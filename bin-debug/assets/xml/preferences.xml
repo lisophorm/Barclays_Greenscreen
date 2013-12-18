@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<preferences>
+  <serverIP>192.168.0.150</serverIP>
+  <facebookAppID>308521192563512</facebookAppID>
+  <urnLength>16</urnLength>
+  <scoreFormat>99:99.99</scoreFormat>
+  <applicationtype>registration</applicationtype>
+</preferences>

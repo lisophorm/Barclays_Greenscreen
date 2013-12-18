@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		xmlns:s="library://ns.adobe.com/flex/spark" 
+		creationComplete="created()" 
+		activate="init()" 
+		remove="exit(event)">
+	<fx:Script>
+		<![CDATA[
+			import com.alfo.utils.CleanWebView;
+			import com.alfo.utils.EncryptWrapper;
+			import com.alfo.utils.StringUtils;
+			import com.lia.crypto.AES;
+			import com.utils.Console;
+			
+			import flash.desktop.NativeApplication;
+			import flash.desktop.SystemIdleMode;
+			import flash.display.Sprite;
+			import flash.display.StageAlign;
+			import flash.display.StageScaleMode;
+			import flash.events.Event;
+			import flash.events.StageVideoAvailabilityEvent;
+			
+			import mx.core.FlexGlobals;
+			import mx.events.FlexEvent;
+			import mx.messaging.channels.StreamingAMFChannel;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			import mx.rpc.http.HTTPService;
+			
+			import spark.events.TextOperationEvent;
+			
+			import events.KioskError;
+			import events.KioskEvent;
+			import events.RegistrationEvent;
+			import events.UserEvent;
+			import events.ViewEvent;
+			
+			import model.ML;
+			import model.Registration;
+			
+			import views.components.tandcWindow;
+			
+			private var currentUrn:String;
+			
+			private var restartInterval:Number;
+			
+			private var currentURN:String;
+			private var checking:Boolean=false;
+			
+			[Bindable]
+			public var barcode:String = null;
+			
+			[Bindable]
+			public var gameNumber:String = "1";
+			
+			[Bindable]
+			public var data:Object;
+			protected var service:HTTPService;
+			
+			protected var device:Registration;
+			
+			public function created(event:FlexEvent=null):void
+			{
+				init();
+				this.addEventListener( Event.INIT, init);
+			}
+			public function init(event:Event=null):void
+			{
+				Console.log("*** INITIATING DEVICE ***", this);
+				frontMessage.text = "PLEASE SCAN YOUR FINGER";
+				//trace("creation complete");
+				StageDisplayState.FULL_SCREEN_INTERACTIVE;
+				CleanWebView.wipeOut();
+				startListen();
+				//	if (!systemManager.stage.hasEventListener(KeyboardEvent.KEY_DOWN))
+				/*
+				try
+				{
+					barcodeInput.text = barcode = "";
+					barcodeWriter.text ="";
+					barcodeInput.enabled = true;
+					barcodeWriter.visible = true;
+					getBarcodeFocus();
+				} catch (er:Error)
+				{
+					this.parentApplication.dispatchEvent( new KioskError( KioskError.ERROR, er.message, "Warning!"))
+				}
+				*/
+				this.executeBindings(true);
+			}
+			
+			//Prepare device for scanning
+			protected function startListen(event:Event=null):void
+			{
+				//stopListen();
+				trace("* Listen ON")
+				if (device==null)
+				{
+					//systemManager.stage.addEventListener(KeyboardEvent.KEY_DOWN, checkKey);
+					device = new Registration(); 
+					device.addEventListener( RegistrationEvent.SCAN_READY, readyToScan);
+					device.addEventListener( RegistrationEvent.USER_ALREADY_REGISTERED, userRegistered);
+					device.addEventListener( RegistrationEvent.ERROR, registrationError);
+					device.addEventListener( RegistrationEvent.USER_FOUND, userFound);
+					device.addEventListener( RegistrationEvent.USER_NOT_FOUND, userNotFound);
+					device.startSocket();
+				}
+			}
+			protected function readyToScan( e:RegistrationEvent ):void
+			{
+				Console.log("readyToScan", this);
+				frontMessage.text = "PLEASE PLACE FINGER ON SCANNER";
+			}
+			protected function userRegistered( e:RegistrationEvent ):void
+			{
+				Console.log("userRegistered", this);
+				this.onNewUser( e.userid  );
+			}
+			protected function registrationError( e:RegistrationEvent ):void
+			{
+				Console.log("registrationError "+e.message, this);
+				this.onError( e.message );
+			}
+			protected function userFound( e:RegistrationEvent ):void
+			{
+				Console.log("userFound", this);
+				
+			}
+			protected function get uniqueID():Number
+			{
+				return Number((new Date()).time);
+			}
+			protected function userNotFound( e:RegistrationEvent ):void
+			{
+				Console.log("userNotFound", this);
+				//register with device first
+				
+				device.registerUser( uniqueID.toString() );
+				
+			}
+			
+			protected function exit(e:FlexEvent=null):void
+			{
+				trace("*** EXIT SCANWRISTBAND ***");
+				stopListen();
+			}
+			private function stopListen(event:Event=null):void
+			{
+				trace("* Listen OFF")
+				if (device!=null)
+					device.stopSocket();
+			}
+			
+			protected function urn_changeHandler(event:TextOperationEvent):void
+			{
+				trace("check urn");
+				
+			}
+			
+			protected function urn_focusOutHandler(event:FocusEvent):void
+			{
+				//focusManager.setFocus(urn);
+				//urn.selectAll();
+				trace("focus out handler");
+			}
+			
+			protected function urn_softKeyboardActivatingHandler(event:SoftKeyboardEvent):void
+			{
+				event.preventDefault();
+			}
+			
+			protected function clearFunc():void {
+				clearInterval(restartInterval);
+			}
+			
+			
+			
+			protected function checkKey(e:KeyboardEvent=null):void
+			{
+				trace("checking key");
+				if (e.keyCode == Keyboard.ENTER  && (this.parentApplication).urn==barcodeInput.text.length)
+				{
+					lookupBarCode();
+				} else
+				{
+					if (e.keyCode!=Keyboard.ENTER && e.keyCode!=Keyboard.ESCAPE && e.charCode!=0)
+					{
+						barcodeInput.text +=String.fromCharCode(e.charCode);
+					}
+					if ((this.parentApplication).urn==barcodeInput.text.length)
+						lookupBarCode();
+				}
+			}
+			protected function lookupBarCode(e:FlexEvent=null):void
+			{
+			
+				trace("barcode before:"+barcodeInput.text);
+				barcode = com.alfo.utils.StringUtils.trim(String(barcodeInput.text.toLocaleUpperCase()));
+				// only for hungarian
+				barcode = barcode.split("Ö").join("0");
+				
+				barcode = barcode.toUpperCase();
+				//	barcode.replace(String.fromCharCode(5), "");
+				trace("barcode converted:"+barcode);
+				
+				for (var i:int=0;i<barcode.length;i++)
+				{
+					trace(barcode.charAt(i)+" "+barcode.charCodeAt(i))
+				}
+				trace("Looking up barcode:"+barcode+" => "+(this.parentApplication).urn.toString()+"=="+barcode.length.toString());
+				
+				if ((this.parentApplication).urn==barcode.length)
+				{
+					
+					if ((this.parentApplication).monitor.isConnected())
+					{
+						frontMessage.text = "Please wait...checking";
+						stopListen();
+						barcodeWriter.visible = false;
+						var localurl:String = (this.parentApplication).baseURL+"checkuser.php";
+					//	localurl = "http://www.ignitesocial.co.uk/ignite/checkuser.php";
+						service =  new HTTPService;
+						service.url = localurl;
+						service.method = "POST";
+						var params:Object=new Object();
+						params.urn= EncryptWrapper.Wrap( barcode );
+						params.activity = EncryptWrapper.Wrap( this.parentApplication.ApplicationType );
+						service.addEventListener(FaultEvent.FAULT, userCheckFailed);
+						service.addEventListener(ResultEvent.RESULT, userValidCheck);
+						service.resultFormat = "flashvars";
+						service.send(params);
+						trace("REQUEST TO SERVER MADE");
+						
+					} else
+					{
+						trace("error done here");
+						barcodeInput.text = barcode = "";
+						barcodeWriter.text ="";
+						this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, "SORRY - NO INTERNET CONNECTION", "CONNECTION ERROR"));
+						
+					}
+				} else
+				{
+					barcodeInput.text = barcode = "";
+					barcodeWriter.text ="";
+				}
+				
+			}
+			protected function userCheckFailed(event:FaultEvent):void
+			{
+				
+				this.parentApplication.dispatchEvent(new events.KioskError(KioskError.ERROR,event.fault.faultDetail.toString(), event.fault.faultString.toString(), init) );
+			}
+			protected function onNewUser(uid:*):void
+			{
+				this.parentApplication.dispatchEvent( new UserEvent(UserEvent.URN, uid));
+				this.parentApplication.dispatchEvent( new UserEvent(UserEvent.REGISTERED));
+				this.parentApplication.dispatchEvent(new ViewEvent(ViewEvent.LOCATION_SELECT_USER_TYPE));
+				
+			}
+			protected function onAlreadyRegistered(uid:*, type:String):void
+			{
+				this.parentApplication.dispatchEvent( new UserEvent(UserEvent.URN, uid));
+				this.parentApplication.dispatchEvent( new UserEvent(UserEvent.REGISTERED, type));
+				this.parentApplication.dispatchEvent(new ViewEvent(ViewEvent.LOCATION_SELECT_USER_TYPE));
+
+			}
+			protected function onDuplicate():void
+			{
+				this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, "SORRY - BUT YOU CAN ONLY PLAY ONCE", "ERROR", init));			
+				init();
+
+			}
+			protected function onError(msg:String):void
+			{
+				this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, "ERROR - RETURNED:"+msg, "ERROR", init));
+				init();
+			}
+			protected function userValidCheck(e:ResultEvent):void
+			{
+				service.removeEventListener(ResultEvent.RESULT, userValidCheck);
+				if (e.result.result!=null)
+				{
+					trace(e.result.result.toString()=="NO");
+					switch (e.result.result.toString())
+					{
+						
+						case "NO": // NEW USER
+							onNewUser(barcode);
+							break;
+						case "YES": // USER ALREADY REGISTERED
+							onAlreadyRegistered(barcode, e.result.type)							
+							//
+							break;
+						case "DUPLICATE": // USER HAVE ALREADY PERFORMED THIS ACTIVITY
+							//	Alert.show("SORRY - BUT YOU CAN ONLY PLAY ONCE", "Error", 4, null, init);
+							trace("Duplicate");
+							barcodeInput.text="";
+							onDuplicate();
+							break;
+						default:
+							
+							barcodeInput.text="";
+							barcodeWriter.text ="";
+							onError(e.result.result)
+							
+							
+					}
+				} else
+				{
+					var str:String = "";
+					for (var m:String in e.result)
+					{
+						str += m+"="+e.result[m]+"; "; 
+					}
+					this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, "NO RESULT ON SERVER :"+str, "SERVER ERROR", init));
+							
+				}
+			}
+			protected function getBarcodeFocus(e:Event=null):void
+			{
+//				trace("set focus")
+//				barcodeWriter.setFocus();
+			}
+			
+			
+			public function restart(e:Event=null):void
+			{
+				this.stage.focus=null;
+				
+			}
+			
+			protected function httpservice1_faultHandler(event:FaultEvent):void
+			{
+				checking=false;
+				this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, "Network error, please check connectivity and try again: " + event.fault.faultString, "NETWORK ERROR", restart));
+
+			}
+			
+			protected function cazzoFunc(event:Event):void 
+			{
+				trace("cazzo");
+			}
+			protected function tandcd_clickHandler(event:MouseEvent):void
+			{
+				this.parentApplication.dispatchEvent(new KioskEvent(KioskEvent.TERMS_NOTIFY, restart));
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<!--s:HTTPService id="checkURN" resultFormat="flashvars" method="POST" url="http://www.ignitesocial.co.uk/ignite/checkuser.php" result="httpservice1_resultHandler(event)" fault="httpservice1_faultHandler(event)" /-->
+	</fx:Declarations>
+	
+	<s:VGroup horizontalAlign="center" verticalAlign="middle" height="574" width="100%">
+		
+		
+		<s:VGroup horizontalAlign="center">
+			<s:Label id="frontMessage" horizontalCenter="0"  text="PLEASE SCAN YOUR FINGER" verticalCenter="0"/>
+			
+			<s:BitmapImage source="@Embed('assets/images/scanyourwristband.png')" visible="false" includeInLayout="false"/>
+			<s:TextInput id="barcodeWriter" top="-50" addedToStage="getBarcodeFocus()" alpha="0" includeInLayout="false" visible="false" text="" textAlign="left" softKeyboardActivating="urn_softKeyboardActivatingHandler(event)"/>
+			
+			<s:TextInput id="barcodeInput" includeInLayout="false" addedToStage="getBarcodeFocus()"  visible="false" text="" textAlign="left"/>
+
+			<s:HGroup verticalAlign="middle">
+				<s:Button x="259" y="591" label="Terms And Conditions" visible="false" includeInLayout="false" click="tandcd_clickHandler(event)" skinClass="skins.vodafoneButton"/>
+				
+				
+			</s:HGroup>
+			
+		</s:VGroup>
+		
+	</s:VGroup>
+	
+</s:Group>

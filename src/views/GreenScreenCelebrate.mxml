@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" 
+		 remove="exit(event)" 
+		 creationComplete="created(event)"
+		 
+		 >
+	
+	<fx:Script>
+		<![CDATA[
+			import com.alfo.DelayedExecution;
+			import com.alfo.utils.EncryptWrapper;
+			import com.alfo.utils.GreenScreenPrefs;
+			import com.alfo.utils.PictureWatcher;
+			import com.alfo.utils.WatchEvent;
+			import com.alfo.utils.StringUtils;
+			
+			import events.GreenscreenModuleEvent;
+			import events.KioskError;
+			import events.KioskProgressEvent;
+			import events.KioskWaitEvent;
+			import events.ViewEvent;
+			
+			import mx.collections.ArrayCollection;
+			import mx.collections.IList;
+			import mx.events.FlexEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			import views.components.ErrorAlert;
+			import views.components.GreenScreenPopUp;
+			import views.components.ProgressPopUp;
+			import views.components.pleaseWait;
+			private var currentURN:String;
+			
+			[Bindable]
+			public var userName:String="";
+			
+			[Bindable]
+			public var posts:int = 0;
+			
+			[Bindable]
+			public var data:Object;
+			
+			protected var applicationType:int = 0;
+			
+			private var folderWatch:PictureWatcher;
+			private var finalWatch:PictureWatcher;
+			
+			private var greenScreenPrefs:GreenScreenPrefs = new GreenScreenPrefs();
+			
+			private var currentPhoto:String="";
+			private var plsWait:pleaseWait;
+			
+			private var urlRequest:URLRequest;
+			private var file:File;
+			
+			private var progressPop:ProgressPopUp;
+			
+			private var urnTMP:String="";
+			
+			public function created(event:FlexEvent=null):void
+			{
+				this.addEventListener( Event.INIT, init);
+			}
+			public function init(event:Event=null):void
+			{
+				trace("*** INIT GREENSCREEN ***");
+				data = this.parentApplication.data
+				if (data!=null)
+				{
+					currentURN = data.urn;
+					applicationType = data.type;
+					this.currentState = data.facebook ? "facebook" : "default";
+					trace("CurrentState:"+this.currentState);
+					publishPhoto.url = this.parentApplication.baseURL+'publishcelebrate.php';
+					urlRequest= new URLRequest(this.parentApplication.baseURL+"uploader.php");
+					getUser.url = this.parentApplication.baseURL+'getuser.php';
+					hideSettings_clickHandler();
+					var passVars:Object=new Object;
+					passVars.urn=EncryptWrapper.Wrap(currentURN);
+					
+					// LOOK-UP USER INFO FOR THIS URN
+					getUser.send(passVars);
+					
+				}
+				
+				currentPhoto="";
+				
+			}
+			protected function start():void
+			{
+				emptyCaptures();
+				if (greenScreenPrefs.basePath!=null && greenScreenPrefs.photoShopPath!=null)
+				{
+					// watches for the canon camera photos
+					folderWatch=new PictureWatcher();
+					folderWatch.setWatchFolder(greenScreenPrefs.basePath+"\\captures");
+					folderWatch.addEventListener(WatchEvent.ON_ADD_PHOTO,readDir);
+					folderWatch.startWatch();
+					// photoShop output Folder
+					finalWatch=new PictureWatcher();
+					finalWatch.setWatchFolder(greenScreenPrefs.basePath+"\\output");
+					finalWatch.addEventListener(WatchEvent.ON_ADD_PHOTO,displayFinalPhoto);
+					basePath.text=greenScreenPrefs.basePath;
+					photoPath.text=greenScreenPrefs.photoShopPath;
+				}
+			}
+			protected function exit( e:Event = null ):void
+			{
+				tidy();
+				trace("*** EXIT GREENSCREEN ***");
+			}
+			// called when exiting from the component
+			protected function tidy(e:Event = null):void
+			{
+				photoSource.source=null;
+				
+				if (this.photoList.dataProvider!=null)
+				{
+					photoList.dataProvider.removeAll();
+				}
+				//var urnFile:File=File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+"\\destination\\"+this.currentURN+".jpg");
+				/*var tempFile:File=File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+"\\destination\\"+this.currentURN+".jpg");
+				if(tempFile.exists) {
+				tempFile.moveTo(File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+"\\output\\"+this.currentURN+".jpg"),true);
+				}*/
+				
+				var dello:File=File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+"\\tmp\\lastpicture.jpg");
+				if(dello.exists) {
+					dello.deleteFile();
+				}
+				folderWatch.removeEventListener(WatchEvent.ON_ADD_PHOTO,readDir);
+				folderWatch.stopWatch();
+				finalWatch.removeEventListener(WatchEvent.ON_ADD_PHOTO,readDir);
+				finalWatch.stopWatch();
+				emptyCaptures();
+				trace("removed greenscreen");
+				try
+				{
+					
+				} catch (error:Error)
+				{
+					trace("==> Actual error in tidying up "+error.message);
+				}
+			}
+			
+			protected function readDir(evt:WatchEvent):void {
+				//photoList.dataProvider.removeAll();
+				trace("read directory dispatched"+evt.customMessage);
+				var dir : File = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+"\\captures");
+				var result:Array=dir.getDirectoryListing();
+				var photoListProvider:ArrayCollection=new ArrayCollection();
+				for (var i : uint = 0;i<result.length;i++)
+					
+				{
+					photoListProvider.addItem({label:result[i].name});
+					trace(result[i].name + "....." + result[i].size);
+					
+				}
+				if (photoListProvider.length>0)
+				{
+					photoList.dataProvider=photoListProvider;
+					photoList.selectedIndex=result.length-1;
+					currentPhoto=result[result.length-1].name;
+					photoSource.source=greenScreenPrefs.basePath+"\\captures\\"+result[result.length-1].name;
+				}
+			}
+			
+			protected function displayFinalPhoto(evt:WatchEvent):void {
+				finalWatch.stopWatch();
+				var tempo:DelayedExecution=new DelayedExecution(1500,this,showThePreview);
+			}
+			protected function showThePreview():void {
+				this.parentApplication.dispatchEvent ( new GreenscreenModuleEvent( acceptPhoto, cancelPhoto, greenScreenPrefs.basePath+"\\output\\lastpicture.jpg" ));
+				NativeApplication.nativeApplication.activate();
+			}
+			protected function acceptPhoto(e:MouseEvent=null) :void
+			{
+				trace("PHOTO ACCEPTED");
+				urnTMP=this.currentURN+"_"+StringUtils.generateRandomString(5)+"_celebrate.jpg";
+				var tempFile:File=File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+"\\output\\lastpicture.jpg");
+				tempFile.copyTo(File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+"\\destination\\"+urnTMP),true);
+				file = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+"\\destination\\"+urnTMP);
+				if(file.exists) {
+					trace("*************** greenscreen file is here");
+				} else {
+					trace("No greenscreen file");
+				}
+				file.addEventListener(Event.COMPLETE,uploadCompleteHandler);
+				file.addEventListener(Event.OPEN,openUploadHandler);
+				file.addEventListener(ProgressEvent.PROGRESS,updateProgress);
+				file.addEventListener(IOErrorEvent.IO_ERROR,onFileError);
+				file.upload(urlRequest);
+				this.parentApplication.dispatchEvent( new KioskProgressEvent(KioskProgressEvent.NOTIFY, "Uploading file" ) );
+				
+			}			
+			
+			protected function openUploadHandler(event:Event):void
+			{
+				trace("uploading");
+				//statusText.text = "Uploading...";
+			}
+			
+			protected function onFileError(error:IOErrorEvent) :void {
+				this.parentApplication.dispatchEvent( new KioskError(KioskError.ERROR, error.text.toString(), "I/O error while uploading the file" ) );
+				
+			}
+			protected function updateProgress(event:ProgressEvent):void {
+				var perc:Number=Math.round(event.bytesLoaded*100/event.bytesTotal);
+				this.parentApplication.dispatchEvent( new KioskProgressEvent(KioskProgressEvent.UPDATE, String(perc)+"% complete"));
+			}
+			
+			protected function uploadCompleteHandler(event:Event):void
+			{
+				this.parentApplication.dispatchEvent( new KioskProgressEvent( KioskProgressEvent.UPDATE_COMPLETE ));
+				
+				publish()
+				
+			}
+			
+			
+			protected function cancelPhoto(e:MouseEvent=null):void 
+			{
+				trace("PHOTO CANCELLED");
+				folderWatch.startWatch();
+			}
+			protected function restart(event:MouseEvent=null):void
+			{
+				trace("close");
+				this.parentApplication.dispatchEvent( new ViewEvent( ViewEvent.LOCATION_RESTART ));
+				
+			}
+			
+			protected function setBase_clickHandler(event:MouseEvent):void
+			{
+				var file:File = new File();
+				file.resolvePath("C:\\");
+				file.addEventListener(Event.SELECT, baseSelect);
+				file.browseForDirectory("Select the base directory"); 
+				
+			}
+			protected function baseSelect(evt:Event):void {
+				greenScreenPrefs.basePath=File(evt.currentTarget).nativePath;
+				basePath.text = File(evt.currentTarget).nativePath;
+				start();
+			}
+			
+			
+			protected function setPhoto_clickHandler(event:MouseEvent):void
+			{
+				var file:File = new File();
+				file.resolvePath("C:\\");
+				file.addEventListener(Event.SELECT, photoSelect);
+				file.browse();
+				
+			}
+			protected function photoSelect(evt:Event):void {
+				greenScreenPrefs.photoShopPath=File(evt.currentTarget).nativePath;
+				photoPath.text = File(evt.currentTarget).nativePath;
+				start();
+			}
+			
+			protected function photoList_clickHandler(event:MouseEvent):void
+			{
+				currentPhoto=photoList.dataProvider.getItemAt(photoList.selectedIndex).label;
+				photoSource.source=greenScreenPrefs.basePath+"\\captures\\"+currentPhoto;
+				
+			}
+			
+			protected function emptyCaptures():void {
+				trace("clear everything");
+				if (greenScreenPrefs.basePath!=null)
+				{
+					var dir : File = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+"\\captures");
+					dir.deleteDirectory(true);
+					dir.createDirectory();
+					
+					dir = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+"\\tmp");
+					dir.deleteDirectory(true);
+					dir.createDirectory();
+					
+					dir = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+"\\output");
+					dir.deleteDirectory(true);
+					dir.createDirectory();
+				}
+			}
+			
+			protected function group1_removeHandler(event:FlexEvent):void
+			{
+				trace("REMOVE");
+				
+			}
+			
+			protected function photoLaunch_clickHandler(event:MouseEvent):void
+			{
+				if(currentPhoto!="") {
+					folderWatch.stopWatch();
+					finalWatch.startWatch();
+					var photo:File=File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+"\\captures\\"+currentPhoto);
+					photo.copyTo(File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+"\\tmp\\lastpicture.jpg"),true);
+					
+					var file:File=File.applicationDirectory.resolvePath(greenScreenPrefs.photoShopPath);
+					var nativeProcessInfo:NativeProcessStartupInfo=new NativeProcessStartupInfo();
+					nativeProcessInfo.executable=file;
+					nativeProcessInfo.arguments=new <String>[greenScreenPrefs.basePath+"\\settings\\wrapup.jsx"];
+					
+					var process:NativeProcess=new NativeProcess();
+					process.start(nativeProcessInfo);
+					
+					this.parentApplication.dispatchEvent( new KioskWaitEvent("PLEASE WAIT") );
+				}
+				
+			}
+			
+			protected function publishPhoto_resultHandler(event:ResultEvent):void
+			{
+				trace("PUBLISH PHOTO result"+publishPhoto.lastResult.result);
+				
+				if(publishPhoto.lastResult.result!="SUCCESS") {
+					this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, publishPhoto.lastResult.message, "Error From FaceBook"));
+				} else {
+					trace("PUBLISHING SUCCESSFUL");
+					this.parentApplication.dispatchEvent( new ViewEvent( ViewEvent.LOCATION_GAME_COMPLETE ));
+					/*photodone.visible=true;
+					takePhotoButton.visible=false;
+					checkForEnd();*/
+				}
+				
+				
+			}
+			protected function getUser_resultHandler(event:ResultEvent):void
+			{
+				userName 	= EncryptWrapper.Wrap(getUser.lastResult.name);
+				posts 		= int(EncryptWrapper.Wrap(getUser.lastResult.posts));
+				if (this.currentState=="facebook")
+					facebookposts_check.selected = this.canPost;
+				
+				trace("** USER INFO RETRIVED:\nUser's lastname:"+user.text+"\nPosts:"+posts);
+				start();
+			}
+			
+			protected function httpservice_faultHandler(event:FaultEvent):void
+			{
+				this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, event.fault.faultString, "NETWORK ERROR"));
+				
+			}
+			
+			protected function showSettings_clickHandler(event:MouseEvent=null):void
+			{
+				showSettings.visible=false;
+				showSettings.includeInLayout=false;
+				hideSettings.visible=true;
+				hideSettings.includeInLayout=true
+				settings.visible=true;
+				settings.includeInLayout = true;
+			}
+			
+			protected function hideSettings_clickHandler(event:MouseEvent = null):void
+			{
+				showSettings.visible=true;
+				showSettings.includeInLayout=true;
+				hideSettings.visible=false;
+				hideSettings.includeInLayout=false;
+				settings.visible=false;
+				settings.includeInLayout = false;
+				
+			}
+			//publish photo to facebook
+			protected function publish( e:Event = null ):void
+			{
+				
+				var passVars:Object=new Object();
+				passVars.urn=this.currentURN;
+				if (this.currentState=="facebook")
+					passVars.facebook_optin= this.facebookposts_check.selected ? 1 : 0;
+				else
+					passVars.facebook_optin= 0;
+				passVars.type = this.applicationType;
+				
+				passVars.file=urnTMP;
+				publishPhoto.send(passVars);
+				
+				this.parentApplication.dispatchEvent( new KioskProgressEvent(KioskProgressEvent.NOTIFY, (this.currentState=="facebook" ? "Publishing on Facebook" : "Sending email")+"..."));
+				
+				
+			}
+			protected function get canPost():Boolean
+			{
+				
+				return (int(posts)<5);
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<s:HTTPService id="publishPhoto" resultFormat="flashvars" method="POST" url="{this.parentApplication.baseURL+'publishcelebrate.php'}" result="publishPhoto_resultHandler(event)" fault="httpservice_faultHandler(event)" />
+		<s:HTTPService id="getUser" resultFormat="flashvars" method="POST" url="{this.parentApplication.baseURL+'getuser.php'}"  result="getUser_resultHandler(event)" fault="httpservice_faultHandler(event)" />
+		
+	</fx:Declarations>
+	<s:states>
+		<s:State name="default" />
+		<s:State name="facebook" />
+	</s:states>
+	
+	<s:VGroup width="100%" height="100%">
+		<s:HGroup>
+			<s:BorderContainer borderVisible="false">
+				
+				
+				<s:Group x="0" y="0">
+					<s:mask>
+						<s:Group x="0" y="0">
+							<s:Rect width="350" height="250" radiusX="15" radiusY="15" id="elem1">
+								<s:fill>
+									<s:SolidColor color="#FFFFFF"/>
+								</s:fill>
+							</s:Rect>
+						</s:Group>
+					</s:mask>
+					<s:Image y="-15" width="{elem1.width+30}" height="{elem1.height+30}" id="photoSource" />
+				</s:Group>
+				<s:Rect width="{elem1.width}" height="{elem1.height}" radiusX="15" radiusY="15" id="elem2">
+					<s:stroke>
+						<s:SolidColorStroke weight="5" caps="none" joints="miter" miterLimit="10" color="#e60000"/>
+					</s:stroke>
+				</s:Rect>
+			</s:BorderContainer>
+			
+			
+			<s:List id="photoList" width="250" height="250" click="photoList_clickHandler(event)"
+					fontSize="14">
+			</s:List>
+			
+		</s:HGroup>
+		
+		
+		<s:VGroup id="settings">
+			<s:HGroup verticalAlign="middle">
+				<s:Button id="setPhoto" height="50" label="set photoshop path"
+						  click="setPhoto_clickHandler(event)" skinClass="skins.vodafoneButton"
+						  label.default="celeb - set photoshop path"/>
+				
+				<s:Label id="photoPath" width="664" color="#000000" fontSize="18"/>
+				
+			</s:HGroup>
+			<s:HGroup verticalAlign="middle">
+				<s:Button id="setBase" height="50" label="Set Base path"
+						  click="setBase_clickHandler(event)" skinClass="skins.vodafoneButton"/>
+				<s:Label id="basePath" width="664" color="#000000" fontSize="18">
+					
+				</s:Label>
+			</s:HGroup>
+		</s:VGroup>
+		
+		<s:VGroup styleName="Game"  horizontalAlign="center" verticalAlign="middle" >
+			<s:HGroup horizontalAlign="left">
+				<s:Label width="400" text="Name:"/>
+				<s:Spacer width="20" />
+				<s:Label text="{userName}" id="user"  styleName="userInfo" />
+			</s:HGroup>
+			<s:Spacer height="5" />
+			<s:HGroup horizontalAlign="left" includeIn="facebook">
+				<s:Label width="400" text="Published Facebook posts:"/>
+				<s:Spacer width="20" />
+				<s:Label text="{posts}" id="facebookposts_label" styleName="userInfo" />
+			</s:HGroup>
+			<s:Spacer width="10" height="20"  includeIn="facebook"/>
+			<s:HGroup  includeIn="facebook">
+				<s:CheckBox id="facebookposts_check"  label="Post to facebook?" skinClass="skins.vodafoneCheckBox" />
+			</s:HGroup>
+			<s:HGroup width="100%" horizontalAlign="center">
+				<s:Button label="Close" height="50" skinClass="skins.vodafoneButton" click="restart(event)"/>
+				<s:HGroup>
+					<s:Button skinClass="skins.vodafoneButton" label="Show Settings" id="showSettings" click="showSettings_clickHandler(event)" />
+					<s:Button skinClass="skins.vodafoneButton" label="Hide Settings" id="hideSettings" visible="false" includeInLayout="false" click="hideSettings_clickHandler(event)" />
+				</s:HGroup>
+				<s:Button id="photoLaunch" height="50" skinClass="skins.vodafoneButton" label="Create"
+						  click="photoLaunch_clickHandler(event)"/>
+				
+			</s:HGroup>
+		</s:VGroup>
+	</s:VGroup>
+	
+	
+</s:Group>

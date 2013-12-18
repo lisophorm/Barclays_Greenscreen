@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:components="views.components.*" 
+		 
+		 remove="exit(event)" creationComplete="created(event)"
+		 >
+	
+	<fx:Script>
+		<![CDATA[
+			import com.alfo.utils.EncryptWrapper;
+			import com.lia.crypto.AES;
+			
+			import events.KioskError;
+			import events.KioskProgressEvent;
+			import events.ViewEvent;
+			
+			import model.ML;
+			
+			import mx.events.FlexEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			import views.components.*;
+			
+			private var urlRequest:URLRequest
+			private var file:File;
+			
+			private var currentURN:String;
+			
+			private var progressPop:ProgressPopUp;
+			protected var fileTransfer:Boolean=false;
+			
+			[Bindable]
+			public var activityTitle:String ="Helmet Challenge";
+			
+			[Bindable]
+			public var userName:String="";
+			
+			[Bindable]
+			public var posts:int = 0;
+			
+			[Bindable]
+			public var data:Object;
+			
+			protected var applicationType:int = 0;
+			
+			public function created(event:FlexEvent=null):void
+			{
+				this.addEventListener( Event.INIT, init);
+			}
+			public function init(event:Event=null):void
+			{
+				trace("*** INIT TASKCOMPLETECAPTURE ***");
+
+				if (this.parentApplication.data!=null)
+				{
+					data = this.parentApplication.data
+
+					currentURN = data.urn;
+					applicationType = data.type;
+					this.currentState = data.facebook ? "facebook" : "default";
+					publishData.url = this.parentApplication.baseURL+'publishscore.php';
+					getUser.url = this.parentApplication.baseURL+'getuser.php';
+					
+					var passVars:Object=new Object;
+					passVars.urn=EncryptWrapper.Wrap(currentURN);
+					
+					// LOOK-UP USER INFO FOR THIS URN
+					getUser.send(passVars);
+					fileTransfer=false;
+				} else {
+					trace("URN MISSING");
+				}					
+				
+			}
+			protected function exit(event:Event=null):void
+			{
+				trace("*** EXIT TASKCOMPLETE CAPTURE ***");
+
+			}
+			protected function getUser_resultHandler(event:ResultEvent):void
+			{
+				userName =EncryptWrapper.Wrap(getUser.lastResult.name);
+				posts = int(EncryptWrapper.Wrap(getUser.lastResult.posts));
+				if (this.currentState=="facebook")
+					facebookposts_check.selected = this.canPost;
+				trace("** USER INFO RETRIVED:\nUser's lastname:"+userName+"\nPosts:"+posts);
+			}
+			
+			protected function httpservice_faultHandler(event:FaultEvent):void
+			{
+				this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, event.fault.faultString, "NETWORK ERROR"));
+
+			}
+			
+// SCORE HANDLING
+			protected function publishBTN_clickHandler(event:MouseEvent):void
+			{
+				var passVars:Object=new Object();
+				
+					passVars.urn=EncryptWrapper.Wrap(currentURN);
+					if (this.currentState=="facebook")
+						passVars.facebook_optin= this.facebookposts_check.selected ? 1 : 0;
+					else
+						passVars.facebook_optin= 0;
+					passVars.type = this.applicationType;
+					
+					publishData.send(passVars);
+					this.parentApplication.dispatchEvent( new KioskProgressEvent(KioskProgressEvent.NOTIFY, "Publishing Score" ) );
+			}
+			
+			protected function publish_resultHandler(event:ResultEvent):void
+			{
+				this.parentApplication.dispatchEvent( new KioskProgressEvent(KioskProgressEvent.UPDATE_COMPLETE ) );
+				
+				if(publishData.lastResult.result!="SUCCESS") 
+				{
+					
+					this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, publishData.lastResult.message, "ERROR"));
+				} else {
+					checkForEnd();
+				}
+			}
+
+			protected function checkForEnd():void
+			{
+						this.parentApplication.dispatchEvent( new ViewEvent( ViewEvent.LOCATION_GAME_COMPLETE ) );
+			}
+			
+			
+			public function restart(e:Event):void
+			{
+				this.parentApplication.dispatchEvent( new ViewEvent( ViewEvent.LOCATION_RESTART ) );
+			}
+			
+			
+			protected function cancelBTN_clickHandler(event:MouseEvent):void
+			{
+				this.parentApplication.dispatchEvent( new ViewEvent( ViewEvent.LOCATION_RESTART ));
+			}
+			protected function get canPost():Boolean
+			{
+				
+				return (int(posts)<5);
+			}
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<s:HTTPService id="getUser" resultFormat="flashvars" method="POST" url="{this.parentApplication.baseURL+'getuser.php'}"  result="getUser_resultHandler(event)" fault="httpservice_faultHandler(event)" />
+		<s:HTTPService id="publishData" resultFormat="flashvars" method="POST" url="{this.parentApplication.baseURL+'publishscore.php'}"  result="publish_resultHandler(event)" fault="httpservice_faultHandler(event)" />
+		
+	</fx:Declarations>
+
+	<s:states>
+		<s:State name="default" />
+		<s:State name="facebook" />
+	</s:states>
+	
+	
+	<s:VGroup  styleName="Game"  horizontalAlign="center" verticalAlign="middle" width="100%" height="592">
+		<s:Label text="{activityTitle}" styleName="heading" />
+		<s:Spacer width="10" height="30"/>
+		
+		<s:VGroup>
+			<s:Label id="statusText" />
+			<s:HGroup horizontalAlign="left">
+				<s:Label width="400" text="Name"/>
+				<s:Spacer width="20" />
+				<s:Label text="{userName}" id="user"  styleName="userInfo" />
+			</s:HGroup>
+			<s:Spacer height="5" />
+			<s:HGroup horizontalAlign="left" includeIn="facebook">
+				<s:Label width="400" text="Published Facebook Posts:" />
+				<s:Spacer width="20" />
+				<s:Label text="{posts}" id="facebookposts_label"  styleName="userInfo" />
+				
+			</s:HGroup>
+			<s:Spacer width="10" height="5" includeIn="facebook"/>
+			<s:HGroup includeIn="facebook">
+				<s:CheckBox id="facebookposts_check"  label="Post fo Facebook?"  skinClass="skins.vodafoneCheckBox"/>
+			</s:HGroup>
+			<s:Spacer width="10" height="100"/>
+			<s:HGroup width="100%" horizontalAlign="center">
+				<s:Button id="publishBTN" horizontalCenter="0" label="Done" click="publishBTN_clickHandler(event)" skinClass="skins.vodafoneButton"/>
+			</s:HGroup>
+		</s:VGroup>
+		
+	</s:VGroup>
+	
+</s:Group>

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		xmlns:s="library://ns.adobe.com/flex/spark" 
+		remove="exit(event)" creationComplete="created(event)" 
+		>
+	<fx:Script>
+		<![CDATA[
+			import events.ApplicationEvent;
+			import events.ViewEvent;
+			
+			import model.Config;
+			
+			import mx.events.FlexEvent;
+			
+			import spark.events.IndexChangeEvent;
+			
+			[Bindable]
+			public var data:Object;
+			
+			public function created(event:FlexEvent=null):void
+			{
+				this.addEventListener( Event.INIT, init);
+			}
+			public function init(event:Event=null):void
+			{
+				trace("*** INIT APPLICATIONTYPE ***");
+				if (this.parentApplication.data!=null)
+				{
+					data = this.parentApplication.data;
+					this.server.text = data.xml.serverIP;
+					this.facebookAPI_ID.text = data.xml.facebookAppID;
+					this.urnLength.text = data.xml.urnLength;
+					this.scoreFormat.text = data.xml.scoreFormat;
+					
+					this.radioGroup.selectedValue = data.xml.applicationtype;
+					
+				}
+				
+			}
+			protected function exit(event:Event=null):void
+			{
+				trace("*** EXIT APPLICATIONTYPE ***");
+			}
+			protected function submit(e:MouseEvent):void
+			{
+				trace("serverIP:"+ server.text.toString()+"facebookAppID:"+ facebookAPI_ID.text.toString()+"urnLength:"+ urnLength.text.toString()+"applicationtype:"+ radioGroup.selectedValue.toString()+"scoreFormat:"+scoreFormat.text.toString());
+				this.parentApplication.dispatchEvent( new ApplicationEvent( ApplicationEvent.SAVE_TYPE, { serverIP: server.text.toString(),
+					facebookAppID: facebookAPI_ID.text.toString(), 
+					urnLength: urnLength.text.toString(), 
+					applicationtype: radioGroup.selectedValue.toString(),
+					scoreFormat: scoreFormat.text.toString()} ) );
+				
+			}
+			protected function cancel(e:MouseEvent):void
+			{
+				this.parentApplication.dispatchEvent( new ViewEvent(ViewEvent.LOCATION_RESTART ));
+			}
+			protected function forceLogout(e:MouseEvent):void
+			{
+				this.parentApplication.dispatchEvent( new ViewEvent(ViewEvent.LOCATION_FACEBOOK_FORCELOGOUT ));
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->						
+		<s:RadioButtonGroup id="radioGroup" />
+
+	</fx:Declarations>
+	
+	
+	
+	<s:VGroup horizontalAlign="center" verticalAlign="middle" width="100%" height="100%">
+		<s:Form id="configform" horizontalCenter="0" verticalCenter="0">
+			<s:FormHeading label="CONFIGURATION DETAILS:" />
+			
+			<s:FormItem width="365" label="Server name:" fontFamily="Arial">
+				<s:TextInput id="server" width="550" height="30" color="0x000000" fontFamily="Arial"/>
+			</s:FormItem>
+			<s:HGroup>
+				
+			<s:FormItem width="365" label="URN Length:" >
+					<s:TextInput id="urnLength" width="150" color="0x000000"  height="30" fontFamily="Arial"/>
+			</s:FormItem>
+			<s:FormItem width="365" label="Score format:" >
+				<s:TextInput id="scoreFormat" width="150" color="0x000000"  height="30" fontFamily="Arial"/>
+			</s:FormItem>
+			</s:HGroup>
+
+			<s:FormItem width="365" label="Facebook appID:" >
+				<s:TextInput id="facebookAPI_ID" width="550" color="0x000000" height="30" fontFamily="Arial"/>
+			</s:FormItem>
+
+			<s:FormItem width="365" label="Application:">
+				<s:VGroup width="628">
+						<s:RadioButton width="500" label="Registration Only" value="registration" group="{radioGroup}" skinClass="skins.vodafoneRadioButton" />
+						<s:RadioButton width="500" label="Pit Stop Challenge" value="pitstop" group="{radioGroup}" skinClass="skins.vodafoneRadioButton" />
+						<s:RadioButton width="500" label="Simulator" value="simulator" group="{radioGroup}" skinClass="skins.vodafoneRadioButton" />
+						<s:RadioButton width="500" label="Green screen - Sit In" value="greenscreen" group="{radioGroup}" skinClass="skins.vodafoneRadioButton" />
+						<s:RadioButton width="500" label="Green screen - Celebrate" value="greenscreen_celebrate" group="{radioGroup}" skinClass="skins.vodafoneRadioButton" />
+						<s:RadioButton width="500" label="Helmet" value="helmet" group="{radioGroup}" skinClass="skins.vodafoneRadioButton" />
+				</s:VGroup>
+			
+			</s:FormItem>
+		</s:Form>
+		<s:HGroup verticalAlign="middle">
+			<s:Button  label="Cancel" click="cancel(event)"  skinClass="skins.vodafoneButton"/>
+			<s:Spacer y="8" width="200" height="24"/>
+			<s:Button id="submitButton" label="Submit" click="submit(event)"  skinClass="skins.vodafoneButton" />
+			<s:Button label="Force Logout Facebook" click="forceLogout(event)" />
+
+		</s:HGroup>
+		
+		
+	</s:VGroup>
+</s:Group>
