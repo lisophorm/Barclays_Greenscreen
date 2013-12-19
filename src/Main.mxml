@@ -512,8 +512,8 @@
 						//this.navigator.popToFirstView(fadeTrans);
 						trace("*** RESTART WAS CALLED ***");
 						deleteWindowsCookies();
-						gotoView("RegisterView");
-						//gotoView("SelectTeam");
+						//gotoView("RegisterView");
+						gotoView("SelectTeam");
 						break;
 					case ViewEvent.LOCATION_CONFIG:
 						gotoView("SelectApplication", { xml : pref.prefsXML } );
