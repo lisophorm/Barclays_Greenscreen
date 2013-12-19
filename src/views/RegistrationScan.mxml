@@ -489,8 +489,6 @@
 					<s:Spacer width="20" />
 					<s:BitmapImage source="assets/images/fingerprint_orange.png" />
 				</s:HGroup>
-
-				
 			</s:HGroup>
 			
 		</s:VGroup>
