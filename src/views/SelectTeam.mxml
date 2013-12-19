@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" 
+		 xmlns:views="views.*"
+		 xmlns:layouts= "views.layouts.*"
+		 
+		 creationComplete="created(event)">
+	
+	<fx:Script>
+		<![CDATA[
+			import com.utils.Console;
+			
+			import mx.events.FlexEvent;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			import spark.filters.GlowFilter;
+			
+			import events.KioskError;
+			import events.KioskEvent;
+			import events.UserEvent;
+			import events.ViewEvent;
+			
+			import model.ML;
+			
+			
+			public var data:Object;
+			
+			[Bindable]
+			public var type:String = "Game";
+			
+			[Bindable]
+			public var teamDataList:XMLList;
+			protected var teamFile:File;
+			protected var stream:FileStream;
+			
+			
+			public function created(event:FlexEvent=null):void
+			{
+				this.addEventListener( Event.INIT, init);
+				init();
+			}
+			public function init(event:Event=null):void
+			{
+				Console.log("*** INIT SELECTTEAM ***", this);
+		
+				if (this.parentApplication.data!=null)
+				{
+					data = this.parentApplication.data;
+					type = data.type;
+					Console.log( data.type, this );
+					
+				}
+				teamFile = File.applicationDirectory.resolvePath('assets/xml/teams.xml')
+				readXML();
+				
+			}
+			private function readXML():void 
+			{
+				
+				// If it exists read it 
+				if (teamFile.exists) {
+					Console.log("team file exists", this);
+					stream = new FileStream();
+					stream.open(teamFile, FileMode.READ);
+					processXMLData();
+				}
+				else //Otherwise make a file and save it
+				{
+					Console.log("no file", this);
+					this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, teamFile.url+" NOT FOUND", "COMMUNICATION ERROR", this.init));
+				}
+				
+			}
+			public function exit( e:Event = null):void
+			{
+				trace("*** EXIT SELECTTEAM ***");
+			}
+			
+			protected function game(e:Event=null):void
+			{
+				this.parentApplication.dispatchEvent( new ViewEvent( ViewEvent.LOCATION_GAME ));
+				
+			}
+			
+			
+			private var myGlowIs:GlowFilter = new GlowFilter(0xffffff,1,12,12,2);
+			private var noGlowIs:GlowFilter = new GlowFilter(0xffffff,0,0,0,0);
+			
+			private function processXMLData():void 
+			{
+				trace("file size:"+stream.bytesAvailable);
+				
+				var xml:XML = XML(stream.readUTFBytes(stream.bytesAvailable));
+				stream.close();
+				teamDataList = (xml..team);
+				
+				Console.log(teamDataList, this);
+			}
+			
+			// this function was attempting to add a series of dummy elements to thin out the scrollbar by increasing the number of elements.
+			// issues is that it is process intensive
+			protected function modify(list:XMLList):XMLList
+			{
+				if (list.length()>0)
+				{
+					
+					Console.log( list[0].toString(), this);
+					var itemNo:int = 40;
+					var node:XML = XML(list[0]).copy();
+					node.@logo = ""; 
+					var addinsNo:Number = Math.round(itemNo/list.length());
+					var xmlCopy:XML = new XML(<mylist/>);
+						
+					var count:int = 0;
+					for (var i:int=0;i<itemNo;i++)
+					{
+						if (i%addinsNo==0 || addinsNo<=1)
+						{
+							xmlCopy.appendChild( XML(list[count]).copy() );
+							count++;
+						} else {
+							xmlCopy.appendChild( node.copy() );
+						}
+						
+					}
+					return xmlCopy..team;
+				} else {
+					return list;
+				}
+			}
+
+			
+			
+			
+			]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<fx:String id="game_subtext"><![CDATA[CHOOSE OUR FAVORITE PLAYERS TO MAKE UP YOUR CLUB’S ULTIMATE DREAM TEAM]]></fx:String>
+		<fx:String id="teamsheet_subtext"><![CDATA[A FEW THINGS YOU MIGHT NOT HAVE KNOWN ABOUT YOUR FAVOURITE CLUB]]></fx:String>
+		<s:Power id="powerEasing" exponent="4"/>
+		<s:Sine id="sineEasing" easeInFraction="0.3"/>
+		<s:Linear id="slowDown" easeInFraction=".1" easeOutFraction=".1"  />
+	</fx:Declarations>
+	<!-- Menu -->
+	<!-- Field -->
+	<s:VGroup left="100" top="110" width="100%" height="100%">
+		<s:BorderContainer backgroundAlpha="0" borderVisible="false" height="800" width="100%">
+			<s:DataGroup id="CarouselGroup" width="100%" height="800" itemRenderer="views.renderer.logoItemRenderer">			
+				<s:layout>
+					<s:TileLayout orientation="rows" clipAndEnableScrolling="true"
+								  requestedColumnCount="-1" requestedRowCount="-1"
+								  verticalGap="12" horizontalGap="12" useVirtualLayout="true" />
+				</s:layout>
+				<s:XMLListCollection  id="teamList"   source="{teamDataList}"/>	
+			</s:DataGroup>
+		</s:BorderContainer>
+		</s:VGroup>
+			
+			
+</s:Group>
