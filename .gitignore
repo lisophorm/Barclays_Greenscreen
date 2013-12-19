@@ -15,6 +15,9 @@ local.properties
 .classpath
 .settings/
 .loadpath
+bin-debug/
+release/
+release_desktop/
 **/bin-debug/
 **/release_desktop/
 **/release/
