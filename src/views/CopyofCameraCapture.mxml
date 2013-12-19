@@ -1,0 +1,776 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:View xmlns:fx="http://ns.adobe.com/mxml/2009"
+		xmlns:s="library://ns.adobe.com/flex/spark" 
+		
+		creationComplete="onAddToStage(event)" backKeyPressed="view1_backKeyPressedHandler(event)" currentStateChange="view1_currentStateChangeHandler(event)" removing="view1_removingHandler(event)" removedFromStage="view1_removedFromStageHandler(event)" currentState="default" xmlns:components="views.components.*"  >
+	
+	<fx:Script>
+		<![CDATA[
+			import com.alfo.UserObject;
+			import com.alfo.utils.StringUtils;
+			
+			import mx.events.FlexEvent;
+			import mx.events.ResizeEvent;
+			import mx.events.StateChangeEvent;
+			
+			import spark.events.ViewNavigatorEvent;
+			
+			import events.KioskError;
+			import events.KioskEvent;
+			import events.KioskProgressEvent;
+			import events.ViewEvent;
+			
+			import ru.inspirit.image.encoder.JPGAsyncEncoder;
+			
+			import uk.soulwire.utils.display.Alignment;
+			import uk.soulwire.utils.display.DisplayUtils;
+			
+			
+			
+			
+			private var urlRequest:URLRequest
+			private var file:File;
+			
+			private var currentURN:String;
+			
+			
+			protected var fileTransfer:Boolean=false;
+			
+			protected var webView:StageWebView = new StageWebView();
+			
+			[Bindable]
+			public var userName:String="";
+			
+			[Bindable]
+			public var posts:int = 0;
+			
+			public var destFile:File;
+			
+			protected var applicationType:int = 0;
+			
+			private var logOutView:StageWebView;
+			
+			private var videoAdded:Boolean=false;
+			
+			// image processing stuff
+			private var overlayBitmapData:BitmapData=new BitmapData(10,10);
+			private var backGroundBitmapData:BitmapData=new BitmapData(10,10);
+			
+			private var destBitmap:Bitmap=new Bitmap();
+			
+			private var scaledBitmap:Bitmap=new Bitmap();
+			
+			var foregroundLoader:Loader = new Loader();
+			var backgroundLoader:Loader = new Loader();
+			
+			var loaded1:Boolean=false;
+			var loaded2:Boolean=false;
+			
+			var destWidth:Number;
+			var destHeight:Number;
+			
+			private var tempPhotoDisplay:DisplayObject;
+			
+			public var theUser:UserObject;
+			
+			private var myCam:CameraUI;
+			
+			var theJPG:JPGAsyncEncoder = new JPGAsyncEncoder(85);
+			
+			private var nc : NetConnection;
+			private var ns : NetStream;
+			private var video : Video;
+			
+			private var videoW:Number=1280;
+			private var videoH:Number=720;
+			
+			[Bindable]
+			private var videoRatio:Number=videoW/videoH;
+			
+			private var currentStatus:String="";
+			
+			
+			
+			protected function onAddToStage(event:Event):void
+			{
+				this.parentApplication.stage.autoOrients=false;
+				this.parentApplication.stage.setAspectRatio(StageAspectRatio.LANDSCAPE);
+				
+				
+				theUser=UserObject.getInstance();
+				trace("added photo "+theUser.firstname);
+				stage.addEventListener(StateChangeEvent.CURRENT_STATE_CHANGE,stateChangeHandler);
+				// loads the foreground image to overlay
+				foregroundLoader.contentLoaderInfo.addEventListener(Event.COMPLETE, onComplete);
+				foregroundLoader.load(new URLRequest("assets/images/overlay.png"));
+				
+				
+				
+				currentURN = theUser.urn;
+				applicationType = data.type;
+				
+				theJPG.addEventListener(ProgressEvent.PROGRESS, onEncodingProgress);
+				theJPG.addEventListener(Event.COMPLETE, onEncodeComplete);
+				
+				nc = new NetConnection();
+				nc.connect(null);
+				ns = new NetStream(nc);
+				ns.addEventListener(NetStatusEvent.NET_STATUS, onNetStatus);
+				ns.client = this;
+				
+				video = new Video();
+				video.smoothing=true;
+				video.addEventListener(VideoEvent.RENDER_STATE, videoStateChange);
+				
+				video.attachNetStream(ns);
+				
+				
+				
+			}
+			private function videoStateChange(event:VideoEvent):void
+			{	
+				log("VideoEvent received");
+				log("Render State : " + event.status);
+				controls.invalidateDisplayList();
+			}
+			private function onNetStatus(event:NetStatusEvent):void
+			{
+				trace("netstatus event");
+				trace("netstatus code:"+event.info.code);
+				trace("netstatus level:"+event.info.level);
+				
+				if(event.info.code=="NetStream.Play.Start") {
+					playBtn.visible=false;
+					playBtn.includeInLayout=true;
+					
+					stopBtn.visible=false;
+					stopBtn.includeInLayout=false;
+					currentStatus=event.info.code;
+				}
+				if(event.info.code=="NetStream.Play.Stop") {
+					playBtn.visible=true;
+					playBtn.includeInLayout=true;
+					
+					stopBtn.visible=false;
+					stopBtn.includeInLayout=false;
+					
+				}
+				if(event.info.code=="NetStream.Pause.Notify") {
+					/*playBtn.visible=true;
+					playBtn.includeInLayout=true;
+					pauseBtn.visible=false;
+					pauseBtn.includeInLayout=false;
+					stopBtn.visible=false;
+					stopBtn.includeInLayout=false;
+					currentStatus="";*/
+					currentStatus=event.info.code;
+				}
+				if(event.info.code=="NetStream.Unpause.Notify") {
+					/*playBtn.visible=false;
+					playBtn.includeInLayout=false;
+					pauseBtn.visible=true;
+					pauseBtn.includeInLayout=true;
+					stopBtn.visible=true;
+					stopBtn.includeInLayout=true;
+					currentStatus="";*/
+					currentStatus=event.info.code;
+				}
+				
+				
+				
+				
+				
+			}
+			private function log(s:String) {
+				trace(s);
+			}
+			protected function stateChangeHandler(e:StateChangeEvent) {
+				trace("statechangeEvent"+e.newState);
+				
+				
+			}
+			public function onMetaData ( evt:Object ):void
+			{
+				trace("metadata:"+evt.duration);
+				
+			}
+			
+			public function onPlayStatus ( evt:Object ):void
+			{
+				
+				if(evt.code=="NetStream.Play.Complete") {
+					trace("LA FINE DEL VIDEO");
+					
+					
+					playBtn.visible=true;
+					stopBtn.visible=false;
+					controls.invalidateDisplayList();
+					/*playBtn.visible=true;
+					playBtn.includeInLayout=true;
+					pauseBtn.visible=false;
+					pauseBtn.includeInLayout=false;
+					stopBtn.visible=false;
+					stopBtn.includeInLayout=false;
+					currentStatus="complete";*/
+					currentStatus=evt.code;
+				} 
+				
+				trace("on play stats:"+evt.code);
+				trace("on play stats:"+evt.level);
+			}
+			
+			protected function onEncodeComplete(e:Event) {
+				
+				var success:Boolean=true;
+				theUser.destFileName=theUser.urn+"-"+StringUtils.generateRandomString(4)+".jpg";
+				
+				destFile = File.documentsDirectory.resolvePath(theUser.jpgPath+File.separator+theUser.destFileName);
+				trace("destFileName "+theUser.destFileName);
+				trace("destFile "+destFile.url);
+				
+				//Use a FileStream to save the bytearray as bytes to the new file
+				var fs:FileStream = new FileStream();
+				try{
+					//open file in write mode
+					fs.open(destFile,FileMode.WRITE);
+					//write bytes from the byte array
+					fs.writeBytes(theJPG.encodedImageData);
+					//close the file
+					fs.close();
+				}catch(e:Error){
+					success=false;
+					trace("******** error saving file"+e.message);
+					this.navigator.dispatchEvent( new KioskError(KioskError.ERROR, e.message, "I/O error saving Jpeg image, check SD Card available space" ) );
+				} finally {
+					fs.close();
+				}
+				
+				
+				if(success) {
+					
+					destFile = File.documentsDirectory.resolvePath(theUser.thumbPath+File.separator+theUser.destFileName);
+					trace("now copio:"+file.nativePath+" dest:"+destFile.nativePath);
+					try {
+						file.copyTo(destFile,true);
+					} catch (e:Error) {
+						this.navigator.dispatchEvent( new KioskError(KioskError.ERROR, e.message, "I/O error saving Jpeg image, check SD Card available space" ) );
+					}
+					
+					theUser.mediaType=UserObject.TYPE_PHOTO;
+					complete();
+				}
+				
+				
+				
+				
+			}
+			private function onEncodingProgress(e:ProgressEvent):void 
+			{
+				jpgprogress.text=Math.round(e.bytesLoaded/e.bytesTotal * 100).toString()+"%";
+				trace('ENCODING PROGRESS: ' + Math.round(e.bytesLoaded/e.bytesTotal * 100) + '%');
+			}
+			protected function onComplete (event:Event):void
+			{
+				
+				overlayBitmapData = Bitmap(LoaderInfo(event.target).content).bitmapData;
+				trace("Loaded overlay"+overlayBitmapData.width);
+				destBitmap = new Bitmap();
+				destBitmap.bitmapData=new BitmapData(overlayBitmapData.width,overlayBitmapData.height,true,0xCC00FFFF);
+				
+			}
+			
+			
+			// CAMERA HANDLING
+			
+			//take a new picture with the camera
+			protected function takePhoto(event:MouseEvent):void
+			{
+				
+				// toggle below for file system instead of camera
+				//onLoadFileClick();
+				
+				if (CameraUI.isSupported)
+				{
+					trace("camera is supported");
+					myCam = new CameraUI();
+					myCam.addEventListener(MediaEvent.COMPLETE,takePhotoCompleteHandler);
+					myCam.launch(MediaType.IMAGE);
+				}
+				else
+				{
+					trace("camera not supported");
+					this.navigator.dispatchEvent(new KioskError(KioskError.ERROR, "CAMERA NOT SUPPORTED", "DEVICE ERROR"));
+					statusText.text = "Camera not supported on this device.";		
+				}
+			}
+			
+			
+			
+			
+			private function onLoadFileClick():void
+			{
+				//create the FileReference instance
+				file = new File();
+				//listen for when they select a file
+				file.addEventListener(Event.SELECT, takePhotoCompleteHandler);
+				
+				
+			}
+			
+			
+			//when the selection is complete upload it
+			protected function takePhotoCompleteHandler(event:MediaEvent = null):void
+			{
+				trace("post camera photo");
+				myCam.removeEventListener(MediaEvent.COMPLETE,takePhotoCompleteHandler);
+				
+				
+				file = event.data.file;
+				
+				currentState="pleasewait";
+				
+				trace("curent file:"+file.url);
+				
+				backgroundLoader.contentLoaderInfo.addEventListener(Event.COMPLETE, onCompleteBk);
+				backgroundLoader.load(new URLRequest(file.url));
+				
+				
+			}
+			
+			private function onCompleteBk (event:Event):void
+			{
+				trace("Loaded background");
+				if(backGroundBitmapData !=null) {
+					trace("disposing background bitmap data");
+					backGroundBitmapData.dispose();
+				}
+
+				backGroundBitmapData = Bitmap(LoaderInfo(event.target).content).bitmapData;
+				scaledBitmap= DisplayUtils.createThumb( backGroundBitmapData, 1600, 1200, Alignment.MIDDLE, true );
+				
+				var mat:Matrix=new Matrix();
+				mat.scale(1,1);
+				mat.translate(0,0);
+				
+				destBitmap.bitmapData.draw(scaledBitmap,mat);
+				destBitmap.bitmapData.draw(overlayBitmapData);
+				currentState="previewPhoto";
+				previewBmp.source=null;
+				previewBmp.invalidateDisplayList();
+				//previewBmp.source=new BitmapAsset(destBitmap.bitmapData);
+				previewBmp.source=destBitmap;
+			}
+			
+			
+			
+			protected function encodePhoto():void {
+				trace("encodoing photo");
+				currentState="pleasewait";
+				theJPG.encodeAsync(destBitmap.bitmapData);
+				
+			}
+			
+			
+			protected function updateProgress(event:ProgressEvent):void
+			{
+				var perc:Number=Math.round(event.bytesLoaded*100/event.bytesTotal);
+				this.navigator.dispatchEvent( new KioskProgressEvent(KioskProgressEvent.UPDATE, String(perc)+"% complete"));
+				trace("progress:"+event.bytesLoaded+ "of:"+event.bytesTotal);
+			}
+			
+			
+			
+			
+			public function basename(path:String):String {
+				var index:Number = path.lastIndexOf('/');
+				if (index != -1) {
+					return path.substr(index + 1);
+				}
+				return path;
+			}
+			
+			
+			
+			protected function complete():void
+			{
+				trace("************* photo complete");
+				if(theUser.mediaType==UserObject.TYPE_VIDEO) {
+					trace("dispatching ADD_VIDEO");
+					this.navigator.dispatchEvent( new KioskEvent( KioskEvent.ADD_VIDEO ) );
+				} else {
+					trace("dispatching ADD_PHOTO");
+					this.navigator.dispatchEvent( new KioskEvent( KioskEvent.ADD_PHOTO ) );
+				}
+				
+				
+				theUser.tablet_id=(this.parentApplication).tabletID;
+				theUser.saveXML();
+				this.navigator.dispatchEvent( new ViewEvent( ViewEvent.LOCATION_GAME_COMPLETE ) );
+			}
+			
+			
+			public function restart(e:Event):void
+			{
+				this.navigator.dispatchEvent( new ViewEvent( ViewEvent.LOCATION_RESTART ) );
+			}
+			
+			protected function cancelBTN_clickHandler(event:MouseEvent):void
+			{
+				
+				this.navigator.dispatchEvent( new ViewEvent( ViewEvent.LOCATION_RESTART ));
+			}
+			
+			
+			
+			
+			
+			protected function view1_removedFromStageHandler(event:Event):void
+			{
+				
+				
+				trace("removed from stage!");
+				if(destBitmap.bitmapData!=null) {
+					destBitmap.bitmapData.dispose();
+				}
+				if(scaledBitmap.bitmapData!=null) {
+					scaledBitmap.bitmapData.dispose();
+				}
+				if(backGroundBitmapData!=null) {
+					backGroundBitmapData.dispose();
+				}
+				if (overlayBitmapData!=null) {
+					overlayBitmapData.dispose();
+				}
+				
+				ns.removeEventListener(NetStatusEvent.NET_STATUS, onNetStatus);
+				video.removeEventListener(VideoEvent.RENDER_STATE, videoStateChange);
+				ns.close();
+				nc.close();
+				ns=null;
+				nc=null;
+				
+				if(flexSprite.contains(video)) {
+					flexSprite.removeChild(video);
+				}
+				
+				video.clear();
+				video=null;
+				
+				if(file!=null) {
+					file.removeEventListener(Event.COMPLETE,onCompleteCopyVideo);
+					file.removeEventListener(IOErrorEvent.IO_ERROR,onVideoCopyError);
+				}
+				
+				if(myCam!=null) {
+					myCam.removeEventListener(MediaEvent.COMPLETE,takeVideoCompleteHandler);
+					myCam.removeEventListener(MediaEvent.COMPLETE,takePhotoCompleteHandler);
+				}
+				
+				theJPG.removeEventListener(ProgressEvent.PROGRESS, onEncodingProgress);
+				theJPG.removeEventListener(Event.COMPLETE, onEncodeComplete);
+				theJPG=null;
+			}
+			
+			protected function takeVideo(event:MouseEvent=null):void
+			{
+				
+				if (CameraUI.isSupported)
+				{
+					trace("camera is supported");
+					myCam = new CameraUI();
+					myCam.addEventListener(MediaEvent.COMPLETE,takeVideoCompleteHandler);
+					myCam.launch(MediaType.VIDEO);
+				}
+				else
+				{
+					trace("camera not supported");
+					this.navigator.dispatchEvent(new KioskError(KioskError.ERROR, "CAMERA NOT SUPPORTED", "DEVICE ERROR"));
+					statusText.text = "Camera not supported on this device.";		
+				}
+				
+			}
+			
+			protected function takeVideoCompleteHandler(event:MediaEvent = null):void
+			{
+				
+				
+				if(!videoAdded) {
+					videoAdded=true;
+					flexSprite.addChild(video);
+				}
+				currentState="previewVideo";
+				file = event.data.file
+				trace("video file:"+file.url);
+				ns.play(file.url);
+				//videoPlayer.source=file.url;
+				
+				
+			}
+			
+			protected function videoHolder_resizeHandler(event:ResizeEvent):void
+			{
+				trace("resize videoholder:"+videoHolder.width+"height:"+videoHolder.height);
+				if(video!=null) {
+					video.width=videoHolder.width;
+					video.height=videoHolder.height;
+				}
+				
+			}
+			
+			
+			
+			
+			protected function videoHolder_showHandler(event:FlexEvent):void
+			{
+				trace("show VIDEO");
+				
+			}
+			
+			protected function videoHolder_hideHandler(event:FlexEvent):void
+			{
+				trace("HIDE VIDEO");
+				
+			}
+			
+			protected function vgroup1_stateChangeCompleteHandler(event:FlexEvent):void
+			{
+				trace("statechangecomplete"+currentState);
+				
+			}
+			
+			protected function vgroup1_enterStateHandler(event:FlexEvent):void
+			{
+				trace("enterstate");
+				trace("enter video state"+videoHolder.width);
+				
+			}
+			
+			protected function vgroup1_exitStateHandler(event:FlexEvent):void
+			{
+				trace("exit from video state");
+				
+			}
+			
+			
+			
+			protected function view1_currentStateChangeHandler(event:StateChangeEvent):void
+			{
+				trace("view current state change");
+				trace(event.newState);
+				if (event.newState=="previewVideo") {
+					trace("entro nel video");
+					trace(videoHolder.width);
+					if(videoHolder.width==0) {
+						videoHolder.invalidateSize();
+					}
+					trace("after invalidate:"+videoHolder.width);
+				}
+				if (event.oldState=="previewVideo") {
+					trace("esco dal video!");
+					trace(videoHolder.width);
+				}
+				
+			}
+			
+			
+			
+			protected function playBtn_clickHandler(event:MouseEvent):void
+			{
+				ns.play(file.url);
+				
+			}
+			
+			protected function pauseBtn_clickHandler(event:MouseEvent):void
+			{
+				ns.pause();
+				
+			}
+			
+			protected function stopBtn_clickHandler(event:MouseEvent):void
+			{
+				ns.seek(0);
+				ns.pause();
+				
+				
+			}
+			
+			protected function publishVideoBtn_clickHandler(event:MouseEvent):void
+			{
+				
+				ns.pause();
+				
+				var success:Boolean=true;
+				theUser.destFileName=theUser.urn+"-"+StringUtils.generateRandomString(4)+".mp4";
+				theUser.mediaType=UserObject.TYPE_VIDEO;
+				
+				destFile = File.documentsDirectory.resolvePath(theUser.videoPath+File.separator+theUser.destFileName);
+				try {
+					file.copyToAsync(destFile,true);
+				} catch (e:SecurityError) {
+					this.navigator.dispatchEvent(new KioskError(KioskError.ERROR, "Error copying video:\r\n"+e.message, "I/O Security ERROR"));
+					
+				}
+				file.addEventListener(Event.COMPLETE,onCompleteCopyVideo);
+				file.addEventListener(IOErrorEvent.IO_ERROR,onVideoCopyError);
+				
+			}
+			protected function onCompleteCopyVideo(e:Event) {
+				trace("video copied!");
+				complete();
+			}
+			
+			protected function onVideoCopyError(e:IOErrorEvent) {
+				this.navigator.dispatchEvent(new KioskError(KioskError.ERROR, "Error copying video:\r\n"+e.text, "I/O ERROR"));
+				
+			}
+			
+			protected function view1_backKeyPressedHandler(event:FlexEvent):void
+			{
+				event.preventDefault();
+				
+				theUser.personalNote="";
+				labelGroup.visible=false;
+				
+				trace("you pressed back");
+				try {
+					file.deleteFile();
+				} catch (e:IOError) {
+					trace("cannot delete file!");
+				}
+				currentState="default";
+			}
+			
+			protected function retakeVideo_click(event:MouseEvent):void
+			{
+				try {
+					file.deleteFile();
+				} catch (e:IOError) {
+					trace("cannot delete file!");
+				}
+				
+				takeVideo();
+			}
+			
+			protected function addNoteBtn_clickHandler(event:MouseEvent):void
+			{
+				trace("previous note:"+theUser.personalNote);
+				this.navigator.dispatchEvent(new KioskError(KioskError.NOTE, theUser.personalNote , "Enter your note", submitNote));
+				
+				
+			}
+			public function submitNote(nota:String) {
+				trace("************* ecco la note:"+nota);
+				theUser.personalNote=StringUtils.trim(nota);
+				if(theUser.personalNote!="") {
+					yourLabel.text=theUser.personalNote;
+					labelGroup.visible=true;
+				}
+				
+			}
+			
+			
+			
+			
+			
+			protected function view1_removingHandler(event:ViewNavigatorEvent):void
+			{
+				this.parentApplication.stage.autoOrients=true;
+				//this.parentApplication.stage.setAspectRatio(StageAspectRatio.ANY);
+				
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		
+	</fx:Declarations>
+	<s:states>
+		<s:State name="default" />
+		<s:State name="facebook" />
+		<s:State name="pleasewait" />
+		<s:State name="previewPhoto" />
+		<s:State name="previewVideo" />
+	</s:states>
+	<s:Group width="100%" height="100%">
+		
+		<s:VGroup includeIn="previewPhoto" width="100%" height="100%" horizontalAlign="center" verticalAlign="middle" >
+			
+			
+			<s:BitmapImage width="80%" height="70%" smooth="true" smoothingQuality="high" id="previewBmp" scaleMode="letterbox" />
+			
+			
+			<s:HGroup>
+				<s:Button label="Retake" click="takePhoto(event)" />
+				<s:Button label="Publish" click="encodePhoto()" />
+				<s:Button label="Add note" id="addNoteBtn" click="addNoteBtn_clickHandler(event)" />
+			</s:HGroup>
+			
+		</s:VGroup>
+		<s:VGroup includeIn="previewVideo" itemCreationPolicy="immediate"  width="100%" height="100%" horizontalAlign="center" verticalAlign="middle" exitState="vgroup1_exitStateHandler(event)" enterState="vgroup1_enterStateHandler(event)">
+			
+			<s:Group includeIn="previewVideo" width="{videoHolder.height*videoRatio}" itemCreationPolicy="immediate"  height="80%" id="videoHolder" show="videoHolder_showHandler(event)" hide="videoHolder_hideHandler(event)" resize="videoHolder_resizeHandler(event)"  >
+				<s:SpriteVisualElement id="flexSprite" />
+				<s:HGroup width="100%" height="100%" horizontalAlign="right" verticalAlign="bottom" id="controls" paddingBottom="10" paddingRight="10">
+					<s:Button skinClass="skins.PlayButton" id="playBtn" click="playBtn_clickHandler(event)" />
+					<s:Button skinClass="skins.StopButton" id="stopBtn" click="stopBtn_clickHandler(event)" />
+				</s:HGroup>
+			</s:Group>
+			
+			
+			
+			<s:HGroup>
+				<s:Button label="Retake" id="anotherVideoBtn" click="retakeVideo_click(event)" />
+				<s:Button label="Publish" click="publishVideoBtn_clickHandler(event)" id="publishVideoBtn" />
+				<s:Button label="Add note" click="addNoteBtn_clickHandler(event)" />
+			</s:HGroup>
+			
+		</s:VGroup>
+		<s:VGroup includeIn="pleasewait" width="100%" height="100%" horizontalAlign="center" verticalAlign="middle">
+			<s:BusyIndicator horizontalCenter="0" verticalCenter="0" width="100" height="100" rotationInterval="200" symbolColor="#00ACED" id="busone" />
+			<s:Label text="Processing image please wait.." color="#00ADEE" />
+			<s:Label id="jpgprogress" text="" color="#00ADEE" />
+		</s:VGroup>
+		<s:VGroup styleName="Game" horizontalAlign="center" verticalAlign="middle" width="100%" height="100%" includeIn="default,facebook">
+			
+			<s:VGroup horizontalAlign="center">
+				<s:Label id="statusText" color="#009BD7" visible="false" includeInLayout="false" />
+				<s:HGroup horizontalAlign="center"
+						  x.default="25" width.default="496" visible="false" includeInLayout="false">
+					<s:Spacer width="20" />
+					<s:Label text="{userName}" id="user" fontWeight="normal" color="0xFFFFFF" />
+					
+				</s:HGroup>
+				<s:HGroup visible="false" includeInLayout="false">
+					<s:CheckBox id="facebookposts_check" />
+					<s:Label id="facebookposts_check_label" height="{facebookposts_check.height}" text="Post fo Facebook?" verticalAlign="middle"/>
+				</s:HGroup>
+				<s:VGroup width="100%" horizontalAlign="center" verticalAlign="middle">
+					<s:Label text="What would you like to do?" fontSize="50" color="#00ADEE" id="mainText" />
+					<s:Spacer height="60" />
+					<s:Button id="takePhotoButton" width="{mainText.width-100}" label="Take photo" click="takePhoto(event)"/>
+					<s:Spacer height="30" />
+					<s:Button id="shootVideoButton" width="{mainText.width-100}"  label="Shoot video" click="takeVideo(event)"/>
+				</s:VGroup>
+			</s:VGroup>
+		</s:VGroup>
+		<s:VGroup width="100%" height="100%" id="labelGroup" visible="false" horizontalAlign="left" verticalAlign="top" paddingTop="10" paddingLeft="10">
+			<s:Group width="200">
+				<s:Rect id="tbFill" left="0" right="0" top="0" bottom="0" radiusX="8">
+					<s:stroke>
+						<s:SolidColorStroke color="0x00ADEE" alpha="0.5" weight="2">
+							
+						</s:SolidColorStroke>
+					</s:stroke>
+					<s:fill>
+						<s:SolidColor color="#FFFFFF" alpha="0.5"  />
+					</s:fill>
+				</s:Rect>
+				<s:VGroup width="100%">
+					<s:Label text="Your note:" color="#00ADEE" fontFamily="Font Bd CFF" fontSize="30" paddingLeft="15" paddingTop="10" />
+					<s:Label paddingLeft="15" id="yourLabel" fontSize="20"  paddingBottom="15" paddingRight="15" width="100%" text="No pri omnes tincidunt.Aperiam graecis intellegam eam no, ius malis nonumes ad, his quas homero ad.e i" />
+				</s:VGroup>
+			</s:Group>
+		</s:VGroup>
+	</s:Group>
+</s:View>
