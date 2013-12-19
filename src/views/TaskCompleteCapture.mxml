@@ -61,8 +61,8 @@
 					currentURN = data.urn;
 					applicationType = data.type;
 					this.currentState = data.facebook ? "facebook" : "default";
-					publishData.url = this.parentApplication.baseURL+'publishscore.php';
-					getUser.url = this.parentApplication.baseURL+'getuser.php';
+					publishData.url = this.parentApplication.localURL+'publishscore.php';
+					getUser.url = this.parentApplication.localURL+'getuser.php';
 					
 					var passVars:Object=new Object;
 					passVars.urn=EncryptWrapper.Wrap(currentURN);
@@ -150,8 +150,8 @@
 	
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
-		<s:HTTPService id="getUser" resultFormat="flashvars" method="POST" url="{this.parentApplication.baseURL+'getuser.php'}"  result="getUser_resultHandler(event)" fault="httpservice_faultHandler(event)" />
-		<s:HTTPService id="publishData" resultFormat="flashvars" method="POST" url="{this.parentApplication.baseURL+'publishscore.php'}"  result="publish_resultHandler(event)" fault="httpservice_faultHandler(event)" />
+		<s:HTTPService id="getUser" resultFormat="flashvars" method="POST" url="{this.parentApplication.localURL+'getuser.php'}"  result="getUser_resultHandler(event)" fault="httpservice_faultHandler(event)" />
+		<s:HTTPService id="publishData" resultFormat="flashvars" method="POST" url="{this.parentApplication.localURL+'publishscore.php'}"  result="publish_resultHandler(event)" fault="httpservice_faultHandler(event)" />
 		
 	</fx:Declarations>
 

@@ -67,8 +67,8 @@
 					applicationType = data.type;
 					this.currentState = data.facebook ? "facebook" : "default";
 
-					getUser.url = this.parentApplication.baseURL+'getuser.php';
-					putScore.url = this.parentApplication.baseURL+'publishscore.php';
+					getUser.url = this.parentApplication.localURL+'getuser.php';
+					putScore.url = this.parentApplication.localURL+'publishscore.php';
 					//userScore.init();
 					
 					var passVars:Object=new Object;
@@ -187,8 +187,8 @@
 	</fx:Script>
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
-		<s:HTTPService id="getUser" resultFormat="flashvars" method="POST" url="{this.parentApplication.baseURL+'getuser.php'}"  result="getUser_resultHandler(event)" fault="httpservice_faultHandler(event)" />
-		<s:HTTPService id="putScore" resultFormat="flashvars" method="POST" url="{this.parentApplication.baseURL+'publishscore.php'}"  result="publishscore_resultHandler(event)" fault="httpservice_faultHandler(event)" />
+		<s:HTTPService id="getUser" resultFormat="flashvars" method="POST" url="{this.parentApplication.localURL+'getuser.php'}"  result="getUser_resultHandler(event)" fault="httpservice_faultHandler(event)" />
+		<s:HTTPService id="putScore" resultFormat="flashvars" method="POST" url="{this.parentApplication.localURL+'publishscore.php'}"  result="publishscore_resultHandler(event)" fault="httpservice_faultHandler(event)" />
 		
 	</fx:Declarations>
 	

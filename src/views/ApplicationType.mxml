@@ -28,6 +28,7 @@
 				{
 					data = this.parentApplication.data;
 					this.server.text = data.xml.serverIP;
+					this.localserver.text = data.xml.localIP;
 					this.facebookAPI_ID.text = data.xml.facebookAppID;
 					this.urnLength.text = data.xml.urnLength;
 					this.scoreFormat.text = data.xml.scoreFormat;
@@ -45,6 +46,7 @@
 			{
 				trace("serverIP:"+ server.text.toString()+"facebookAppID:"+ facebookAPI_ID.text.toString()+"urnLength:"+ urnLength.text.toString()+"applicationtype:"+ radioGroup.selectedValue.toString()+"scoreFormat:"+scoreFormat.text.toString());
 				this.parentApplication.dispatchEvent( new ApplicationEvent( ApplicationEvent.SAVE_TYPE, { serverIP: server.text.toString(),
+					localIP:localserver.text.toString(),
 					facebookAppID: facebookAPI_ID.text.toString(), 
 					urnLength: urnLength.text.toString(), 
 					applicationtype: radioGroup.selectedValue.toString(),
@@ -74,8 +76,11 @@
 		<s:Form id="configform" horizontalCenter="0" verticalCenter="0">
 			<s:FormHeading label="CONFIGURATION DETAILS:" />
 			
-			<s:FormItem width="365" label="Server name:" fontFamily="Arial">
+			<s:FormItem width="365" label="Remote Server url:" fontFamily="Arial">
 				<s:TextInput id="server" width="550" height="30" color="0x000000" fontFamily="Arial"/>
+			</s:FormItem>
+			<s:FormItem width="365" label="Local Server url:" fontFamily="Arial">
+				<s:TextInput id="localserver" width="550" height="30" color="0x000000" fontFamily="Arial"/>
 			</s:FormItem>
 			<s:HGroup>
 				

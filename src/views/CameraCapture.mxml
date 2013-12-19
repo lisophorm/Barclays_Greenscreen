@@ -62,8 +62,8 @@
 					currentURN = data.urn;
 					applicationType = data.type;
 					this.currentState = data.facebook ? "facebook" : "default";
-					publishPhoto.url = this.parentApplication.baseURL+'publishphoto.php';
-					getUser.url = this.parentApplication.baseURL+'getuser.php';
+					publishPhoto.url = this.parentApplication.localURL+'publishphoto.php';
+					getUser.url = this.parentApplication.localURL+'getuser.php';
 					
 					var passVars:Object=new Object;
 					passVars.urn=EncryptWrapper.Wrap(currentURN);
@@ -162,7 +162,7 @@
 			}
 			protected function beginUpload(file:File):void
 			{
-				urlRequest = new URLRequest(this.parentApplication.baseURL+"uploader.php");
+				urlRequest = new URLRequest(this.parentApplication.localURL+"uploader.php");
 				trace("event.data.file.url; = "+file.url);
 				takePhotoButton.enabled = false;
 				file = file;
@@ -271,8 +271,8 @@
 	<fx:Declarations>
 		
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
-		<s:HTTPService id="publishPhoto" resultFormat="flashvars" method="POST" url="{this.parentApplication.baseURL+'publishphoto.php'}" result="publishPhoto_resultHandler(event)" fault="httpservice_faultHandler(event)" />
-		<s:HTTPService id="getUser" resultFormat="flashvars" method="POST" url="{this.parentApplication.baseURL+'getuser.php'}"  result="getUser_resultHandler(event)" fault="httpservice_faultHandler(event)" />
+		<s:HTTPService id="publishPhoto" resultFormat="flashvars" method="POST" url="{this.parentApplication.localURL+'publishphoto.php'}" result="publishPhoto_resultHandler(event)" fault="httpservice_faultHandler(event)" />
+		<s:HTTPService id="getUser" resultFormat="flashvars" method="POST" url="{this.parentApplication.localURL+'getuser.php'}"  result="getUser_resultHandler(event)" fault="httpservice_faultHandler(event)" />
 	</fx:Declarations>
 	<s:states>
 		<s:State name="default" />

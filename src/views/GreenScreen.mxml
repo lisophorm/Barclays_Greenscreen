@@ -75,9 +75,9 @@
 					applicationType = data.type;
 					this.currentState = data.facebook ? "facebook" : "default";
 					trace("CurrentState:"+this.currentState);
-					publishPhoto.url = this.parentApplication.baseURL+'publishsitin.php';
-					urlRequest= new URLRequest(this.parentApplication.baseURL+"uploader.php");
-					getUser.url = this.parentApplication.baseURL+'getuser.php';
+					publishPhoto.url = this.parentApplication.localURL+'publishsitin.php';
+					urlRequest= new URLRequest(this.parentApplication.localURL+"uploader.php");
+					getUser.url = this.parentApplication.localURL+'getuser.php';
 					hideSettings_clickHandler();
 					var passVars:Object=new Object;
 					passVars.urn=EncryptWrapper.Wrap(currentURN);
@@ -397,8 +397,8 @@
 	</fx:Script>
 	
 	<fx:Declarations>
-		<s:HTTPService id="publishPhoto" resultFormat="flashvars" method="POST" url="{this.parentApplication.baseURL+'publishsitin.php'}" result="publishPhoto_resultHandler(event)" fault="httpservice_faultHandler(event)" />
-		<s:HTTPService id="getUser" resultFormat="flashvars" method="POST" url="{this.parentApplication.baseURL+'getuser.php'}"  result="getUser_resultHandler(event)" fault="httpservice_faultHandler(event)" />
+		<s:HTTPService id="publishPhoto" resultFormat="flashvars" method="POST" url="{this.parentApplication.localURL+'publishsitin.php'}" result="publishPhoto_resultHandler(event)" fault="httpservice_faultHandler(event)" />
+		<s:HTTPService id="getUser" resultFormat="flashvars" method="POST" url="{this.parentApplication.localURL+'getuser.php'}"  result="getUser_resultHandler(event)" fault="httpservice_faultHandler(event)" />
 
 	</fx:Declarations>
 	<s:states>

@@ -269,7 +269,7 @@
 						frontMessage.text = "Please wait...checking";
 						stopListen();
 						barcodeWriter.visible = false;
-						var localurl:String = (this.parentApplication).baseURL+"checkuser.php";
+						var localurl:String = (this.parentApplication).localURL+"checkuser.php";
 					//	localurl = "http://www.ignitesocial.co.uk/ignite/checkuser.php";
 						service =  new HTTPService;
 						service.url = localurl;

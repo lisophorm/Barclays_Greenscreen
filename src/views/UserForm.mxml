@@ -57,7 +57,7 @@
 				validatorArr.push(validateSurname);
 				validatorArr.push(validateEmail);
 				validatorArr.push(validateMobile);
-				saveData.url = (this.parentApplication).baseURL+'register.php';
+				saveData.url = (this.parentApplication).localURL+'register.php';
 			}
 			protected function clearData():void
 			{
@@ -149,7 +149,7 @@
 						   property="text">
 		</mx:PhoneNumberValidator>
 
-		<s:HTTPService id="saveData" resultFormat="flashvars" method="POST" url="{(this.parentApplication).baseURL+'register.php'}" result="save(event)" fault="error(event)" />
+		<s:HTTPService id="saveData" resultFormat="flashvars" method="POST" url="{(this.parentApplication).localURL+'register.php'}" result="save(event)" fault="error(event)" />
 	</fx:Declarations>
 	
 	<s:Form width="100%" id="userform" horizontalCenter="0" verticalCenter="0">
