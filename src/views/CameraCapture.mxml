@@ -12,19 +12,21 @@
 		<![CDATA[
 			import com.alfo.utils.EncryptWrapper;
 			import com.lia.crypto.AES;
-			
-			import events.KioskError;
-			import events.KioskProgressEvent;
-			import events.ViewEvent;
-			
-			import model.ML;
+			import com.utils.Console;
 			
 			import mx.events.FlexEvent;
 			import mx.managers.PopUpManager;
 			import mx.rpc.events.FaultEvent;
 			import mx.rpc.events.ResultEvent;
 			
-			import views.components.*;
+			import events.KioskError;
+			import events.KioskProgressEvent;
+			import events.ViewEvent;
+			
+			import model.CameraDevice;
+			import model.ML;
+			
+			import views.components.ProgressPopUp;
 			
 			private var urlRequest:URLRequest
 			private var file:File;
@@ -100,7 +102,8 @@
 			{
 				if (CameraUI.isSupported)
 				{
-					trace("camera is supported");
+					
+					Console.log("CameraUI is supported",this);
 					var myCam:CameraUI = new CameraUI();
 					myCam.launch(MediaType.IMAGE);
 					myCam.addEventListener(MediaEvent.COMPLETE,takePhotoCompleteHandler);
@@ -108,10 +111,24 @@
 				}
 				else
 				{
-					trace("camera not supported");
 					
-					this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, "CAMERA NOT SUPPORTED", "DEVICE ERROR"));
-					statusText.text = "Camera not supported on this device.";
+					
+					if (CameraDevice.isSupported)
+					{
+						Console.log("standard camera not supported",this);
+						var c:CameraDevice = new CameraDevice();
+						c.addEventListener(MediaEvent.COMPLETE,takePhotoCompleteHandler);
+						game.addElement( c )
+							
+					} else 
+					{
+						Console.log("camera not supported",this);
+						this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, "CAMERA NOT SUPPORTED", "DEVICE ERROR"));
+						statusText.text = "Camera not supported on this device.";	
+					}
+					
+					
+					
 				}
 			}
 			
@@ -251,6 +268,9 @@
 		<s:State name="default" />
 		<s:State name="facebook" />
 	</s:states>
+	<s:VGroup id="game" >
+		
+	</s:VGroup>
 	<s:VGroup styleName="Game" horizontalAlign="center" verticalAlign="middle" width="100%" height="592">
 			<s:VGroup>
 				<s:Label id="statusText" />
