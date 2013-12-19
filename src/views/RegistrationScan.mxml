@@ -454,14 +454,41 @@
 			</s:HGroup>
 			
 			<s:HGroup verticalAlign="middle" id="userFingerScanStepModule">
-				<mx:Box width="100" height="120" id="step_1" backgroundColor="0xCCCCCC" backgroundColor.STEP1="0xFF0000" backgroundColor.STEP2="0xFF0000" backgroundColor.STEP3="0xFF0000" backgroundColor.REGISTER_COMPLETE="0x00DD00">
-				</mx:Box>
+				<s:HGroup includeIn="REGISTER_BEGIN" >
+					<s:BitmapImage source="assets/images/fingerprint_gray.png" />
+					<s:Spacer width="20" />
+					<s:BitmapImage source="assets/images/fingerprint_gray.png" />
+					<s:Spacer width="20" />
+					<s:BitmapImage source="assets/images/fingerprint_gray.png" />
+				</s:HGroup>
+			<s:HGroup includeIn="STEP1" >
+				<s:BitmapImage source="assets/images/fingerprint_orange.png" />
 				<s:Spacer width="20" />
-				<mx:Box width="100" height="120" id="step_2" backgroundColor="0xCCCCCC"  backgroundColor.STEP2="0x00FF00"  backgroundColor.STEP3="0x00FF00" backgroundColor.REGISTER_COMPLETE="0x00DD00">
-				</mx:Box>
+				<s:BitmapImage source="assets/images/fingerprint_gray.png" />
 				<s:Spacer width="20" />
-				<mx:Box width="100" height="120" id="step_3" backgroundColor="0xCCCCCC"  backgroundColor.STEP3="0x0000FF" backgroundColor.REGISTER_COMPLETE="0x00DD00">
-				</mx:Box>
+				<s:BitmapImage source="assets/images/fingerprint_gray.png" />
+			</s:HGroup>
+				<s:HGroup includeIn="STEP2" >
+					<s:BitmapImage source="assets/images/fingerprint_blue.png" />
+					<s:Spacer width="20" />
+					<s:BitmapImage source="assets/images/fingerprint_orange.png" />
+					<s:Spacer width="20" />
+					<s:BitmapImage source="assets/images/fingerprint_gray.png" />
+				</s:HGroup>
+				<s:HGroup includeIn="STEP3" >
+					<s:BitmapImage source="assets/images/fingerprint_blue.png" />
+					<s:Spacer width="20" />
+					<s:BitmapImage source="assets/images/fingerprint_blue.png" />
+					<s:Spacer width="20" />
+					<s:BitmapImage source="assets/images/fingerprint_orange.png" />
+				</s:HGroup>
+				<s:HGroup includeIn="REGISTER_COMPLETE" >
+					<s:BitmapImage source="assets/images/fingerprint_orange.png" />
+					<s:Spacer width="20" />
+					<s:BitmapImage source="assets/images/fingerprint_orange.png" />
+					<s:Spacer width="20" />
+					<s:BitmapImage source="assets/images/fingerprint_orange.png" />
+				</s:HGroup>
 
 				
 			</s:HGroup>

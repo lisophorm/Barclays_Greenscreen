@@ -15,6 +15,9 @@ local.properties
 .classpath
 .settings/
 .loadpath
+**/bin-debug/
+**/release_desktop/
+**/release/
 
 # External tool builders
 .externalToolBuilders/
