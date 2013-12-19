@@ -7,6 +7,7 @@
 	<fx:Script>
 		<![CDATA[
 			import com.greensock.TweenMax;
+			import com.utils.Console;
 			
 			import mx.core.UIComponent;
 			import mx.events.FlexEvent;
@@ -176,12 +177,14 @@
 				ApplicationType = pref.prefsXML..applicationtype.toString().toUpperCase();
 				urn = int(pref.prefsXML..urnLength);
 				scoreFormat = pref.prefsXML..scoreFormat;
+				Console.log("baseURL: "+baseURL, this);
+				Console.log("localURL: "+localURL, this);
 				trace("scoreformat is now: "+scoreFormat);
 				trace("appplicationtype is now: "+ApplicationType);
 				monitor =  new MonitorConnection(baseURL+"ping.php");			
 				
-				if (!monitor.hasEventListener( MonitorConnection.EVENT_INTERNET_NOT_AVAILABLE))
-					monitor.addEventListener( MonitorConnection.EVENT_INTERNET_NOT_AVAILABLE, notifyNoInternet);
+			//	if (!monitor.hasEventListener( MonitorConnection.EVENT_INTERNET_NOT_AVAILABLE))
+			//		monitor.addEventListener( MonitorConnection.EVENT_INTERNET_NOT_AVAILABLE, notifyNoInternet);
 				
 				/*NativeApplication.nativeApplication.idleThreshold = 60;
 				if(!NativeApplication.nativeApplication.hasEventListener(Event.USER_IDLE)) {

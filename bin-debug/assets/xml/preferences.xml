@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <preferences>
-  <serverIP>192.168.0.150/backend/</serverIP>
+  <serverIP>www.bpllive.com</serverIP>
   <facebookAppID>308521192563512</facebookAppID>
-  <localIP>192.168.0.100</localIP>
+  <localIP>192.168.0.150/backend</localIP>
   <urnLength>16</urnLength>
-  <internetTimeout>10</internetTimeout>
+  <internetTimeout>10</internetTimeout>	
   <scoreFormat>99:99.99</scoreFormat>
   <applicationtype>photocapture</applicationtype>
   <latitude></latitude>

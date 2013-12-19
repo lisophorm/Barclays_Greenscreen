@@ -4,11 +4,7 @@ package model
 	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
-	import flash.display.Loader;
-	import flash.display.MovieClip;
-	import flash.display.Sprite;
 	import flash.events.Event;
-	import flash.events.MediaEvent;
 	import flash.events.MouseEvent;
 	import flash.events.ProgressEvent;
 	import flash.events.StatusEvent;
@@ -16,17 +12,12 @@ package model
 	import flash.filesystem.FileMode;
 	import flash.filesystem.FileStream;
 	import flash.media.Camera;
-	import flash.media.MediaPromise;
 	import flash.media.Video;
-	import flash.net.FileReference;
-	import flash.utils.ByteArray;
 	
 	import mx.core.UIComponent;
 	
 	import events.CameraEvent;
-	import events.UserEvent;
 	
-	import org.osmf.events.MediaElementEvent;
 	
 	import ru.inspirit.image.encoder.JPGAsyncEncoder;
 
@@ -72,9 +63,12 @@ package model
 		}
 		public function destroy():void
 		{
-			if (video!=null)
-			if (this.contains(video))
-				this.removeChild( video );
+			if (video!=null) {
+				video.attachCamera(null);
+				if (this.contains(video))
+					this.removeChild( video );
+
+			}
 			if (photoCapture!=null)
 			if (this.contains(photoCapture))
 				this.removeChild( photoCapture );
@@ -117,7 +111,10 @@ package model
 			photoCapture = new Bitmap(bitmapData, "auto", true)
 			this.addChild( photoCapture );
 			video.visible = false;
-			
+			video.attachCamera(null);
+			this.removeChild( video );
+			camera = null;
+			video = null;
 			
 			encoder.addEventListener(ProgressEvent.PROGRESS, onEncodingProgress);
 			encoder.addEventListener(Event.COMPLETE, onEncodeComplete);
@@ -134,7 +131,8 @@ package model
 			//.text=Math.round(e.bytesLoaded/e.bytesTotal * 100).toString()+"%";
 			Console.log('ENCODING PROGRESS: ' + Math.round(e.bytesLoaded/e.bytesTotal * 100) + '%', this);
 		}
-		protected function onEncodeComplete(e:Event) {
+		protected function onEncodeComplete(e:Event):void 
+		{
 			var now:Date = new Date();
 			var randomName:String  = "IMG" + now.fullYear + now.month +now.day +now.hours + now.minutes + now.seconds + ".jpg";
 			var destFile:File = File.documentsDirectory.resolvePath("userdata/"+randomName);
