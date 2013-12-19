@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <preferences>
-  <serverIP>192.168.0.150</serverIP>
+  <serverIP>192.168.0.150/backend/</serverIP>
   <facebookAppID>308521192563512</facebookAppID>
   <localIP>192.168.0.100</localIP>
   <urnLength>16</urnLength>
