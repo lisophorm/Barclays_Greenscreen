@@ -183,7 +183,7 @@ package model
 						if (data["msg"]=="000000000") //user not found
 						{
 							this.dispatchEvent( new RegistrationEvent( RegistrationEvent.USER_NOT_FOUND, -1, data["msg"] ) );	
-						} else if ( data["msg"]=="BADSCAN")
+						} else if ( data["msg"]=="BADSCAN" )
 						{
 							this.dispatchEvent( new RegistrationEvent( RegistrationEvent.SCAN_AGAIN, -1, data["msg"]  ) );
 						} else {
