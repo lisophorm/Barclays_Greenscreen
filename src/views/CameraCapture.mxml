@@ -19,6 +19,7 @@
 			import mx.rpc.events.FaultEvent;
 			import mx.rpc.events.ResultEvent;
 			
+			import events.CameraEvent;
 			import events.KioskError;
 			import events.KioskProgressEvent;
 			import events.ViewEvent;
@@ -117,7 +118,8 @@
 					{
 						Console.log("standard camera not supported",this);
 						var c:CameraDevice = new CameraDevice();
-						c.addEventListener(MediaEvent.COMPLETE,takePhotoCompleteHandler);
+					
+						c.addEventListener(CameraEvent.COMPLETE,takePhotoStandardCompleteHandler);
 						game.addElement( c )
 							
 					} else 
@@ -152,10 +154,18 @@
 			//when the selection is complete upload it
 			protected function takePhotoCompleteHandler(event:MediaEvent):void
 			{
+				beginUpload( event.data.file );
+			}
+			protected function takePhotoStandardCompleteHandler(event:CameraEvent):void
+			{
+				beginUpload( event.data.file );
+			}
+			protected function beginUpload(file:File):void
+			{
 				urlRequest = new URLRequest(this.parentApplication.baseURL+"uploader.php");
-				trace("event.data.file.url; = "+event.data.file.url);
+				trace("event.data.file.url; = "+file.url);
 				takePhotoButton.enabled = false;
-				file = event.data.file;
+				file = file;
 				file.addEventListener(Event.COMPLETE,uploadCompleteHandler);
 				file.addEventListener(Event.OPEN,openUploadHandler);
 				file.addEventListener(ProgressEvent.PROGRESS,updateProgress);

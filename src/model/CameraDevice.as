@@ -1,6 +1,5 @@
 package model
 {
-	import com.adobe.images.JPGEncoder;
 	import com.utils.Console;
 	
 	import flash.display.Bitmap;
@@ -11,6 +10,7 @@ package model
 	import flash.events.Event;
 	import flash.events.MediaEvent;
 	import flash.events.MouseEvent;
+	import flash.events.ProgressEvent;
 	import flash.events.StatusEvent;
 	import flash.filesystem.File;
 	import flash.filesystem.FileMode;
@@ -23,7 +23,12 @@ package model
 	
 	import mx.core.UIComponent;
 	
+	import events.CameraEvent;
+	import events.UserEvent;
+	
 	import org.osmf.events.MediaElementEvent;
+	
+	import ru.inspirit.image.encoder.JPGAsyncEncoder;
 
 	public class CameraDevice  extends UIComponent
 	{
@@ -32,10 +37,13 @@ package model
 		protected var photoCapture:Bitmap;
 		protected var _width:int=0;
 		protected var _height:int=0;
-		public function CameraDevice(_width:int=640, _height:int=480)
+		protected var encoder:JPGAsyncEncoder = new JPGAsyncEncoder(85);
+		
+		public function CameraDevice(_width:int=1280, _height:int=720)
 		{
 			this._width = _width;
 			this._height = _height;
+			this.destroy();
 			this.init()
 		}
 		
@@ -61,6 +69,19 @@ package model
 				
 			}
 			
+		}
+		public function destroy():void
+		{
+			if (video!=null)
+			if (this.contains(video))
+				this.removeChild( video );
+			if (photoCapture!=null)
+			if (this.contains(photoCapture))
+				this.removeChild( photoCapture );
+			
+			video = null;
+			camera = null;
+			photoCapture = null;
 		}
 		protected function statusHandler( e:StatusEvent ):void
 		{
@@ -93,38 +114,43 @@ package model
 			
 			var bitmapData:BitmapData = new BitmapData(_width, _height);
 			bitmapData.draw(video);
-			
-			var encoder:JPGEncoder = new JPGEncoder();
-			var byteArray:ByteArray = encoder.encode(bitmapData);
-		//	var fileReference:FileReference = new FileReference();
-		//	fileReference.save(byteArray);
-			; 
-			var f:File = File.applicationDirectory.resolvePath("assets/userdata/test.jpg");
-		
-			var stream:FileStream = new FileStream();
-			stream = new FileStream();
-			
-			stream.open(f, FileMode.WRITE);
-			stream.writeBytes(byteArray);
-			//stream.writeUTFBytes(outputString);
-			stream.close();
-			
 			photoCapture = new Bitmap(bitmapData, "auto", true)
 			this.addChild( photoCapture );
 			video.visible = false;
-			Console.log("Image Saved",this);
-			//make media event
-			/*
-			var m:MediaEvent = new MediaEvent(MediaEvent.COMPLETE);
-			var data:MediaPromise = new MediaPromise();
 			
-			var loader:Loader = new Loader();
+			
+			encoder.addEventListener(ProgressEvent.PROGRESS, onEncodingProgress);
+			encoder.addEventListener(Event.COMPLETE, onEncodeComplete);
+			encoder.encodeAsync(bitmapData);
 			
 			
 			
 			
-			this.dispatchEvent( m );
-			*/
+		}
+		
+		private function onEncodingProgress(e:ProgressEvent):void 
+		{
+			//this.dispatchEvent(  
+			//.text=Math.round(e.bytesLoaded/e.bytesTotal * 100).toString()+"%";
+			Console.log('ENCODING PROGRESS: ' + Math.round(e.bytesLoaded/e.bytesTotal * 100) + '%', this);
+		}
+		protected function onEncodeComplete(e:Event) {
+			var now:Date = new Date();
+			var randomName:String  = "IMG" + now.fullYear + now.month +now.day +now.hours + now.minutes + now.seconds + ".jpg";
+			var destFile:File = File.documentsDirectory.resolvePath("userdata/"+randomName);
+
+			var stream:FileStream = new FileStream();
+			stream = new FileStream();
+			
+			stream.open(destFile, FileMode.WRITE);
+			stream.writeBytes(encoder.encodedImageData);
+			//stream.writeUTFBytes(outputString);
+			stream.close();
+			
+			Console.log("Image Saved: "+destFile.url, this);
+			
+			this.dispatchEvent( new CameraEvent( CameraEvent.COMPLETE, {file: destFile} ) );
+			
 		}
 		public static function get isSupported():Boolean
 		{
