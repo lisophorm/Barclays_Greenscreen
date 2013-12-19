@@ -21,7 +21,7 @@ package model
 		
 		private var server:AIRServer;
 		private var msg:String ="";
-		
+		private var hasStarted:Boolean = false;
 		public function Registration()
 		{
 			
@@ -41,8 +41,16 @@ package model
 			}
 			//start the server
 			try {
-				Console.log("startSocket "+server, this);
-				server.start();
+		
+				if (!hasStarted)
+				{
+					Console.log("startSocket "+server, this);
+					server.start();
+				} else {
+					server.stop();
+					server.start();
+				}
+				hasStarted = true;
 						
 			} catch (e:Error)
 			{
@@ -65,7 +73,10 @@ package model
 		public function stopSocket(e:Event = null):void
 		{
 			if (server!=null)
+			{
 				server.stop();
+			}
+			hasStarted = false;
 		}
 		public function registerUser( uid:String ):void
 		{
@@ -115,8 +126,8 @@ package model
 		{
 			if (data!=null)
 			{
-				Console.log( data["code"],this);
-				switch ( data["code"] )
+				Console.log("handleCode:"+ data["code"]+ " "+data["msg"],this);
+				switch ( int(data["code"]) ) //'code' parameter is integer
 				{
 					case 101: 
 						//- Place finger on scanner
@@ -169,7 +180,13 @@ package model
 					break;
 					case 302:
 						//- (Success, returns user ID)
-						this.dispatchEvent( new RegistrationEvent( RegistrationEvent.USER_FOUND, -1, data["msg"]  ) );
+						if (data["msg"]=="000000000") //user not found
+						{
+							this.dispatchEvent( new RegistrationEvent( RegistrationEvent.USER_NOT_FOUND, -1, data["msg"] ) );	
+						} else
+						{
+							this.dispatchEvent( new RegistrationEvent( RegistrationEvent.USER_FOUND, data["msg"]  ) );
+						}
 					break;
 					case 303 :
 						//- Customer not found
@@ -183,35 +200,22 @@ package model
 		{
 			
 			try {
-				var dataOut:Object = by.blooddy.crypto.serialization.JSON.decode(event.message.data.toString());
-				for (var m:String in dataOut)
+				if (event.message.data!=null)
 				{
-					Console.log(m+": "+dataOut[m], this);
+					var dataOut:Object = by.blooddy.crypto.serialization.JSON.decode(event.message.data.toString());
+					handleCode( dataOut )
+				} else
+				{
+					this.dispatchEvent( new RegistrationEvent( RegistrationEvent.ERROR, -1, "Server communication error...Try again"  ) );
 				}
-				handleCode( dataOut )
-				//
 			} catch (e:Error)
 			{
-				Console.log("Error: "+e.message, this)
+				Console.log("Error:\n"+e.message, this)
+				this.dispatchEvent( new RegistrationEvent( RegistrationEvent.ERROR, -1, e.message  ) );
 			}
 			
 			
 			
-			Console.log(event.message.data, this);
-			
-			/*
-			//outputArea.appendText("<client" + event.message.senderId + "> " + event.message.data + "\n");
-			//trace("<client" + event.message.senderId + "> " + event.message.data + "\n");
-			switch(event.message.command)
-			{
-				case "PORT":
-				case "ADDR":
-					//don't forward PORT or ADDR commands from UDP
-					break;
-				default:
-					//forward the message to all connected clients
-					server.sendMessageToAllClients(event.message);
-			}*/
 		}
 	}
 }

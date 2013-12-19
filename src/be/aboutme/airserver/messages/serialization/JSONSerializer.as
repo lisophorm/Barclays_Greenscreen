@@ -44,13 +44,21 @@ package be.aboutme.airserver.messages.serialization
 			{
 				if(input.length > 0)
 				{
-					var decoded:Object = decodeMethod(input);
-					var message:Message = new Message();
-					if(decoded.hasOwnProperty("senderId")) message.senderId = decoded.senderId;
-					if(decoded.hasOwnProperty("command")) message.command = decoded.command;
-					if(decoded.hasOwnProperty("data")) message.data = decoded.data;
-					else message.data = decoded;
-					messages.push(message);
+					try
+					{
+						var decoded:Object = decodeMethod(input);
+						var message:Message = new Message();
+						if(decoded.hasOwnProperty("senderId")) message.senderId = decoded.senderId;
+						if(decoded.hasOwnProperty("command")) message.command = decoded.command;
+						if(decoded.hasOwnProperty("data")) message.data = decoded.data;
+						else message.data = decoded;
+						messages.push(message);
+					} catch (e:Error)
+					{
+						var message:Message = new Message();
+						message.data = e.message;
+						messages.push(message);
+					}
 				}
 			}
 			return messages;

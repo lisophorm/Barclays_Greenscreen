@@ -102,16 +102,7 @@ in accordance with the terms of the license agreement accompanying it.
 	<!--- @private -->
 	<s:Rect id="shadow" left="0" right="0" top="0" bottom="0" radiusX="22" filters="{[shadowfilter]}">
 		<s:fill>
-			<s:LinearGradient rotation="90">
-				<s:GradientEntry color="0x000000" 
-								 color.down="0xFFFFFF"
-								 alpha="0.8"
-								 alpha.down="0" />
-				<s:GradientEntry color="0x000000" 
-								 color.down="0xFFFFFF" 
-								 alpha="0.6"
-								 alpha.down="0" />
-			</s:LinearGradient>
+			<s:SolidColor color="0x00AEEF" />
 		</s:fill>
 	</s:Rect>
 	
@@ -120,9 +111,9 @@ in accordance with the terms of the license agreement accompanying it.
 	<s:Rect id="fill" left="1" right="1" top="1" bottom="1" radiusX="22">
 		<s:fill>
 			
-			<s:SolidColor color="0xFF0000" 
-						  color.over="0xFF0000" 
-						  color.down="0xFF0000" 
+			<s:SolidColor color="0x00AEEF" 
+						  color.over="0x00AEEF" 
+						  color.down="0x00AEEF" 
 						  alpha="0.85" />
 			
 		</s:fill>
@@ -172,6 +163,7 @@ in accordance with the terms of the license agreement accompanying it.
 			 textAlign="center" styleName="buttonLabel"
 			 maxDisplayedLines="1"
 			 horizontalCenter="0" verticalCenter="1" verticalAlign="middle"
+			 
 			 left="10" right="10" top="2" bottom="2" paddingLeft="10" paddingRight="10"
 			 color="0xffffff">
 	</s:Label>

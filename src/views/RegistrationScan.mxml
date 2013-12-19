@@ -2,8 +2,8 @@
 <s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		xmlns:s="library://ns.adobe.com/flex/spark" 
 		creationComplete="created()" 
-		activate="init()" 
-		remove="exit(event)">
+		
+		remove="exit(event)" xmlns:mx="library://ns.adobe.com/flex/mx">
 	<fx:Script>
 		<![CDATA[
 			import com.alfo.utils.CleanWebView;
@@ -62,12 +62,13 @@
 			public function created(event:FlexEvent=null):void
 			{
 				init();
-				this.addEventListener( Event.INIT, init);
+				//this.addEventListener( Event.INIT, init);
 			}
 			public function init(event:Event=null):void
 			{
 				Console.log("*** INITIATING DEVICE ***", this);
-				frontMessage.text = "PLEASE SCAN YOUR FINGER";
+				frontMessage.text = "PLEASE WAIT - INITIALISING SCANNER";
+				userNotFoundModule.includeInLayout = userNotFoundModule.visible= false;
 				//trace("creation complete");
 				StageDisplayState.FULL_SCREEN_INTERACTIVE;
 				CleanWebView.wipeOut();
@@ -96,20 +97,24 @@
 				trace("* Listen ON")
 				if (device==null)
 				{
+					Console.log("Start Device", this)
 					//systemManager.stage.addEventListener(KeyboardEvent.KEY_DOWN, checkKey);
 					device = new Registration(); 
-					device.addEventListener( RegistrationEvent.SCAN_READY, readyToScan);
-					device.addEventListener( RegistrationEvent.USER_ALREADY_REGISTERED, userRegistered);
-					device.addEventListener( RegistrationEvent.ERROR, registrationError);
-					device.addEventListener( RegistrationEvent.USER_FOUND, userFound);
-					device.addEventListener( RegistrationEvent.USER_NOT_FOUND, userNotFound);
-					device.startSocket();
+					device.addEventListener( RegistrationEvent.SCAN_READY, this.readyToScan);
+					device.addEventListener( RegistrationEvent.USER_ALREADY_REGISTERED, this.userRegistered);
+					device.addEventListener( RegistrationEvent.ERROR, this.registrationError);
+					device.addEventListener( RegistrationEvent.USER_FOUND, this.userFound);
+					device.addEventListener( RegistrationEvent.USER_NOT_FOUND, this.userNotFound);
+						
 				}
+				
+				device.startSocket();
+				
 			}
 			protected function readyToScan( e:RegistrationEvent ):void
 			{
 				Console.log("readyToScan", this);
-				frontMessage.text = "PLEASE PLACE FINGER ON SCANNER";
+				frontMessage.text = "PLEASE SCAN YOUR FINGER";
 			}
 			protected function userRegistered( e:RegistrationEvent ):void
 			{
@@ -126,22 +131,26 @@
 				Console.log("userFound", this);
 				
 			}
+			
+			protected function userNotFound( e:RegistrationEvent ):void
+			{
+				//var uid:String = uniqueID.toString()
+				Console.log("userNotFound ", this);
+				//register with device first
+				userNotFoundModule.includeInLayout = userNotFoundModule.visible= true;
+				frontMessage.text = "FINGER NOT FOUND";
+				//device.registerUser( uid );
+				
+			}
 			protected function get uniqueID():Number
 			{
 				return Number((new Date()).time);
 			}
-			protected function userNotFound( e:RegistrationEvent ):void
-			{
-				Console.log("userNotFound", this);
-				//register with device first
-				
-				device.registerUser( uniqueID.toString() );
-				
-			}
+			
 			
 			protected function exit(e:FlexEvent=null):void
 			{
-				trace("*** EXIT SCANWRISTBAND ***");
+				Console.log("*** EXIT Registration ***", this);
 				stopListen();
 			}
 			private function stopListen(event:Event=null):void
@@ -249,10 +258,11 @@
 			protected function userCheckFailed(event:FaultEvent):void
 			{
 				
-				this.parentApplication.dispatchEvent(new events.KioskError(KioskError.ERROR,event.fault.faultDetail.toString(), event.fault.faultString.toString(), init) );
+//				this.parentApplication.dispatchEvent(new events.KioskError(KioskError.ERROR,event.fault.faultDetail.toString(), event.fault.faultString.toString(), init) );
 			}
 			protected function onNewUser(uid:*):void
 			{
+				
 				this.parentApplication.dispatchEvent( new UserEvent(UserEvent.URN, uid));
 				this.parentApplication.dispatchEvent( new UserEvent(UserEvent.REGISTERED));
 				this.parentApplication.dispatchEvent(new ViewEvent(ViewEvent.LOCATION_SELECT_USER_TYPE));
@@ -267,14 +277,14 @@
 			}
 			protected function onDuplicate():void
 			{
-				this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, "SORRY - BUT YOU CAN ONLY PLAY ONCE", "ERROR", init));			
-				init();
+				//this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, "SORRY - BUT YOU CAN ONLY PLAY ONCE", "ERROR", init));			
+				//init();
 
 			}
 			protected function onError(msg:String):void
 			{
-				this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, "ERROR - RETURNED:"+msg, "ERROR", init));
-				init();
+				//this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, "ERROR - RETURNED:"+msg, "ERROR", init));
+				//init();
 			}
 			protected function userValidCheck(e:ResultEvent):void
 			{
@@ -313,7 +323,7 @@
 					{
 						str += m+"="+e.result[m]+"; "; 
 					}
-					this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, "NO RESULT ON SERVER :"+str, "SERVER ERROR", init));
+					//this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, "NO RESULT ON SERVER :"+str, "SERVER ERROR", init));
 							
 				}
 			}
@@ -341,6 +351,12 @@
 			{
 				trace("cazzo");
 			}
+			protected function register(event:MouseEvent):void
+			{
+				Console.log("How do we deal with this section", this)
+				
+			}
+
 			protected function tandcd_clickHandler(event:MouseEvent):void
 			{
 				this.parentApplication.dispatchEvent(new KioskEvent(KioskEvent.TERMS_NOTIFY, restart));
@@ -364,9 +380,20 @@
 			
 			<s:TextInput id="barcodeInput" includeInLayout="false" addedToStage="getBarcodeFocus()"  visible="false" text="" textAlign="left"/>
 
-			<s:HGroup verticalAlign="middle">
+			<s:HGroup verticalAlign="middle"  includeInLayout="false" id="userNotFoundModule">
+				<s:Button label="Scan Again" click="init(event)" skinClass="skins.vodafoneButton"/>
+				<s:Button label="Register" click="register(event)" skinClass="skins.vodafoneButton"/>
 				<s:Button x="259" y="591" label="Terms And Conditions" visible="false" includeInLayout="false" click="tandcd_clickHandler(event)" skinClass="skins.vodafoneButton"/>
-				
+			</s:HGroup>
+			
+			<s:HGroup verticalAlign="middle"  includeInLayout="false" id="userFingerScanStepModule">
+				<mx:Box width="100" height="150" id="step_1">
+				</mx:Box>
+				<mx:Box width="100" height="150" id="step_2">
+				</mx:Box>
+				<mx:Box width="100" height="150" id="step_3">
+				</mx:Box>
+
 				
 			</s:HGroup>
 			

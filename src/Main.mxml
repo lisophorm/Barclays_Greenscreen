@@ -135,7 +135,7 @@
 			/*
 			TO DO:
 			-- Need to save optins
-			-- Check that ScanWristBand always get wired back up
+			-- Check that RegisterView always get wired back up
 			-
 			
 			*/
@@ -386,7 +386,7 @@
 			}
 			protected function gotoView( stackStr:String="", obj:Object=null ) :void
 			{
-				var indexSeq:Array = ["ScanWristBand", "SelectUserType", "FaceBookAuth01", "UserForm", "CameraCapture", "ScoreCapture", "TaskCompleteCapture", "GreenScreen","GreenScreenCelebrate", "SelectApplication", "Thankyou", "FaceBookLogoutOverride"]
+				var indexSeq:Array = ["RegisterView", "SelectUserType", "FaceBookAuth01", "UserForm", "CameraCapture", "ScoreCapture", "TaskCompleteCapture", "GreenScreen","GreenScreenCelebrate", "SelectApplication", "Thankyou", "FaceBookLogoutOverride"]
 				var lastScreen:DisplayObject;
 				var nextScreen:DisplayObject;
 				var nextIndex:int=-1;
@@ -406,9 +406,9 @@
 					{
 						data = obj;
 						nextIndex = i;
-						if (stackStr == "ScanWristBand")
+						if (stackStr == "RegisterView")
 						{
-							nextScreen = ScanWristBand;
+							nextScreen = RegisterView;
 						}
 						if (stackStr == "SelectUserType")
 						{
@@ -506,7 +506,7 @@
 						//this.navigator.popToFirstView(fadeTrans);
 						trace("*** RESTART WAS CALLED ***");
 						deleteWindowsCookies();
-						gotoView("ScanWristBand");
+						gotoView("RegisterView");
 						break;
 					case ViewEvent.LOCATION_CONFIG:
 						gotoView("SelectApplication", { xml : pref.prefsXML } );
@@ -518,7 +518,7 @@
 							{
 								
 								showError("YOU HAVE ALREADY REGISTERED.", "USER REGISTERED");
-								ScanWristBand.init();
+								RegisterView.init();
 							} else 
 							{
 								this.dispatchEvent( new ViewEvent( ViewEvent.LOCATION_GAME ));
@@ -593,7 +593,7 @@
 								gotoView("CameraCapture", {urn: barcode, type: ApplicationTypeNumber, facebook: this.isFacebookRegistered});
 							} else
 							{
-								gotoView("ScanWristBand");
+								gotoView("RegisterView");
 								showError("USER NOT REGISTERED WITH FACEBOOK ACCOUNT", "FACEBOOK ACCOUNT REQUIRED", this.defaultView);
 							}
 						} else if  (ApplicationType == APPLICATION_TYPE_PITSTOP || ApplicationType == APPLICATION_TYPE_SIMULATOR)
@@ -617,7 +617,7 @@
 							
 						} else 
 						{
-							gotoView("ScanWristBand");
+							gotoView("RegisterView");
 							showError("UNKNOWN ACTIVTIY", "NOT IMPLEMENTED");
 							
 						}
@@ -957,7 +957,7 @@
 			
 			<mx:ViewStack id="Stack" top="100" height="100%" width="100%"  creationPolicy="all">
 				<mx:VBox hideEffect="{hideFX}"  showEffect="{showFX}">
-					<views:RegistrationScan id="ScanWristBand" />
+					<views:RegistrationScan id="RegisterView" />
 				</mx:VBox>
 				<mx:VBox hideEffect="{hideFX}"  showEffect="{showFX}">
 					<views:SelectUserType id="SelectUserType" />
