@@ -8,9 +8,13 @@ package model
 	import flash.display.Loader;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
+	import flash.events.Event;
 	import flash.events.MediaEvent;
 	import flash.events.MouseEvent;
 	import flash.events.StatusEvent;
+	import flash.filesystem.File;
+	import flash.filesystem.FileMode;
+	import flash.filesystem.FileStream;
 	import flash.media.Camera;
 	import flash.media.MediaPromise;
 	import flash.media.Video;
@@ -83,7 +87,7 @@ package model
 			this.mouseEnabled = this.buttonMode = false;
 		}
 			
-		protected function takePhoto():void
+		protected function takePhoto( e:Event = null ):void
 		{
 			// save file
 			
@@ -92,8 +96,19 @@ package model
 			
 			var encoder:JPGEncoder = new JPGEncoder();
 			var byteArray:ByteArray = encoder.encode(bitmapData);
-			var fileReference:FileReference = new FileReference();
-			fileReference.save(byteArray, "test.jpg");
+		//	var fileReference:FileReference = new FileReference();
+		//	fileReference.save(byteArray);
+			; 
+			var f:File = File.applicationDirectory.resolvePath("assets/userdata/test.jpg");
+		
+			var stream:FileStream = new FileStream();
+			stream = new FileStream();
+			
+			stream.open(f, FileMode.WRITE);
+			stream.writeBytes(byteArray);
+			//stream.writeUTFBytes(outputString);
+			stream.close();
+			
 			photoCapture = new Bitmap(bitmapData, "auto", true)
 			this.addChild( photoCapture );
 			video.visible = false;
