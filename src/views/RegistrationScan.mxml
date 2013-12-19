@@ -454,6 +454,7 @@
 			</s:HGroup>
 			
 			<s:HGroup verticalAlign="middle" id="userFingerScanStepModule">
+				
 				<mx:Box width="100" height="120" id="step_1" backgroundColor="0xCCCCCC" backgroundColor.STEP1="0xFF0000" backgroundColor.STEP2="0xFF0000" backgroundColor.STEP3="0xFF0000" backgroundColor.REGISTER_COMPLETE="0x00DD00">
 				</mx:Box>
 				<s:Spacer width="20" />

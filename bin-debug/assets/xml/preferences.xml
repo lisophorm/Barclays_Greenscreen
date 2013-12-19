@@ -2,7 +2,16 @@
 <preferences>
   <serverIP>192.168.0.150</serverIP>
   <facebookAppID>308521192563512</facebookAppID>
+  <localIP>192.168.0.100</localIP>
   <urnLength>16</urnLength>
+  <internetTimeout>10</internetTimeout>
   <scoreFormat>99:99.99</scoreFormat>
-  <applicationtype>registration</applicationtype>
+  <applicationtype>photocapture</applicationtype>
+  <latitude></latitude>
+  <longitude></longitude>
+  <aespassword>asdghylmn84</aespassword>
+  <eventlocation>tottenham hotspur</eventlocation>
+  <photocount>0</photocount>
+  <videocount>0</videocount>
+  <tabletID>1</tabletID>
 </preferences>
