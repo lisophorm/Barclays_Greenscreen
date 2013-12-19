@@ -6,17 +6,19 @@
 		>
 	<fx:Script>
 		<![CDATA[
+			import com.utils.Console;
+			
+			import mx.events.FlexEvent;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			import mx.validators.Validator;
+			
 			import events.KioskError;
 			import events.KioskEvent;
 			import events.UserEvent;
 			import events.ViewEvent;
 			
 			import model.ML;
-			
-			import mx.events.FlexEvent;
-			import mx.rpc.events.FaultEvent;
-			import mx.rpc.events.ResultEvent;
-			import mx.validators.Validator;
 			
 			[Bindable]
 			protected var validatorArr:Array;
@@ -35,8 +37,8 @@
 			}
 			public function init(event:Event=null):void
 			{
-				trace("*** INIT USERFORM ***");
-
+				Console.log("*** INIT USERFORM ***", this);
+				clearData();
 				if (this.parentApplication.data!=null)
 				{
 					this.userFirstName.setFocus();
@@ -44,10 +46,11 @@
 					this.currentURN = data.urn;
 					optin_marketing = data.optin_marketing;
 					optin_terms = data.optin_terms;
+					Console.log("CURRENT URN: "+this.currentURN, this);
 
 				} else
-				{
-					trace("NO CURRENT URN");
+				{				
+					Console.log("NO CURRENT URN", this);
 				}
 				validatorArr = new Array();
 				validatorArr.push(validateName);
@@ -56,7 +59,14 @@
 				validatorArr.push(validateMobile);
 				saveData.url = (this.parentApplication).baseURL+'register.php';
 			}
-			
+			protected function clearData():void
+			{
+				userFirstName.text = ""; 
+				userLastName.text = ""; 
+				userMobile.text = "";
+				userEmail.text = ""; 
+								
+			}
 			protected function exit(event:Event=null):void
 			{
 				trace("*** INIT USERFORM ***");

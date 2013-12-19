@@ -8,6 +8,13 @@
 		>
 	<fx:Script>
 		<![CDATA[
+			import com.utils.Console;
+			
+			import mx.events.FlexEvent;
+			import mx.validators.Validator;
+			
+			import spark.events.IndexChangeEvent;
+			
 			import events.KioskError;
 			import events.KioskEvent;
 			import events.UserEvent;
@@ -15,10 +22,7 @@
 			
 			import model.ML;
 			
-			import mx.events.FlexEvent;
-			import mx.validators.Validator;
-			
-			import spark.events.IndexChangeEvent;
+			import skins.vodafoneButton;
 			
 			protected var validatorArr:Array;
 			protected var timer:Timer;
@@ -29,7 +33,7 @@
 			}
 			public function init(event:Event=null):void
 			{
-				trace("*** INIT SELECTUSERTYPE ***");
+				Console.log("*** INIT SELECTUSERTYPE ***", this);
 				validatorArr = new Array();
 				validatorArr.push(validateTerms);
 				timer = new Timer(100,1);
@@ -38,7 +42,7 @@
 			}
 			public function exit( e:Event = null):void
 			{
-				trace("*** EXIT SELECTUSERTYPE ***");
+				Console.log("*** EXIT SELECTUSERTYPE ***", this);
 			}
 			protected function start( e:TimerEvent ):void
 			{
@@ -90,6 +94,7 @@
 						   required="true"
 						   property="selected" maxLength="4" requiredFieldError="You must agree the terms of use" tooLongError="You must agree to the Terms of Use.">
 		</mx:StringValidator>
+		<s:Button x="259" y="591" label="Terms And Conditions"  click="tandcd_clickHandler(event)" skinClass="skins.vodafoneButton"/>
 <!--		<mx:StringValidator id="validateMarketing"
 							source="{marketCheck}"
 							required="true"

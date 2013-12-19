@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		xmlns:s="library://ns.adobe.com/flex/spark" 
-		creationComplete="created()" 
-		
+		creationComplete="created()"
+		 
 		remove="exit(event)" xmlns:mx="library://ns.adobe.com/flex/mx">
 	<fx:Script>
 		<![CDATA[
@@ -22,6 +22,7 @@
 			
 			import mx.core.FlexGlobals;
 			import mx.events.FlexEvent;
+			import mx.events.StateChangeEvent;
 			import mx.messaging.channels.StreamingAMFChannel;
 			import mx.rpc.events.FaultEvent;
 			import mx.rpc.events.ResultEvent;
@@ -40,15 +41,16 @@
 			
 			import views.components.tandcWindow;
 			
-			private var currentUrn:String;
+			private var currentURN:String;
 			
 			private var restartInterval:Number;
 			
-			private var currentURN:String;
 			private var checking:Boolean=false;
 			
 			[Bindable]
 			public var barcode:String = null;
+			
+			
 			
 			[Bindable]
 			public var gameNumber:String = "1";
@@ -61,14 +63,19 @@
 			
 			public function created(event:FlexEvent=null):void
 			{
+				Console.log("*** CREATE ***", this);
 				init();
-				//this.addEventListener( Event.INIT, init);
+				this.addEventListener( Event.INIT, init);
+				this.addEventListener(StateChangeEvent.CURRENT_STATE_CHANGE, onStateChange);
 			}
 			public function init(event:Event=null):void
 			{
+				this.currentState = "";
+				currentURN = null;
 				Console.log("*** INITIATING DEVICE ***", this);
 				frontMessage.text = "PLEASE WAIT - INITIALISING SCANNER";
 				userNotFoundModule.includeInLayout = userNotFoundModule.visible= false;
+				userFingerScanStepModule.includeInLayout = userFingerScanStepModule.visible = false;
 				//trace("creation complete");
 				StageDisplayState.FULL_SCREEN_INTERACTIVE;
 				CleanWebView.wipeOut();
@@ -101,15 +108,50 @@
 					//systemManager.stage.addEventListener(KeyboardEvent.KEY_DOWN, checkKey);
 					device = new Registration(); 
 					device.addEventListener( RegistrationEvent.SCAN_READY, this.readyToScan);
-					device.addEventListener( RegistrationEvent.USER_ALREADY_REGISTERED, this.userRegistered);
+					device.addEventListener( RegistrationEvent.SCAN_AGAIN, this.scan_again);
+					device.addEventListener( RegistrationEvent.USER_REGISTERED, this.userRegistered);
 					device.addEventListener( RegistrationEvent.ERROR, this.registrationError);
 					device.addEventListener( RegistrationEvent.USER_FOUND, this.userFound);
 					device.addEventListener( RegistrationEvent.USER_NOT_FOUND, this.userNotFound);
+					
+					
+					//scanning steps 1-3
+					device.addEventListener( RegistrationEvent.SCAN_STEP_1, this.register_step_1);
+					device.addEventListener( RegistrationEvent.SCAN_STEP_2, this.register_step_2);
+					device.addEventListener( RegistrationEvent.SCAN_STEP_3, this.register_step_3);
+					device.addEventListener( RegistrationEvent.SCAN_COMPLETED, this.register_complete);
+					device.addEventListener( RegistrationEvent.SCAN_RESTART, this.scan_restart);
 						
 				}
 				
 				device.startSocket();
 				
+			}
+			protected function scan_restart( e:RegistrationEvent ):void
+			{
+
+				this.currentState = "SCANNING_RESTART";
+			}
+			protected function scan_again( e:RegistrationEvent ):void
+			{
+				this.frontMessage.text = "I HAD A PROBLEM READING THAT - PLEASE TRY AGAIN.";	
+			}
+			protected function register_step_1( e:RegistrationEvent ):void
+			{
+				Console.log("CHANGING STATE -> STEP1", this);
+				this.currentState = "STEP1";
+			}
+			protected function register_step_2( e:RegistrationEvent ):void
+			{
+				this.currentState = "STEP2";
+			}
+			protected function register_step_3( e:RegistrationEvent ):void
+			{
+				this.currentState = "STEP3";
+			}
+			protected function register_complete( e:RegistrationEvent ):void
+			{
+				this.currentState = "REGISTER_COMPLETE";
 			}
 			protected function readyToScan( e:RegistrationEvent ):void
 			{
@@ -118,8 +160,8 @@
 			}
 			protected function userRegistered( e:RegistrationEvent ):void
 			{
-				Console.log("userRegistered", this);
-				this.onNewUser( e.userid  );
+				Console.log("userRegistered "+e.userid, this);
+				this.onNewUser( currentURN  );
 			}
 			protected function registrationError( e:RegistrationEvent ):void
 			{
@@ -129,17 +171,18 @@
 			protected function userFound( e:RegistrationEvent ):void
 			{
 				Console.log("userFound", this);
-				
+				//if this is a registration type - then alreadyregistered otherwise move use
+				this.onAlreadyRegistered( e.userid, this.parentApplication.ApplicationType );
 			}
 			
 			protected function userNotFound( e:RegistrationEvent ):void
 			{
-				//var uid:String = uniqueID.toString()
+			
 				Console.log("userNotFound ", this);
 				//register with device first
 				userNotFoundModule.includeInLayout = userNotFoundModule.visible= true;
 				frontMessage.text = "FINGER NOT FOUND";
-				//device.registerUser( uid );
+				
 				
 			}
 			protected function get uniqueID():Number
@@ -283,8 +326,8 @@
 			}
 			protected function onError(msg:String):void
 			{
-				//this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, "ERROR - RETURNED:"+msg, "ERROR", init));
-				//init();
+				this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, "ERROR - RETURNED:"+msg, "ERROR", init));
+				init();
 			}
 			protected function userValidCheck(e:ResultEvent):void
 			{
@@ -351,29 +394,53 @@
 			{
 				trace("cazzo");
 			}
-			protected function register(event:MouseEvent):void
+		
+			protected function onBeginRegister(event:MouseEvent):void
 			{
-				Console.log("How do we deal with this section", this)
+				Console.log("onBeginRegister", this);
+				this.currentState = "REGISTER_BEGIN";
 				
+				userFingerScanStepModule.includeInLayout = userFingerScanStepModule.visible = true;
+				userNotFoundModule.includeInLayout = userNotFoundModule.visible = false;
+				currentURN = uniqueID.toString();
+				device.registerUser( currentURN );
 			}
-
-			protected function tandcd_clickHandler(event:MouseEvent):void
+			protected function onStateChange( e:StateChangeEvent ):void
 			{
-				this.parentApplication.dispatchEvent(new KioskEvent(KioskEvent.TERMS_NOTIFY, restart));
+				Console.log(e.oldState+"->"+e.newState,this);
 			}
+				
 			
 		]]>
 	</fx:Script>
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 		<!--s:HTTPService id="checkURN" resultFormat="flashvars" method="POST" url="http://www.ignitesocial.co.uk/ignite/checkuser.php" result="httpservice1_resultHandler(event)" fault="httpservice1_faultHandler(event)" /-->
+		
 	</fx:Declarations>
+	<s:states>
+		<s:State name="DEFAULT" />
+		<s:State name="REGISTER_BEGIN" />
+		<s:State name="STEP1" />
+		<s:State name="STEP2" />
+		<s:State name="STEP3" />
+		<s:State name="REGISTER_COMPLETE" />
+		<s:State name="SCANNING_RESTART" />
+		
+	</s:states>
 	
 	<s:VGroup horizontalAlign="center" verticalAlign="middle" height="574" width="100%">
 		
 		
 		<s:VGroup horizontalAlign="center">
-			<s:Label id="frontMessage" horizontalCenter="0"  text="PLEASE SCAN YOUR FINGER" verticalCenter="0"/>
+			<s:Label id="frontMessage" horizontalCenter="0" verticalCenter="0"  
+					 text="PLEASE SCAN YOUR FINGER"
+					 text.REGISTER_BEGIN = "REGISTRATION SCAN - PLEASE SCAN FINGER"
+					 text.SCANNING_RESTART = "READING ERROR - PLEASE TRY AGAIN!"
+					 text.STEP1="STEP 1: PLACE FINGER ON SCANNER AND LIFT"
+					 text.STEP2="STEP 2: PLACE FINGER ON SCANNER AND LIFT"
+					 text.STEP3="STEP 3: PLACE FINGER ON SCANNER AND LIFT"
+					 text.REGISTER_COMPLETE="SCANNING SUCCESFUL"/>
 			
 			<s:BitmapImage source="@Embed('assets/images/scanyourwristband.png')" visible="false" includeInLayout="false"/>
 			<s:TextInput id="barcodeWriter" top="-50" addedToStage="getBarcodeFocus()" alpha="0" includeInLayout="false" visible="false" text="" textAlign="left" softKeyboardActivating="urn_softKeyboardActivatingHandler(event)"/>
@@ -382,16 +449,18 @@
 
 			<s:HGroup verticalAlign="middle"  includeInLayout="false" id="userNotFoundModule">
 				<s:Button label="Scan Again" click="init(event)" skinClass="skins.vodafoneButton"/>
-				<s:Button label="Register" click="register(event)" skinClass="skins.vodafoneButton"/>
-				<s:Button x="259" y="591" label="Terms And Conditions" visible="false" includeInLayout="false" click="tandcd_clickHandler(event)" skinClass="skins.vodafoneButton"/>
+				<s:Button label="Register" click="onBeginRegister(event)" skinClass="skins.vodafoneButton"/>
+				
 			</s:HGroup>
 			
-			<s:HGroup verticalAlign="middle"  includeInLayout="false" id="userFingerScanStepModule">
-				<mx:Box width="100" height="150" id="step_1">
+			<s:HGroup verticalAlign="middle" id="userFingerScanStepModule">
+				<mx:Box width="100" height="120" id="step_1" backgroundColor="0xCCCCCC" backgroundColor.STEP1="0xFF0000" backgroundColor.STEP2="0xFF0000" backgroundColor.STEP3="0xFF0000" backgroundColor.REGISTER_COMPLETE="0x00DD00">
 				</mx:Box>
-				<mx:Box width="100" height="150" id="step_2">
+				<s:Spacer width="20" />
+				<mx:Box width="100" height="120" id="step_2" backgroundColor="0xCCCCCC"  backgroundColor.STEP2="0x00FF00"  backgroundColor.STEP3="0x00FF00" backgroundColor.REGISTER_COMPLETE="0x00DD00">
 				</mx:Box>
-				<mx:Box width="100" height="150" id="step_3">
+				<s:Spacer width="20" />
+				<mx:Box width="100" height="120" id="step_3" backgroundColor="0xCCCCCC"  backgroundColor.STEP3="0x0000FF" backgroundColor.REGISTER_COMPLETE="0x00DD00">
 				</mx:Box>
 
 				

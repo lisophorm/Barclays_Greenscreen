@@ -183,8 +183,10 @@ package model
 						if (data["msg"]=="000000000") //user not found
 						{
 							this.dispatchEvent( new RegistrationEvent( RegistrationEvent.USER_NOT_FOUND, -1, data["msg"] ) );	
-						} else
+						} else if ( data["msg"]=="BADSCAN")
 						{
+							this.dispatchEvent( new RegistrationEvent( RegistrationEvent.SCAN_AGAIN, -1, data["msg"]  ) );
+						} else {
 							this.dispatchEvent( new RegistrationEvent( RegistrationEvent.USER_FOUND, data["msg"]  ) );
 						}
 					break;
@@ -203,7 +205,8 @@ package model
 				if (event.message.data!=null)
 				{
 					var dataOut:Object = by.blooddy.crypto.serialization.JSON.decode(event.message.data.toString());
-					handleCode( dataOut )
+					Console.log(event.message.data.toString(), this);
+					handleCode( dataOut );
 				} else
 				{
 					this.dispatchEvent( new RegistrationEvent( RegistrationEvent.ERROR, -1, "Server communication error...Try again"  ) );
