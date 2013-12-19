@@ -48,6 +48,7 @@
 			
 			
 			public var baseURL:String ="";
+			public var localURL:String ="";
 			public var facebookAppID:String ="";
 			public var urn:int = 0;
 			public var scoreFormat:String = "99:99"
@@ -55,6 +56,14 @@
 			public var password:String;
 			protected var pref:Config;
 			protected var blinkTimer:Timer;
+			public var aespassword:String="";
+			public var latitude:Number=0;
+			public var longitude:Number=0;
+			public var photoCount:Number=0;
+			public var videoCount:Number=0;
+			public var tabletID:String="";
+			
+			public var eventLocation:String="";
 			
 			
 			
@@ -162,6 +171,7 @@
 				
 				
 				baseURL =  "http://"+pref.prefsXML..serverIP+"/";
+				localURL= "http://"+pref.prefsXML..localIP+"/";
 				facebookAppID = pref.prefsXML..facebookAppID;
 				ApplicationType = pref.prefsXML..applicationtype.toString().toUpperCase();
 				urn = int(pref.prefsXML..urnLength);
@@ -266,6 +276,8 @@
 				pref.saveApplicationVariables( e.value );
 				trace(pref.prefsXML);
 				baseURL =  "http://"+pref.prefsXML..serverIP+"/";
+				localURL= "http://"+pref.prefsXML..localIP+"/";
+				eventLocation=pref.prefsXML..eventlocation;
 				facebookAppID = pref.prefsXML..facebookAppID;
 				ApplicationType = pref.prefsXML..applicationtype.toString().toUpperCase();
 				urn = int(pref.prefsXML..urnLength);

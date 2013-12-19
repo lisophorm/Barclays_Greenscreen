@@ -33,7 +33,7 @@
 			protected var openBrowser:Boolean = false; 
 			
 			
-			private var fbScope:String="email,publish_checkins,publish_stream,offline_access";
+			private var fbScope:String="email,publish_actions";
 			
 			private var fbRedir:String;
 			private var fbLogout:String;
