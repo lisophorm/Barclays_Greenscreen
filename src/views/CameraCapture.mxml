@@ -5,7 +5,8 @@
 		xmlns:components="views.components.*"  
 		remove="exit(event)" 
 		creationComplete="created(event)"
-		
+		 width="100%"
+		 height="100%"
 		>
 	
 	<fx:Script>
@@ -29,6 +30,7 @@
 			
 			import views.components.ProgressPopUp;
 			
+			protected var webcamera:CameraDevice
 			private var urlRequest:URLRequest
 			private var file:File;
 			
@@ -79,6 +81,16 @@
 			protected function exit(e:Event=null):void
 			{
 				trace("*** EXIT CAMERACAPTURE ***");
+				if (webcamera!=null)
+				{
+					webcamera.destroy();
+					if (videoholder.containsElement( webcamera) )
+					{
+						videoholder.removeElement( webcamera )
+						webcamera = null;
+					}
+					
+				}
 			}
 			protected function getUser_resultHandler(event:ResultEvent):void
 			{
@@ -117,10 +129,9 @@
 					if (CameraDevice.isSupported)
 					{
 						Console.log("standard camera not supported",this);
-						var c:CameraDevice = new CameraDevice();
-					
-						c.addEventListener(CameraEvent.COMPLETE,takePhotoStandardCompleteHandler);
-						game.addElement( c )
+						webcamera = new CameraDevice();					
+						webcamera.addEventListener(CameraEvent.COMPLETE,takePhotoStandardCompleteHandler);
+						videoholder.addElement(webcamera )
 							
 					} else 
 					{
@@ -163,9 +174,9 @@
 			protected function beginUpload(file:File):void
 			{
 				urlRequest = new URLRequest(this.parentApplication.localURL+"uploader.php");
-				trace("event.data.file.url; = "+file.url);
+				Console.log("event.data.file.url; = "+file.url, this);
 				takePhotoButton.enabled = false;
-				file = file;
+				this.file = file;
 				file.addEventListener(Event.COMPLETE,uploadCompleteHandler);
 				file.addEventListener(Event.OPEN,openUploadHandler);
 				file.addEventListener(ProgressEvent.PROGRESS,updateProgress);
@@ -244,7 +255,7 @@
 			}
 			
 			
-			public function restart(e:Event):void
+			public function restart(e:Event=null):void
 			{
 				this.parentApplication.dispatchEvent( new ViewEvent( ViewEvent.LOCATION_RESTART ) );
 			}
@@ -278,7 +289,7 @@
 		<s:State name="default" />
 		<s:State name="facebook" />
 	</s:states>
-	<s:VGroup id="game" >
+	<s:VGroup id="videoholder" horizontalCenter="0" verticalCenter="0" >
 		
 	</s:VGroup>
 	<s:VGroup styleName="Game" horizontalAlign="center" verticalAlign="middle" width="100%" height="592">

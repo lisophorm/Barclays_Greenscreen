@@ -1,12 +1,14 @@
 package model
 {
-	import air.net.URLMonitor;
+	import com.utils.Console;
 	
 	import flash.desktop.NativeApplication;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.events.StatusEvent;
 	import flash.net.URLRequest;
+	
+	import air.net.URLMonitor;
 
 
 	public class MonitorConnection extends EventDispatcher
@@ -23,7 +25,7 @@ package model
 			
 			
 			// Detecting online/offline network connectivity with a URLMonitor
-			trace("monitoring: "+url);
+			Console.log("monitoring: "+url, this);
 			
 			monitor = new URLMonitor(new URLRequest(url)); // change URL to URL desired
 			monitor.addEventListener(StatusEvent.STATUS, onStatusChange);

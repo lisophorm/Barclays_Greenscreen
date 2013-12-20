@@ -64,7 +64,7 @@
 			public function created(event:FlexEvent=null):void
 			{
 				Console.log("*** CREATE ***", this);
-			
+				init();
 				this.addEventListener( Event.INIT, init);
 				this.addEventListener(StateChangeEvent.CURRENT_STATE_CHANGE, onStateChange);
 			}

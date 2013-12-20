@@ -7,6 +7,7 @@
 	<fx:Script>
 		<![CDATA[
 			import com.greensock.TweenMax;
+			import com.utils.Console;
 			
 			import mx.core.UIComponent;
 			import mx.events.FlexEvent;
@@ -100,7 +101,6 @@
 			protected var popupWait:pleaseWait;
 			
 			public var data:Object = null;
-			
 			protected var loggedIn:Boolean = false;
 			
 			private var skins_vodafoneFormItem_obj:skins.vodafoneFormItem;
@@ -172,16 +172,19 @@
 				
 				baseURL =  "http://"+pref.prefsXML..serverIP+"/";
 				localURL= "http://"+pref.prefsXML..localIP+"/";
+				password ="ignite123";
 				facebookAppID = pref.prefsXML..facebookAppID;
 				ApplicationType = pref.prefsXML..applicationtype.toString().toUpperCase();
 				urn = int(pref.prefsXML..urnLength);
 				scoreFormat = pref.prefsXML..scoreFormat;
+				Console.log("baseURL: "+baseURL, this);
+				Console.log("localURL: "+localURL, this);
 				trace("scoreformat is now: "+scoreFormat);
 				trace("appplicationtype is now: "+ApplicationType);
 				monitor =  new MonitorConnection(baseURL+"ping.php");			
 				
-				if (!monitor.hasEventListener( MonitorConnection.EVENT_INTERNET_NOT_AVAILABLE))
-					monitor.addEventListener( MonitorConnection.EVENT_INTERNET_NOT_AVAILABLE, notifyNoInternet);
+			//	if (!monitor.hasEventListener( MonitorConnection.EVENT_INTERNET_NOT_AVAILABLE))
+			//		monitor.addEventListener( MonitorConnection.EVENT_INTERNET_NOT_AVAILABLE, notifyNoInternet);
 				
 				/*NativeApplication.nativeApplication.idleThreshold = 60;
 				if(!NativeApplication.nativeApplication.hasEventListener(Event.USER_IDLE)) {
@@ -514,7 +517,7 @@
 			//NAVIGATION HANDLING BETWEEN VIEWS
 			protected function doNavigation(e:ViewEvent):void
 			{
-				trace(e.location);
+				Console.log("doNavigation:"+e.location, this);
 				clearPopups();
 				hideDropshadow();
 				switch (e.location)
@@ -604,8 +607,8 @@
 						trace("ENTERING THE GAME "+ApplicationType);
 						if (ApplicationType == APPLICATION_TYPE_PHOTO)
 						{
-							gotoView("CameraCapture", {urn: barcode, type: ApplicationTypeNumber, facebook: this.isFacebookRegistered});
-/*							
+							//gotoView("CameraCapture", {urn: barcode, type: ApplicationTypeNumber, facebook: this.isFacebookRegistered});
+							
 							if (this.isFacebookRegistered)
 							{
 								gotoView("CameraCapture", {urn: barcode, type: ApplicationTypeNumber, facebook: this.isFacebookRegistered});
@@ -614,7 +617,7 @@
 								gotoView("RegisterView");
 								showError("USER NOT REGISTERED WITH FACEBOOK ACCOUNT", "FACEBOOK ACCOUNT REQUIRED", this.defaultView);
 							}
-							*/
+							
 						} else if  (ApplicationType == APPLICATION_TYPE_PITSTOP || ApplicationType == APPLICATION_TYPE_SIMULATOR)
 						{
 							trace(":"+this.activityTitle);
@@ -751,7 +754,7 @@
 				passwordbox.password = password;
 				passwordbox.exitFunction = exitFunction;
 				
-				PopUpManager.addPopUp(passwordbox, this, true);
+				PopUpManager.addPopUp(passwordbox, this, false);
 				PopUpManager.centerPopUp(passwordbox);
 				this.dispatchEvent( new ApplicationEvent( ApplicationEvent.POPUP_OPEN ) );
 				centerPopups();
