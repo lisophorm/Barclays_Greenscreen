@@ -3,6 +3,8 @@ package model
 	import com.greensock.TweenMax;
 	import com.utils.Console;
 	
+	import flash.desktop.NativeProcess;
+	import flash.desktop.NativeProcessStartupInfo;
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.Sprite;
@@ -16,6 +18,7 @@ package model
 	import flash.geom.Matrix;
 	import flash.media.Camera;
 	import flash.media.Video;
+	import flash.system.Capabilities;
 	
 	import mx.core.UIComponent;
 	import mx.utils.DisplayUtil;
@@ -188,5 +191,7 @@ package model
 		{
 			return Camera.isSupported;
 		}
+		
+	
 	}
 }

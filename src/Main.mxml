@@ -492,7 +492,7 @@
 				// ENSURE NEXT SCREEN CALLS INIT
 				if (nextScreen!=null)
 				{
-					trace("We dispatching an INIT event to "+getQualifiedClassName(nextScreen));
+					Console.log("We dispatching an INIT event to "+getQualifiedClassName(nextScreen), this);
 					nextScreen.dispatchEvent( new Event( Event.INIT ) );
 					
 				}
@@ -526,7 +526,8 @@
 						//this.navigator.popToFirstView(fadeTrans);
 						trace("*** RESTART WAS CALLED ***");
 						deleteWindowsCookies();
-						gotoView("RegisterView");
+						//gotoView("RegisterView");
+						gotoView("SelectTeam")
 						break;
 					case ViewEvent.LOCATION_CONFIG:
 						gotoView("SelectApplication", { xml : pref.prefsXML } );
@@ -977,7 +978,7 @@
 			
 		
 			
-			<mx:ViewStack id="Stack" top="100" height="100%" width="100%"  creationPolicy="all">
+			<mx:ViewStack id="Stack" height="100%" width="100%"  creationPolicy="all">
 				<mx:VBox hideEffect="{hideFX}"  showEffect="{showFX}">
 					<views:RegistrationScan id="RegisterView" />
 				</mx:VBox>

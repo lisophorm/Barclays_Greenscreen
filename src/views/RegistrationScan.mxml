@@ -2,7 +2,6 @@
 <s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		xmlns:s="library://ns.adobe.com/flex/spark" 
 		creationComplete="created()"
-		 
 		remove="exit(event)" xmlns:mx="library://ns.adobe.com/flex/mx">
 	<fx:Script>
 		<![CDATA[
@@ -65,7 +64,9 @@
 			{
 				Console.log("*** CREATE ***", this);
 				init();
+				this.removeEventListener( Event.INIT, init);
 				this.addEventListener( Event.INIT, init);
+				this.removeEventListener(StateChangeEvent.CURRENT_STATE_CHANGE, onStateChange);
 				this.addEventListener(StateChangeEvent.CURRENT_STATE_CHANGE, onStateChange);
 			}
 			public function init(event:Event=null):void
@@ -194,6 +195,7 @@
 			protected function exit(e:FlexEvent=null):void
 			{
 				Console.log("*** EXIT Registration ***", this);
+				//this.removeEventListener( Event.INIT, init);
 				stopListen();
 			}
 			private function stopListen(event:Event=null):void
@@ -327,7 +329,7 @@
 			protected function onError(msg:String):void
 			{
 				this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, "ERROR - RETURNED:"+msg, "ERROR", init));
-				init();
+				//init();
 			}
 			protected function userValidCheck(e:ResultEvent):void
 			{

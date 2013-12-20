@@ -5,28 +5,34 @@
 		>
 	<fx:Script>
 		<![CDATA[
-			import events.ApplicationEvent;
-			import events.ViewEvent;
-			
-			import model.Config;
+			import com.utils.Console;
 			
 			import mx.events.FlexEvent;
 			
 			import spark.events.IndexChangeEvent;
+			
+			import events.ApplicationEvent;
+			import events.ViewEvent;
+			
+			import model.Config;
 			
 			[Bindable]
 			public var data:Object;
 			
 			public function created(event:FlexEvent=null):void
 			{
+				init();
 				this.addEventListener( Event.INIT, init);
 			}
 			public function init(event:Event=null):void
 			{
-				trace("*** INIT APPLICATIONTYPE ***");
+				Console.log("*** INIT APPLICATIONTYPE ***", this);
+				
 				if (this.parentApplication.data!=null)
 				{
+					
 					data = this.parentApplication.data;
+					Console.log("data:"+data.xml.applicationtype, this );
 					this.server.text = data.xml.serverIP;
 					this.localserver.text = data.xml.localIP;
 					this.facebookAPI_ID.text = data.xml.facebookAppID;

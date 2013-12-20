@@ -1,8 +1,12 @@
 package model
 {
+	import flash.desktop.NativeProcess;
+	import flash.desktop.NativeProcessStartupInfo;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.events.TimerEvent;
+	import flash.filesystem.File;
+	import flash.system.Capabilities;
 	import flash.utils.Timer;
 	
 	import events.RegistrationEvent;
@@ -49,8 +53,8 @@ package model
 					Console.log("startSocket "+server, this);
 					server.start();
 				} else {
-					server.stop();
-					server.start();
+					//server.stop();
+					//server.start();
 				}
 				hasStarted = true;
 						
@@ -74,9 +78,11 @@ package model
 		
 		public function stopSocket(e:Event = null):void
 		{
-			if (server!=null)
+			if (server!=null && hasStarted)
 			{
+				Console.log("stopping socket", this);
 				server.stop();
+				//kill(); //TODO:: This stops the finger print reader to laucnh - but it never returns
 			}
 			hasStarted = false;
 		}
@@ -218,9 +224,22 @@ package model
 				Console.log("Error:\n"+e.message, this)
 				this.dispatchEvent( new RegistrationEvent( RegistrationEvent.ERROR, -1, e.message  ) );
 			}
-			
-			
-			
+		}
+		
+		public function kill():void
+		{
+			Console.log("Attempting kill", this);
+			if (flash.system.Capabilities.os.indexOf("Windows")!=-1)
+			{
+				Console.log("Kill Device!", this)
+				var file:File=File.applicationDirectory.resolvePath("C:/Program Files/BioPlugin/M2SysPlugIn.exe");
+				var nativeProcessInfo:NativeProcessStartupInfo=new NativeProcessStartupInfo();
+				nativeProcessInfo.executable=file;
+				nativeProcessInfo.arguments=new <String>["IS -1"];
+				
+				var process:NativeProcess=new NativeProcess();
+				process.start(nativeProcessInfo);
+			}
 		}
 	}
 }
