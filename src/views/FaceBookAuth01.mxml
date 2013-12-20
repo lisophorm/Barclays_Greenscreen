@@ -73,7 +73,7 @@
 				webView= new StageWebView();
 				fbRedir = (this.parentApplication).baseURL+"php-sdk/examples/landed.php";
 				fbLogout = (this.parentApplication).baseURL+"php-sdk/examples/logout.php"; // &display=touch publish_checkins ,offline_access
-				fbAuthURL = "http://graph.facebook.com/oauth/authorize?type=user_agent&scope=email,publish_actions,&client_id="+facebookAppID+"&display=touch&redirect_uri=http://"+redirect_uri+"facebook/php-sdk/examples/landed.php&response_type=token"; //&auth_type=reauthenticate
+				fbAuthURL = "http://graph.facebook.com/oauth/authorize?type=user_agent&scope=email,publish_actions,&client_id="+facebookAppID+"&display=touch&redirect_uri=http://"+redirect_uri+"/facebook/php-sdk/examples/landed.php&response_type=token"; //&auth_type=reauthenticate
 				//
 				createBrowser();
 			}

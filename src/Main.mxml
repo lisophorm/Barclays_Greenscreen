@@ -526,7 +526,8 @@
 						//this.navigator.popToFirstView(fadeTrans);
 						trace("*** RESTART WAS CALLED ***");
 						deleteWindowsCookies();
-						gotoView("RegisterView");
+						//gotoView("RegisterView");
+						this.dispatchEvent( new ViewEvent( ViewEvent.LOCATION_FACEBOOK ));
 						//gotoView("SelectTeam", {urn: "10002021"})
 						break;
 					case ViewEvent.LOCATION_CONFIG:
