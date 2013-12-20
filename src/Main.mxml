@@ -604,7 +604,7 @@
 							gotoView("Thankyou", {urn: barcode});
 						} else
 						{
-							
+							//gotoView("Thankyou", {urn: barcode});
 							this.dispatchEvent( new ViewEvent( ViewEvent.LOCATION_GAME ));
 						}
 						

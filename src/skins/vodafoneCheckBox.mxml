@@ -35,7 +35,7 @@
 		</s:Path>
 	</s:Group>
 	<s:RichText id="labelDisplay" d:id="54" d:userLabel="enter text..." x="44" y="7"
-				ai:aa="2" color="#000000" columnCount="1" fontFamily="Vodafone Rg" fontSize="31.572"
+				ai:aa="2" color="#FFFFFF" columnCount="1" fontFamily="StandardRegularAllCase" fontSize="31.572"
 				kerning="on" tabStops="S94.7159805297852" flm:variant="38"
 				whiteSpaceCollapse="preserve"/>
 </s:Skin>

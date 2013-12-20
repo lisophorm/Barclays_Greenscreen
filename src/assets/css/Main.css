@@ -30,23 +30,23 @@ s|Label#frontMessage  {
 #titleDisplay 
 {
 	fontSize: 28;
-	fontFamily: "StandardRegular";
+	fontFamily: "StandardRegularAllCase";
 	color:#FFFFFF;
 }
 .verysmallprint {
 	fontSize: 14;
-	fontFamily: "StandardRegular";
+	fontFamily: "StandardRegularAllCase";
 	color:#FFFFFF;
 	
 }
 .smallprint {
 	fontSize: 21;
-	fontFamily: "StandardRegular";
+	fontFamily: "StandardRegularAllCase";
 	color:#FFFFFF;
 }
 .smallprintLink {
 	fontSize: 21;
-	fontFamily: "StandardRegular";
+	fontFamily: "StandardRegularAllCase";
 }
 s|FormHeading s|Label#labelDisplay {
 	fontSize: 32;

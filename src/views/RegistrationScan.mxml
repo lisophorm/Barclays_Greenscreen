@@ -177,15 +177,14 @@
 			}
 			
 			protected function userNotFound( e:RegistrationEvent ):void
-			{
-			
+			{			
 				Console.log("userNotFound ", this);
 				//register with device first
 				userNotFoundModule.includeInLayout = userNotFoundModule.visible= true;
 				frontMessage.text = "FINGER NOT FOUND";
-				
-				
+								
 			}
+			
 			protected function get uniqueID():Number
 			{
 				return Number((new Date()).time);

@@ -49,9 +49,9 @@
 				timer.stop();
 				timer = null;
 				termsCheck.selected = false;
-				marketCheck.selected = false;
+			//	marketCheck.selected = false;
 				termsCheck.errorString = "";
-				marketCheck.errorString = "";
+			//	marketCheck.errorString = "";
 				
 				//validatorArr.push(validateMarketing);
 			//	this.marketCheck.selected = this.termsCheck.selected = false;
@@ -67,7 +67,7 @@
 				if (isValid())
 				{
 					this.parentApplication.dispatchEvent( new UserEvent( UserEvent.OPTIN_TERMS, termsCheck.selected ? "true" : "false" ))
-					this.parentApplication.dispatchEvent( new UserEvent( UserEvent.OPTIN_MARKETING, marketCheck.selected ? "true" : "false" ))
+				//	this.parentApplication.dispatchEvent( new UserEvent( UserEvent.OPTIN_MARKETING, marketCheck.selected ? "true" : "false" ))
 					this.parentApplication.dispatchEvent( new ViewEvent( ViewEvent.LOCATION_FACEBOOK ));
 				}
 			}
@@ -76,7 +76,7 @@
 					if (isValid())
 					{
 						this.parentApplication.dispatchEvent( new UserEvent( UserEvent.OPTIN_TERMS, termsCheck.selected ? "true" : "false" ))
-						this.parentApplication.dispatchEvent( new UserEvent( UserEvent.OPTIN_MARKETING, marketCheck.selected ? "true" : "false" ))
+				//		this.parentApplication.dispatchEvent( new UserEvent( UserEvent.OPTIN_MARKETING, marketCheck.selected ? "true" : "false" ))
 						this.parentApplication.dispatchEvent( new ViewEvent( ViewEvent.LOCATION_STANDARD_REGISTRATION ));
 					}
 			}
@@ -117,11 +117,11 @@
 				<s:Label  styleName="smallprintLink" text="Terms And Conditions" click="tandcd_clickHandler(event)" />
 			</s:HGroup>
 
-			<s:Spacer height="30" />
+			<!--s:Spacer height="30" />
 			<s:CheckBox id="marketCheck" label="I accept marketing approach from Vodafone"  skinClass="skins.vodafoneCheckBox"/>
 			<s:Label styleName="verysmallprint" width="600">
 				<s:text>I agree that the specified personal information of Vodafone Hungary\'s own marketing activities, direct marketing, market research and information for telephone or other electronic means (eg SMS, MMS, E-mail), an automated calling system, or by mail use. I understand that Vodafone Hungary 1476 Budapest, PO Box: 350 postal and electronic addresses through ugyfelszolgalat.hu @ vodafone.com ask the registered personal information deleted, modified, or treated with the data to information.</s:text>
-			</s:Label>
+			</s:Label-->
 				
 			</s:VGroup>
 			
