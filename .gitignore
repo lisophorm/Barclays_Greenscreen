@@ -21,6 +21,8 @@ release_desktop/
 **/bin-debug/
 **/release_desktop/
 **/release/
+/bin-debug/
+/bin/Release/
 
 # External tool builders
 .externalToolBuilders/
