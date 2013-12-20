@@ -1,9 +1,11 @@
 package model
 {
+	import com.greensock.TweenMax;
 	import com.utils.Console;
 	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
+	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.events.ProgressEvent;
@@ -11,17 +13,18 @@ package model
 	import flash.filesystem.File;
 	import flash.filesystem.FileMode;
 	import flash.filesystem.FileStream;
+	import flash.geom.Matrix;
 	import flash.media.Camera;
 	import flash.media.Video;
 	
 	import mx.core.UIComponent;
+	import mx.utils.DisplayUtil;
 	
 	import events.CameraEvent;
 	
-	
 	import ru.inspirit.image.encoder.JPGAsyncEncoder;
 
-	public class CameraDevice  extends UIComponent
+	public class CameraDevice extends UIComponent
 	{
 		protected var camera:Camera;
 		protected var video:Video;
@@ -29,8 +32,11 @@ package model
 		protected var _width:int=0;
 		protected var _height:int=0;
 		protected var encoder:JPGAsyncEncoder = new JPGAsyncEncoder(85);
+		protected var bitmapData:BitmapData;
+		protected var overlay:Sprite;
+		protected var mat:Matrix=new Matrix();
 		
-		public function CameraDevice(_width:int=1280, _height:int=720)
+		public function CameraDevice(_width:int=320, _height:int=240)
 		{
 			this._width = _width;
 			this._height = _height;
@@ -49,9 +55,16 @@ package model
 
 				camera.setMode(_width, _height, 25); 
 				camera.setQuality(0,100);
-				video = new Video(_width, _height);
+				video = new Video(_width*4, _height*4);
 				video.attachCamera(camera); 
-				this.addChild(video);
+				bitmapData = new BitmapData(_width, _height);
+				photoCapture = new Bitmap(bitmapData, "auto", true);
+				this.addChild( photoCapture );
+				
+				mat.scale(_width/video.width,_height/video.height);
+				mat.translate(0,0);
+				
+				//this.addChild(video);
 				
 				this.width = _width;
 				this.height = _height;
@@ -63,12 +76,14 @@ package model
 		}
 		public function destroy():void
 		{
+			this.removeEventListener( Event.ENTER_FRAME, updatePhoto );
 			if (video!=null) {
 				video.attachCamera(null);
 				if (this.contains(video))
 					this.removeChild( video );
 
 			}
+			
 			if (photoCapture!=null)
 			if (this.contains(photoCapture))
 				this.removeChild( photoCapture );
@@ -94,7 +109,9 @@ package model
 			Console.log("onAllowClick", this);
 			this.onDenyClick();
 			this.addEventListener( MouseEvent.CLICK, takePhoto);
+			this.addEventListener( Event.ENTER_FRAME, updatePhoto);
 			this.mouseEnabled = this.buttonMode = true;
+			
 		}
 		protected function onDenyClick():void
 		{
@@ -102,27 +119,44 @@ package model
 			this.mouseEnabled = this.buttonMode = false;
 		}
 			
+		protected function updatePhoto( e:Event = null ):void
+		{
+
+			photoCapture.bitmapData.draw( video, mat );
+		
+			
+			
+		}
 		protected function takePhoto( e:Event = null ):void
 		{
 			// save file
-			
-			var bitmapData:BitmapData = new BitmapData(_width, _height);
-			bitmapData.draw(video);
-			photoCapture = new Bitmap(bitmapData, "auto", true)
-			this.addChild( photoCapture );
+			this.removeEventListener( Event.ENTER_FRAME, updatePhoto );
+			var finalCapture:BitmapData = new BitmapData(video.width, video.height);
+			finalCapture.draw( video );
 			video.visible = false;
 			video.attachCamera(null);
-			this.removeChild( video );
+			if (this.contains( video))
+				this.removeChild( video );
 			camera = null;
 			video = null;
 			
+			overlay = new Sprite();
+			overlay.graphics.beginFill(0xFFFFFF,1);
+			overlay.graphics.drawRect(0,0, _width, _height);
+			overlay.graphics.endFill();
+			this.addChild( overlay );
+			TweenMax.to( overlay, 1.5, { alpha:0, onComplete: hideOverlay});
+			
 			encoder.addEventListener(ProgressEvent.PROGRESS, onEncodingProgress);
 			encoder.addEventListener(Event.COMPLETE, onEncodeComplete);
-			encoder.encodeAsync(bitmapData);
+			encoder.encodeAsync(finalCapture);
 			
 			
-			
-			
+		}
+		protected function hideOverlay( e:Event=null ):void
+		{
+			this.removeChild( overlay );
+			overlay = null;
 		}
 		
 		private function onEncodingProgress(e:ProgressEvent):void 
