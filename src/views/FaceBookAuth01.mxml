@@ -27,7 +27,8 @@
 			import mx.rpc.events.ResultEvent;
 			
 			import spark.filters.DropShadowFilter;
-			import spark.primitives.Rect;			
+			import spark.primitives.Rect;	
+			import model.Config;
 			
 			protected var webView:StageWebView;
 			protected var openBrowser:Boolean = false; 
@@ -49,6 +50,8 @@
 			
 			protected var intervallo:Number;
 			
+			protected var pref:Config;
+			
 			public function created(event:FlexEvent=null):void
 			{
 				this.addEventListener( Event.INIT, init);
@@ -64,10 +67,13 @@
 					optin_terms = data.optin_terms;
 					setToken.url = (this.parentApplication).baseURL+'setuser.php'
 				}
+				pref = new Config();
+				var facebookAppID:String = pref.prefsXML..facebookAppID;
+				var redirect_uri:String = pref.prefsXML..serverIP;
 				webView= new StageWebView();
 				fbRedir = (this.parentApplication).baseURL+"php-sdk/examples/landed.php";
 				fbLogout = (this.parentApplication).baseURL+"php-sdk/examples/logout.php"; // &display=touch publish_checkins ,offline_access
-				fbAuthURL = "https://graph.facebook.com/oauth/authorize?type=user_agent&scope=email,user_photos,publish_stream,publish_checkins&client_id="+(this.parentApplication).facebookAppID+"&redirect_uri="+(this.parentApplication).baseURL+"php-sdk/examples/landed.php&response_type=token";
+				fbAuthURL = "http://graph.facebook.com/oauth/authorize?type=user_agent&scope=email,publish_actions,&client_id="+facebookAppID+"&display=touch&redirect_uri=http://"+redirect_uri+"facebook/php-sdk/examples/landed.php&response_type=token"; //&auth_type=reauthenticate
 				//
 				createBrowser();
 			}
