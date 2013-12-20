@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <preferences>
   <serverIP>www.bpllive.com</serverIP>
-  <facebookAppID>1707167398</facebookAppID>
+  <facebookAppID>170716739801062</facebookAppID>
   <localIP>192.168.0.150/backend</localIP>
   <urnLength>16</urnLength>
   <internetTimeout>10</internetTimeout>	
