@@ -1,21 +1,21 @@
 <game>
-	<team name="Arsenal" id="Arsenal"color="0xA9172A" logo="Arsenal.png"/>
-	<team name="Cardiff" id="Cardiff"color="0xA9172A" logo="Cardiff-City.png"/>
-	<team name="Chelsea" id="Chelsea"color="0xA9172A" logo="Chelsea.png"/>
-	<team name="Crystal Palace" id="Crystal-Palace"color="0xA9172A" logo="Crystal-Palace.png"/>
-	<team name="Everton" id="Everton"color="0xA9172A" logo="Everton.png"/>
-	<team name="Fulham" id="Fullham"color="0xA9172A" logo="Fulham.png"/>
-	<team name="Hull" id="Hull"color="0xA9172A" logo="Hull-City.png"/>
-	<team name="Liverpool" id="Liverpool"color="0xA9172A" logo="Liverpool.png"/>
-	<team name="Manchester City" id="Man-City"color="0xA9172A" logo="Man-City.png"/>
-	<team name="Manchester United" id="Man-UTD"color="0xA9172A" logo="Man-Utd.png"/>
-	<team name="Newcastle" id="Newcastle"color="0xA9172A" logo="Newcastle.png"/>
-	<team name="Norwich" id="Norwich"color="0xA9172A" logo="Norwich.png"/>
-	<team name="Southampton" id="Southampton"color="0xA9172A" logo="Southampton.png"/>
-	<team name="Stoke City" id="Stoke"color="0xA9172A" logo="Stoke.png"/>
-	<team name="Swansea" id="Swansea"color="0xA9172A" logo="Swansea.png"/>
-	<team name="Sunderland" id="Sunderland"color="0xA9172A" logo="Sunderland.png"/>
-	<team name="Tottenham" id="Tottenham"color="0xA9172A" logo="Tottenham.png"/>
-	<team name="West Brom" id="WBA"color="0xA9172A" logo="WBA.png"/>
-	<team name="West Ham" id="West-Ham"color="0xA9172A" logo="West-ham.png"/>
+	<team id="1" name="Arsenal" id="Arsenal"color="0xA9172A" logo="Arsenal.png"/>
+	<team id="2" name="Cardiff" id="Cardiff"color="0xA9172A" logo="Cardiff-City.png"/>
+	<team id="3" name="Chelsea" id="Chelsea"color="0xA9172A" logo="Chelsea.png"/>
+	<team id="4" name="Crystal Palace" id="Crystal-Palace"color="0xA9172A" logo="Crystal-Palace.png"/>
+	<team id="5" name="Everton" id="Everton"color="0xA9172A" logo="Everton.png"/>
+	<team id="6" name="Fulham" id="Fullham"color="0xA9172A" logo="Fulham.png"/>
+	<team id="7" name="Hull" id="Hull"color="0xA9172A" logo="Hull-City.png"/>
+	<team id="8" name="Liverpool" id="Liverpool"color="0xA9172A" logo="Liverpool.png"/>
+	<team id="9" name="Manchester City" id="Man-City"color="0xA9172A" logo="Man-City.png"/>
+	<team id="10" name="Manchester United" id="Man-UTD"color="0xA9172A" logo="Man-Utd.png"/>
+	<team id="11" name="Newcastle" id="Newcastle"color="0xA9172A" logo="Newcastle.png"/>
+	<team id="12" name="Norwich" id="Norwich"color="0xA9172A" logo="Norwich.png"/>
+	<team id="13" name="Southampton" id="Southampton"color="0xA9172A" logo="Southampton.png"/>
+	<team id="14" name="Stoke City" id="Stoke"color="0xA9172A" logo="Stoke.png"/>
+	<team id="15" name="Swansea" id="Swansea"color="0xA9172A" logo="Swansea.png"/>
+	<team id="16" name="Sunderland" id="Sunderland"color="0xA9172A" logo="Sunderland.png"/>
+	<team id="17" name="Tottenham" id="Tottenham"color="0xA9172A" logo="Tottenham.png"/>
+	<team id="18" name="West Brom" id="WBA"color="0xA9172A" logo="WBA.png"/>
+	<team id="19" name="West Ham" id="West-Ham"color="0xA9172A" logo="West-ham.png"/>
 </game>
