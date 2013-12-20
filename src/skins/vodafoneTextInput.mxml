@@ -25,20 +25,23 @@
 		<s:stroke>
 			<s:SolidColorStroke weight="2" caps="none" joints="miter" miterLimit="10" color="#E60000"/>
 		</s:stroke>
+		<s:fill>
+			<s:SolidColor color="0xffffff" />
+		</s:fill>
 	</s:Rect>
 	<s:RichText id="promptDisplay" includeIn="disabledWithPrompt,normalWithPrompt"
-				fontFamily="Vodafone Rg" fontSize="31.572" width="100%"
+				fontFamily="StandardRegularAllCase" fontSize="31.572" width="100%"
 				x.disabledWithPrompt="21" y.disabledWithPrompt="19"  
 				left.normalWithPrompt="21" right.normalWithPrompt="13" top.normalWithPrompt="19"
 				bottom.normalWithPrompt="17"/>
 	<s:RichText id="textDisplay1" d:id="54" d:userLabel="enter text..."
 				includeIn="normal" x="21" y="19" width="100%"
-				ai:aa="2" color="#000000" columnCount="1" fontFamily="Vodafone Rg" fontSize="31.572"
+				ai:aa="2" color="#000000" columnCount="1" fontFamily="StandardRegularAllCase" fontSize="31.572"
 				kerning="on" tabStops="S94.7159805297852" flm:variant="38"
 				whiteSpaceCollapse="preserve"/>
 	<s:RichEditableText id="textDisplay" d:id="54" d:userLabel="enter text..."
 						includeIn="disabled,normal" ai:aa="2" color="#000000" columnCount="1"
-						fontFamily="Vodafone Rg" fontSize="31.572" heightInLines="1" kerning="on"
+						fontFamily="StandardRegularAllCase" fontSize="31.572" heightInLines="1" kerning="on"
 						tabStops="S94.7159805297852" flm:variant="38" whiteSpaceCollapse="preserve"
 						width="100%"  x="21" y="19"
 						/>
