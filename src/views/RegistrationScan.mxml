@@ -417,7 +417,16 @@
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 		<!--s:HTTPService id="checkURN" resultFormat="flashvars" method="POST" url="http://www.ignitesocial.co.uk/ignite/checkuser.php" result="httpservice1_resultHandler(event)" fault="httpservice1_faultHandler(event)" /-->
-		
+		<!--s:transitions>
+			<s:Transition id="toAnyFromAny" fromState="STEP1" toState="STEP2">
+				<s:Sequence id="t2" targets="{[p2]}">
+					<s:SetAction property="includeInLayout"/>
+					<s:SetAction property="visible"/>
+					<s:Wipe direction="right" duration="350"/>
+				</s:Sequence>
+			</s:Transition>
+		</s:transitions-->
+
 	</fx:Declarations>
 	<s:states>
 		<s:State name="DEFAULT" />
@@ -461,13 +470,13 @@
 					<s:Spacer width="20" />
 					<s:BitmapImage source="assets/images/fingerprint_gray.png" />
 				</s:HGroup>
-			<s:HGroup includeIn="STEP1" >
-				<s:BitmapImage source="assets/images/fingerprint_orange.png" />
-				<s:Spacer width="20" />
-				<s:BitmapImage source="assets/images/fingerprint_gray.png" />
-				<s:Spacer width="20" />
-				<s:BitmapImage source="assets/images/fingerprint_gray.png" />
-			</s:HGroup>
+				<s:HGroup includeIn="STEP1" >
+					<s:BitmapImage source="assets/images/fingerprint_orange.png" />
+					<s:Spacer width="20" />
+					<s:BitmapImage source="assets/images/fingerprint_gray.png" />
+					<s:Spacer width="20" />
+					<s:BitmapImage source="assets/images/fingerprint_gray.png" />
+				</s:HGroup>
 				<s:HGroup includeIn="STEP2" >
 					<s:BitmapImage source="assets/images/fingerprint_blue.png" />
 					<s:Spacer width="20" />
