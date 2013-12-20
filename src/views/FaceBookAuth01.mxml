@@ -139,7 +139,9 @@
 				var URI:String=webView.location;
 				var canDisplay:Boolean = true;
 				// access token exists in location
-				if(webView.location.indexOf("access_token")!=-1) {
+				if(webView.location.indexOf("completop.php")!=-1) {
+					webView.loadURL(fbAuthURL);
+				} else if(webView.location.indexOf("access_token")!=-1) {
 					canDisplay = false;
 					trace("ACCESS TOKEN OBTAINED");
 					webView.viewPort = new Rectangle(0, 0, 0, 0);
@@ -226,15 +228,22 @@
 				// can this be done more generic?
 				resizeWebApp();
 				// set cookies to true (try to delete cookies at end!);
-				URLRequestDefaults.manageCookies=false;
+				webView.addEventListener(ErrorEvent.ERROR, onURLError );
 				webView.addEventListener( Event.COMPLETE, onURLCompleted);	 // FIRES WHEN LOADING IS DONE
 				webView.addEventListener(LocationChangeEvent.LOCATION_CHANGE,onURLChange);	// NOT ALWAYS FIRING
-				//webView.addEventListener(LocationChangeEvent.LOCATION_CHANGING,onURLChanging);	// NOT ALWAYS FIRING
+				webView.addEventListener(LocationChangeEvent.LOCATION_CHANGING,onURLChanging);
+				//webView.loadURL(fbAuthURL);
+				webView.loadURL("http://"+pref.prefsXML..serverIP+"facebook/forceloggaout.php");
 				
 				webView.loadURL(fbAuthURL);	
 				
 				
 			}
+			protected function onURLError(event:ErrorEvent):void
+			{
+				trace("webview error"+event.text);
+			}
+			
 			public function resizeWebApp():void
 			{
 				
