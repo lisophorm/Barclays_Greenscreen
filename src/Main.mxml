@@ -180,7 +180,7 @@
 				Console.log("baseURL: "+baseURL, this);
 				Console.log("localURL: "+localURL, this);
 				trace("scoreformat is now: "+scoreFormat);
-				trace("appplicationtype is now: "+ApplicationType);
+				Console.log("appplicationtype is now: "+ApplicationType, this);
 				monitor =  new MonitorConnection(baseURL+"ping.php");			
 				
 			//	if (!monitor.hasEventListener( MonitorConnection.EVENT_INTERNET_NOT_AVAILABLE))

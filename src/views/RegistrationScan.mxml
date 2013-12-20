@@ -443,7 +443,6 @@
 					 text.STEP3="STEP 3: PLACE FINGER ON SCANNER AND LIFT"
 					 text.REGISTER_COMPLETE="SCANNING SUCCESFUL"/>
 			
-			<s:BitmapImage source="@Embed('assets/images/scanyourwristband.png')" visible="false" includeInLayout="false"/>
 			<s:TextInput id="barcodeWriter" top="-50" addedToStage="getBarcodeFocus()" alpha="0" includeInLayout="false" visible="false" text="" textAlign="left" softKeyboardActivating="urn_softKeyboardActivatingHandler(event)"/>
 			
 			<s:TextInput id="barcodeInput" includeInLayout="false" addedToStage="getBarcodeFocus()"  visible="false" text="" textAlign="left"/>
