@@ -526,8 +526,8 @@
 						//this.navigator.popToFirstView(fadeTrans);
 						trace("*** RESTART WAS CALLED ***");
 						deleteWindowsCookies();
-						//gotoView("RegisterView");
-						gotoView("SelectTeam")
+						gotoView("RegisterView");
+						//gotoView("SelectTeam", {urn: "10002021"})
 						break;
 					case ViewEvent.LOCATION_CONFIG:
 						gotoView("SelectApplication", { xml : pref.prefsXML } );
@@ -583,7 +583,14 @@
 						break;
 					case ViewEvent.LOCATION_SELECT_TEAM:
 						trace("Select your team");
-						gotoView("SelectTeam",  e.object);
+						var data:Object = e.object;
+						if (data!=null)
+						{
+							data.urn = barcode;
+						} else {
+							data = {urn: barcode};
+						}
+						gotoView("SelectTeam",  data);
 						break;
 					case ViewEvent.LOCATION_TEAM_SELECTED:
 						trace("Attempting to pop current view from NavigationView");

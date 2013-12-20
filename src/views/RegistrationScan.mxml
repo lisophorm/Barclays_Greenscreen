@@ -192,7 +192,7 @@
 			}
 			
 			
-			protected function exit(e:FlexEvent=null):void
+			protected function exit(e:Event=null):void
 			{
 				Console.log("*** EXIT Registration ***", this);
 				//this.removeEventListener( Event.INIT, init);
@@ -308,9 +308,9 @@
 			protected function onNewUser(uid:*):void
 			{
 				
-				this.parentApplication.dispatchEvent( new UserEvent(UserEvent.URN, uid));
-				this.parentApplication.dispatchEvent( new UserEvent(UserEvent.REGISTERED));
-				this.parentApplication.dispatchEvent(new ViewEvent(ViewEvent.LOCATION_SELECT_USER_TYPE));
+				this.parentApplication.dispatchEvent( new UserEvent(UserEvent.URN, uid) );
+				this.parentApplication.dispatchEvent( new UserEvent(UserEvent.REGISTERED) );
+				this.parentApplication.dispatchEvent(new ViewEvent(ViewEvent.LOCATION_SELECT_USER_TYPE) );
 				
 			}
 			protected function onAlreadyRegistered(uid:*, type:String):void

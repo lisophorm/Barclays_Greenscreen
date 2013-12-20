@@ -53,8 +53,8 @@ package model
 					Console.log("startSocket "+server, this);
 					server.start();
 				} else {
-					//server.stop();
-					//server.start();
+					server.stop();
+					server.start();
 				}
 				hasStarted = true;
 						

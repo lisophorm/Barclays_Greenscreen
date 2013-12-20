@@ -13,6 +13,7 @@
 			import com.greensock.easing.Sine;
 			import com.utils.Console;
 			
+			import mx.core.IVisualElement;
 			import mx.events.FlexEvent;
 			import mx.rpc.events.FaultEvent;
 			import mx.rpc.events.ResultEvent;
@@ -47,7 +48,7 @@
 			public function created(event:FlexEvent=null):void
 			{
 				this.addEventListener( Event.INIT, init);
-				init();
+				//init();
 			}
 			public function init(event:Event=null):void
 			{
@@ -57,13 +58,13 @@
 				{
 					data = this.parentApplication.data;
 					currentURN = data.urn;
-					type = data.type;
 					
-					Console.log( data.type, this );
+					Console.log( data.urn, this );
 					
 				}
 				teamFile = File.applicationDirectory.resolvePath('assets/xml/teams.xml')
 				readXML();
+				
 				
 			}
 			private function readXML():void 
@@ -98,12 +99,11 @@
 			
 			private function processXMLData():void 
 			{
-				trace("file size:"+stream.bytesAvailable);
+				Console.log("file size:"+stream.bytesAvailable, this);
 				
 				var xml:XML = XML(stream.readUTFBytes(stream.bytesAvailable));
 				stream.close();
 				teamDataList = (xml..team);
-				this.createListeners();
 				Console.log(teamDataList, this);
 			}
 			
@@ -140,15 +140,23 @@
 			}
 
 			
-			private function createListeners():void{
+			private function createListeners( e:Event= null ):void
+			{
+				Console.log("createListeners "+CarouselGroup.numElements, this);
 				for(var j:uint = 0; j < CarouselGroup.numElements; j++)
 				{
-					if (CarouselGroup.getElementAt( j )!=null)
+					var item:IVisualElement = CarouselGroup.getElementAt( j );
+					if (item!=null)
 					{
+						//Console.log("item:"+item, this);
 						//MOUSE EVENT
-						CarouselGroup.getElementAt( j ).addEventListener(MouseEvent.CLICK, mySelect);
-						CarouselGroup.getElementAt( j ).addEventListener(MouseEvent.ROLL_OVER, myRollOver);
-						CarouselGroup.getElementAt( j ).addEventListener(MouseEvent.ROLL_OUT, myRollOut);
+						item.removeEventListener(MouseEvent.CLICK, mySelect);
+						item.removeEventListener(MouseEvent.ROLL_OVER, myRollOver);
+						item.removeEventListener(MouseEvent.ROLL_OUT, myRollOut);
+						
+						item.addEventListener(MouseEvent.CLICK, mySelect);
+						item.addEventListener(MouseEvent.ROLL_OVER, myRollOver);
+						item.addEventListener(MouseEvent.ROLL_OUT, myRollOut);
 						
 						
 					}
@@ -180,10 +188,11 @@
 			}
 			protected function publish( teamID:int ):void
 			{
+				publishSelectTeam.url = this.parentApplication.localURL+'userteam.php';
+				Console.log("publishing to "+publishSelectTeam.url, this);
 				var passVars:Object=new Object();
 				passVars.urn=currentURN;
 				passVars.team_id= teamID;
-				
 				publishSelectTeam.send(passVars);
 				//this.parentApplication.dispatchEvent( new KioskProgressEvent( KioskProgressEvent.UPDATE_COMPLETE ));
 				
@@ -191,6 +200,7 @@
 			protected function publish_success(event:ResultEvent):void
 			{
 				//this.parentApplication.dispatchEvent( new KioskProgressEvent( KioskProgressEvent.UPDATE_COMPLETE ));
+				Console.log("publish_success: "+event.result.result, this);
 				if(event.result.result!="SUCCESS") 
 				{
 					this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, event.result.message, "ERROR", init));
@@ -210,11 +220,15 @@
 			}
 			
 			//Roll Over ... Add Glow
-			private function myRollOver(event:MouseEvent):void{	
+			private function myRollOver(event:MouseEvent):void
+			{	
+				//Console.log("Rollover", this);
 				event.currentTarget.filters =[myGlowIs];
 			}
 			//Roll Out ... Remove Glow
-			private function myRollOut(event:MouseEvent):void{	
+			private function myRollOut(event:MouseEvent):void
+			{
+			
 				event.currentTarget.filters = null;
 			}
 			]]>
@@ -224,13 +238,13 @@
 		<s:Power id="powerEasing" exponent="4"/>
 		<s:Sine id="sineEasing" easeInFraction="0.3"/>
 		<s:Linear id="slowDown" easeInFraction=".1" easeOutFraction=".1"  />
-		<s:HTTPService id="publishSelectTeam" resultFormat="flashvars" method="POST" url="{this.parentApplication.localURL+'userTeam.php'}" result="publish_success(event)" fault="publish_failed(event)" />
+		<s:HTTPService id="publishSelectTeam" resultFormat="flashvars" method="POST" url="{this.parentApplication.localURL+'userteam.php'}" result="publish_success(event)" fault="publish_failed(event)" />
 
 	</fx:Declarations>
 	<!-- Menu -->
 	<!-- Field -->
 		<s:VGroup height="100%" width="100%" verticalAlign="middle" horizontalAlign="center"  >
-			<s:DataGroup id="CarouselGroup" horizontalCenter="0" height="260" width="1200" itemRenderer="views.renderer.logoItemRenderer">			
+			<s:DataGroup id="CarouselGroup" updateComplete="createListeners(event)" horizontalCenter="0" height="260" width="1240" itemRenderer="views.renderer.logoItemRenderer">			
 				<s:layout>
 					<s:TileLayout orientation="rows" clipAndEnableScrolling="true"
 								  requestedColumnCount="-1" requestedRowCount="-1"
