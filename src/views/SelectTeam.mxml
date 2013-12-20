@@ -9,6 +9,8 @@
 	
 	<fx:Script>
 		<![CDATA[
+			import com.greensock.TweenMax;
+			import com.greensock.easing.Sine;
 			import com.utils.Console;
 			
 			import mx.events.FlexEvent;
@@ -19,10 +21,12 @@
 			
 			import events.KioskError;
 			import events.KioskEvent;
+			import events.KioskProgressEvent;
 			import events.UserEvent;
 			import events.ViewEvent;
 			
 			import model.ML;
+			
 			
 			
 			public var data:Object;
@@ -34,6 +38,10 @@
 			public var teamDataList:XMLList;
 			protected var teamFile:File;
 			protected var stream:FileStream;
+			private var myGlowIs:GlowFilter = new GlowFilter(0xffffff,1,12,12,2);
+			private var noGlowIs:GlowFilter = new GlowFilter(0xffffff,0,0,0,0);
+			
+			protected var currentURN:String;
 			
 			
 			public function created(event:FlexEvent=null):void
@@ -48,7 +56,9 @@
 				if (this.parentApplication.data!=null)
 				{
 					data = this.parentApplication.data;
+					currentURN = data.urn;
 					type = data.type;
+					
 					Console.log( data.type, this );
 					
 				}
@@ -85,8 +95,6 @@
 			}
 			
 			
-			private var myGlowIs:GlowFilter = new GlowFilter(0xffffff,1,12,12,2);
-			private var noGlowIs:GlowFilter = new GlowFilter(0xffffff,0,0,0,0);
 			
 			private function processXMLData():void 
 			{
@@ -95,7 +103,7 @@
 				var xml:XML = XML(stream.readUTFBytes(stream.bytesAvailable));
 				stream.close();
 				teamDataList = (xml..team);
-				
+				this.createListeners();
 				Console.log(teamDataList, this);
 			}
 			
@@ -132,22 +140,97 @@
 			}
 
 			
+			private function createListeners():void{
+				for(var j:uint = 0; j < CarouselGroup.numElements; j++)
+				{
+					if (CarouselGroup.getElementAt( j )!=null)
+					{
+						//MOUSE EVENT
+						CarouselGroup.getElementAt( j ).addEventListener(MouseEvent.CLICK, mySelect);
+						CarouselGroup.getElementAt( j ).addEventListener(MouseEvent.ROLL_OVER, myRollOver);
+						CarouselGroup.getElementAt( j ).addEventListener(MouseEvent.ROLL_OUT, myRollOut);
+						
+						
+					}
+				}
+			}
 			
+			private function mySelect(event:MouseEvent):void
+			{
+					var currentIndex:int = -1;
+					
+					for(var j:uint = 0; j < CarouselGroup.numElements; j++)
+					{
+						if (CarouselGroup.getElementAt( j )==event.currentTarget)
+						{
+							currentIndex = j;
+							Console.log("currentIndex: "+currentIndex,this)
+						}
+					}
+					/*
+					
+					TweenMax.to(CarouselGroup.getElementAt( currentIndex ), .5, 
+						{ scaleX: 1.2, scaleY: 1.2, ease: com.greensock.easing.Sine.easeOut, 
+							onComplete: function():void { gotoTeam(teamDataList[currentIndex].@name.toString()) 
+							} 
+						}); 
+					*/
+					Console.log( "currentIndex: "+ teamDataList[currentIndex].@name, this );
+					publish( teamDataList[currentIndex].@id )
+			}
+			protected function publish( teamID:int ):void
+			{
+				var passVars:Object=new Object();
+				passVars.urn=currentURN;
+				passVars.team_id= teamID;
+				
+				publishSelectTeam.send(passVars);
+				//this.parentApplication.dispatchEvent( new KioskProgressEvent( KioskProgressEvent.UPDATE_COMPLETE ));
+				
+			}
+			protected function publish_success(event:ResultEvent):void
+			{
+				//this.parentApplication.dispatchEvent( new KioskProgressEvent( KioskProgressEvent.UPDATE_COMPLETE ));
+				if(event.result.result!="SUCCESS") 
+				{
+					this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, event.result.message, "ERROR", init));
+				} else 
+				{
+					complete();
+				}
+			}
+			protected function publish_failed(event:FaultEvent):void
+			{
+				this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, event.fault.faultString, "NETWORK ERROR"));
+				
+			}
+			protected function complete():void
+			{
+				this.parentApplication.dispatchEvent( new ViewEvent( ViewEvent.LOCATION_REGISTRATION_COMPLETE, data ) );
+			}
 			
+			//Roll Over ... Add Glow
+			private function myRollOver(event:MouseEvent):void{	
+				event.currentTarget.filters =[myGlowIs];
+			}
+			//Roll Out ... Remove Glow
+			private function myRollOut(event:MouseEvent):void{	
+				event.currentTarget.filters = null;
+			}
 			]]>
 	</fx:Script>
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
-		<fx:String id="game_subtext"><![CDATA[CHOOSE OUR FAVORITE PLAYERS TO MAKE UP YOUR CLUB’S ULTIMATE DREAM TEAM]]></fx:String>
-		<fx:String id="teamsheet_subtext"><![CDATA[A FEW THINGS YOU MIGHT NOT HAVE KNOWN ABOUT YOUR FAVOURITE CLUB]]></fx:String>
 		<s:Power id="powerEasing" exponent="4"/>
 		<s:Sine id="sineEasing" easeInFraction="0.3"/>
 		<s:Linear id="slowDown" easeInFraction=".1" easeOutFraction=".1"  />
+		<s:HTTPService id="publishSelectTeam" resultFormat="flashvars" method="POST" url="{this.parentApplication.localURL+'userTeam.php'}" result="publish_success(event)" fault="publish_failed(event)" />
+
 	</fx:Declarations>
 	<!-- Menu -->
 	<!-- Field -->
 		<s:VGroup height="100%" width="100%" verticalAlign="middle" horizontalAlign="center"  >
-			<s:DataGroup id="CarouselGroup" horizontalCenter="0" height="350" width="800" itemRenderer="views.renderer.logoItemRenderer">			
+			<s:DataGroup id="CarouselGroup" horizontalCenter="0" height="260" width="1200" itemRenderer="views.renderer.logoItemRenderer">			
 				<s:layout>
 					<s:TileLayout orientation="rows" clipAndEnableScrolling="true"
 								  requestedColumnCount="-1" requestedRowCount="-1"
