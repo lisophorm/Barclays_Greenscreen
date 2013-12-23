@@ -6,7 +6,7 @@
   <urnLength>16</urnLength>
   <internetTimeout>10</internetTimeout>	
   <scoreFormat>99:99.99</scoreFormat>
-  <applicationtype>REGISTRATION</applicationtype>
+  <applicationtype>registration</applicationtype>
   <latitude></latitude>
   <longitude></longitude>
   <aespassword>asdghylmn84</aespassword>

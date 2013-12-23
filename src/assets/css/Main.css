@@ -12,8 +12,7 @@ global
 }
 s|Label  {
 	fontSize: 20;
-	fontFamily: "StandardRegularAllCase";
-	
+	fontFamily: "StandardRegularAllCase";	
 	color: #FFFFFF;
 	
 }
@@ -75,7 +74,7 @@ s|VGroup.Game s|Label
 	fontSize: 32;
 	fontFamily: "StandardRegularAllCase";
 	textAlign: left;
-	color: #000000;
+	color: #FFFFFF;
 }
 
 s|VGroup.Game s|Label.userInfo
@@ -83,7 +82,7 @@ s|VGroup.Game s|Label.userInfo
 	fontSize: 32;
 	fontFamily: "StandardRegularAllCase"; 
 	textAlign: left;
-	color: #000000;
+	color: #FFFFFF;
 }
 
 s|VGroup.Game s|Label.heading
@@ -91,7 +90,7 @@ s|VGroup.Game s|Label.heading
 	fontSize: 32;
 	fontFamily: "StandardRegularAllCase";
 	textAlign: left;
-	color: #E60000;
+	color: #FFFFFF;
 }
 s|Button {
 	skinClass: ClassReference("skins.vodafoneButton");

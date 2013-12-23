@@ -130,7 +130,7 @@
 			}
 			protected function scan_restart( e:RegistrationEvent ):void
 			{
-
+				
 				this.currentState = "SCANNING_RESTART";
 			}
 			protected function scan_again( e:RegistrationEvent ):void

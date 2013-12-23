@@ -130,7 +130,7 @@ package model
 			
 			
 		}
-		protected function takePhoto( e:Event = null ):void
+		public function takePhoto( e:Event = null ):void
 		{
 			// save file
 			this.removeEventListener( Event.ENTER_FRAME, updatePhoto );

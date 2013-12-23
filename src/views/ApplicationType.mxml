@@ -105,7 +105,7 @@
 			<s:FormItem width="365" label="Application:">
 				<s:VGroup width="628">
 						<s:RadioButton width="500" label="Registration Only" value="registration" group="{radioGroup}" skinClass="skins.vodafoneRadioButton" />
-						<s:RadioButton width="500" label="Pit Stop Challenge" value="pitstop" group="{radioGroup}" skinClass="skins.vodafoneRadioButton" />
+						<s:RadioButton width="500" label="Photocapture" value="photocapture" group="{radioGroup}" skinClass="skins.vodafoneRadioButton" />
 						<s:RadioButton width="500" label="Simulator" value="simulator" group="{radioGroup}" skinClass="skins.vodafoneRadioButton" />
 						<s:RadioButton width="500" label="Green screen - Sit In" value="greenscreen" group="{radioGroup}" skinClass="skins.vodafoneRadioButton" />
 						<s:RadioButton width="500" label="Green screen - Celebrate" value="greenscreen_celebrate" group="{radioGroup}" skinClass="skins.vodafoneRadioButton" />

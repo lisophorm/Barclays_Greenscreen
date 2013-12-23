@@ -618,7 +618,7 @@
 						{
 							//gotoView("CameraCapture", {urn: barcode, type: ApplicationTypeNumber, facebook: this.isFacebookRegistered});
 							
-							if (this.isFacebookRegistered)
+							if (true || this.isFacebookRegistered)
 							{
 								gotoView("CameraCapture", {urn: barcode, type: ApplicationTypeNumber, facebook: this.isFacebookRegistered});
 							} else

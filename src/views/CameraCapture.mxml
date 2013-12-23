@@ -73,6 +73,7 @@
 					// LOOK-UP USER INFO FOR THIS URN
 					getUser.send(passVars);
 					fileTransfer=false;
+					this.setupCamera()
 				} else {
 					trace("URN MISSING");
 				}					
@@ -111,6 +112,34 @@
 // CAMERA HANDLING
 			
 			//take a new picture with the camera
+			protected function setupCamera():void
+			{
+				takePhotoButton.mouseEnabled = takePhotoButton.buttonMode = true;
+				if (CameraUI.isSupported)
+				{
+					takePhotoButton.removeEventListener( MouseEvent.CLICK, takePhoto);
+					takePhotoButton.addEventListener( MouseEvent.CLICK, takePhoto);
+				} else 
+				{
+					if (CameraDevice.isSupported)
+					{
+						Console.log("standard camera not supported",this);
+						webcamera = new CameraDevice();					
+						webcamera.addEventListener(CameraEvent.COMPLETE,takePhotoStandardCompleteHandler);
+						
+						videoholder.addElement( webcamera );
+						videoholder.swapElementsAt( 0,1 );
+						takePhotoButton.removeEventListener( MouseEvent.CLICK, webcamera.takePhoto);
+						takePhotoButton.addEventListener( MouseEvent.CLICK, webcamera.takePhoto);	
+					} else 
+					{
+						Console.log("camera not supported",this);
+						this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, "CAMERA NOT SUPPORTED", "DEVICE ERROR"));
+						statusText.text = "Camera not supported on this device.";	
+					}
+					
+				}
+			}
 			protected function takePhoto(event:MouseEvent):void
 			{
 				if (CameraUI.isSupported)
@@ -122,27 +151,7 @@
 					myCam.addEventListener(MediaEvent.COMPLETE,takePhotoCompleteHandler);
 				
 				}
-				else
-				{
-					
-					
-					if (CameraDevice.isSupported)
-					{
-						Console.log("standard camera not supported",this);
-						webcamera = new CameraDevice();					
-						webcamera.addEventListener(CameraEvent.COMPLETE,takePhotoStandardCompleteHandler);
-						videoholder.addElement(webcamera )
-							
-					} else 
-					{
-						Console.log("camera not supported",this);
-						this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, "CAMERA NOT SUPPORTED", "DEVICE ERROR"));
-						statusText.text = "Camera not supported on this device.";	
-					}
-					
-					
-					
-				}
+				
 			}
 			
 			//select a picture from the camera roll (gallery)
@@ -289,33 +298,21 @@
 		<s:State name="default" />
 		<s:State name="facebook" />
 	</s:states>
-	<s:VGroup id="videoholder" horizontalCenter="0" verticalCenter="0" >
-		
-	</s:VGroup>
-	<s:VGroup styleName="Game" horizontalAlign="center" verticalAlign="middle" width="100%" height="592">
-			<s:VGroup>
-				<s:Label id="statusText" />
-				<s:HGroup horizontalAlign="left">
-					<s:Label width="400" text="Name"/>
-					<s:Spacer width="20" />
-					<s:Label text="{userName}" id="user"  styleName="userInfo" />
-					
-				</s:HGroup>
-				<s:Spacer height="5" />
-				<s:HGroup horizontalAlign="left" includeIn="facebook">
-					<s:Label width="400" text="Published Facebook Posts:"/>
-					<s:Spacer width="20" />
-					<s:Label text="{posts}" id="facebookposts_label" styleName="userInfo" />
-					
-				</s:HGroup>
-				<s:Spacer width="10" height="20"/>
-				<s:HGroup>
-					<s:CheckBox id="facebookposts_check"  label="Post fo Facebook?" skinClass="skins.vodafoneCheckBox" />
-				</s:HGroup>
-				<s:Spacer width="10" height="100"/>
-				<s:HGroup width="100%" horizontalAlign="center">
-					<s:Button id="takePhotoButton" horizontalCenter="0" label="Shoot Photo" click="takePhoto(event)" skinClass="skins.vodafoneButton"/>
-				</s:HGroup>
+	
+	<s:VGroup styleName="Game" horizontalAlign="center" verticalAlign="middle" width="100%" height="592" verticalCenter="0">
+		<s:VGroup id="videoholder" horizontalCenter="0" verticalCenter="0">
+			<s:HGroup width="100%" horizontalAlign="center"><s:Button id="takePhotoButton" horizontalCenter="0" label="Shoot Photo" skinClass="skins.vodafoneButton"/></s:HGroup>
+		</s:VGroup>		
+		<s:VGroup>
+			<s:Label id="statusText" />
+			<s:HGroup horizontalAlign="left">
+				<s:Label width="400" text="Name"/><s:Spacer width="20" /><s:Label text="{userName}" id="user"  styleName="userInfo" />
+			</s:HGroup>
+			<s:Spacer height="5" />
+			<s:HGroup horizontalAlign="left" includeIn="facebook"><s:Label width="400" text="Published Facebook Posts:"/><s:Spacer width="20" /><s:Label text="{posts}" id="facebookposts_label" styleName="userInfo" /></s:HGroup>
+			<s:Spacer width="10" height="20"/>
+			<s:HGroup><s:CheckBox id="facebookposts_check"  label="Post fo Facebook?" skinClass="skins.vodafoneCheckBox" /></s:HGroup>
+			
 			</s:VGroup>
 		</s:VGroup>
 	
