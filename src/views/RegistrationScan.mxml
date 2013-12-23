@@ -450,7 +450,7 @@
 					 text.STEP1="STEP 1: PLACE FINGER ON SCANNER AND LIFT"
 					 text.STEP2="STEP 2: PLACE FINGER ON SCANNER AND LIFT"
 					 text.STEP3="STEP 3: PLACE FINGER ON SCANNER AND LIFT"
-					 text.REGISTER_COMPLETE="SCANNING SUCCESFUL"/>
+					 text.REGISTER_COMPLETE="SCANNING SUCCESSFUL"/>
 			
 			<s:TextInput id="barcodeWriter" top="-50" addedToStage="getBarcodeFocus()" alpha="0" includeInLayout="false" visible="false" text="" textAlign="left" softKeyboardActivating="urn_softKeyboardActivatingHandler(event)"/>
 			

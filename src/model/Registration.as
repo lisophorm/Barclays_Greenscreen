@@ -51,6 +51,7 @@ package model
 				if (!hasStarted)
 				{
 					Console.log("startSocket "+server, this);
+			
 					server.start();
 				} else {
 					server.stop();

@@ -23,6 +23,7 @@ release_desktop/
 **/release/
 /bin-debug/
 /bin/Release/
+Main.swf
 
 # External tool builders
 .externalToolBuilders/
