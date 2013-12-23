@@ -310,8 +310,8 @@
 			</s:HGroup>
 			<s:Spacer height="5" />
 			<s:HGroup horizontalAlign="left" includeIn="facebook"><s:Label width="400" text="Published Facebook Posts:"/><s:Spacer width="20" /><s:Label text="{posts}" id="facebookposts_label" styleName="userInfo" /></s:HGroup>
-			<s:Spacer width="10" height="20"/>
-			<s:HGroup><s:CheckBox id="facebookposts_check"  label="Post fo Facebook?" skinClass="skins.vodafoneCheckBox" /></s:HGroup>
+			
+			<s:HGroup><s:CheckBox id="facebookposts_check"  label="Post to Facebook?" skinClass="skins.vodafoneCheckBox" /></s:HGroup>
 			
 			</s:VGroup>
 		</s:VGroup>
