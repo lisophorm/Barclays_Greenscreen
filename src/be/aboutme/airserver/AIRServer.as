@@ -1,14 +1,16 @@
 package be.aboutme.airserver
 {
+	import com.utils.Console;
+	
+	import flash.events.Event;
+	import flash.events.EventDispatcher;
+	
 	import be.aboutme.airserver.endpoints.IEndPoint;
 	import be.aboutme.airserver.events.AIRServerEvent;
 	import be.aboutme.airserver.events.EndPointEvent;
 	import be.aboutme.airserver.events.MessageReceivedEvent;
 	import be.aboutme.airserver.messages.Message;
 	import be.aboutme.airserver.util.IDGenerator;
-	
-	import flash.events.Event;
-	import flash.events.EventDispatcher;
 	
 	[Event(name="clientAdded", type="be.aboutme.airserver.events.AIRServerEvent")]
 	[Event(name="clientRemoved", type="be.aboutme.airserver.events.AIRServerEvent")]
@@ -72,12 +74,14 @@ package be.aboutme.airserver
 		public function start():void
 		{
 			//open all endpoints
+			Console.log("Start "+started+" "+endPoints,this);
 			for each(var endPoint:IEndPoint in endPoints)
 			{
 				//add event listeners to the endpoint
 				endPoint.addEventListener(EndPointEvent.CLIENT_HANDLER_ADDED, clientHandlerAddedHandler, false, 0, true);
 				//open it
 				endPoint.open();
+				Console.log("open",this);
 			}
 			started = true;
 		}
@@ -112,7 +116,7 @@ package be.aboutme.airserver
 		
 		private function clientHandlerAddedHandler(event:EndPointEvent):void
 		{
-			//trace("AIRSERVER: Client Handler Added Handler");
+			Console.log("AIRSERVER: Client Handler Added Handler", this);
 			var client:Client = new Client(IDGenerator.getUniqueId(), event.clientHandler);
 			_clients.push(client);
 			clientsMap[client.id] = client;
@@ -128,6 +132,7 @@ package be.aboutme.airserver
 		private function clientCloseHandler(event:Event):void
 		{
 			//trace("AIRSERVER: Client Close Handler");
+			Console.log("AIRSERVER: Client Close Handler", this);
 			var client:Client = event.target as Client;
 			var index:int = _clients.indexOf(client);
 			if(index > -1) _clients.splice(index, 1);
