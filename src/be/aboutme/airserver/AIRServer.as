@@ -80,6 +80,7 @@ package be.aboutme.airserver
 				//add event listeners to the endpoint
 				endPoint.addEventListener(EndPointEvent.CLIENT_HANDLER_ADDED, clientHandlerAddedHandler, false, 0, true);
 				//open it
+				
 				endPoint.open();
 				Console.log("open",this);
 			}
