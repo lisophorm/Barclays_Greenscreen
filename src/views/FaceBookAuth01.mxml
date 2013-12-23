@@ -66,7 +66,8 @@
 					currentURN = data.urn;
 					optin_marketing = data.optin_marketing;
 					optin_terms = data.optin_terms;
-					setToken.url = (this.parentApplication).baseURL+'setuser.php'
+					setToken.url = (this.parentApplication).baseURL+'setuser.php';
+					saveData.url = (this.parentApplication).localURL+'register.php';
 				}
 				pref = new Config();
 				var facebookAppID:String = pref.prefsXML..facebookAppID;
