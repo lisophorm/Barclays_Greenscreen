@@ -38,11 +38,12 @@ package model
 		protected var bitmapData:BitmapData;
 		protected var overlay:Sprite;
 		protected var mat:Matrix=new Matrix();
-		
-		public function CameraDevice(_width:int=320, _height:int=240)
+		protected var URN:String = "";
+		public function CameraDevice(_width:int=320, _height:int=240, URN:String = "")
 		{
 			this._width = _width;
 			this._height = _height;
+			this.URN = URN;
 			this.destroy();
 			this.init()
 		}
@@ -166,13 +167,17 @@ package model
 		{
 			//this.dispatchEvent(  
 			//.text=Math.round(e.bytesLoaded/e.bytesTotal * 100).toString()+"%";
+			this.dispatchEvent( new CameraEvent( CameraEvent.PROGRESS, {title:'ENCODING PROGRESS: ', message: Math.round(e.bytesLoaded/e.bytesTotal * 100) + '%'} ) )
 			Console.log('ENCODING PROGRESS: ' + Math.round(e.bytesLoaded/e.bytesTotal * 100) + '%', this);
 		}
 		protected function onEncodeComplete(e:Event):void 
 		{
+			encoder.removeEventListener(ProgressEvent.PROGRESS, onEncodingProgress);
+			encoder.removeEventListener(Event.COMPLETE, onEncodeComplete);
+
 			var now:Date = new Date();
 			var randomName:String  = "IMG" + now.fullYear + now.month +now.day +now.hours + now.minutes + now.seconds + ".jpg";
-			var destFile:File = File.documentsDirectory.resolvePath("userdata/"+randomName);
+			var destFile:File = File.documentsDirectory.resolvePath("userdata/"+( URN=="" ? URN : randomName ));
 
 			var stream:FileStream = new FileStream();
 			stream = new FileStream();

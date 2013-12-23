@@ -18,5 +18,5 @@
 
 		</s:fill>
 	</s:Rect>
-	<s:Label x="81" y="124" color="#FFFFFF" fontSize="64" text="{message}"/>
+	<s:Label x="81" y="124" color="#FFFFFF" textAlign="center" fontSize="64" text="{message}"/>
 </s:Group>

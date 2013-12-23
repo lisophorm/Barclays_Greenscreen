@@ -7,6 +7,7 @@ package events
 		
 		public static var COMPLETE:String = "COMPLETE";
 		public static var ERROR:String = "ERROR";
+		public static var PROGRESS:String = "PROGRESS";
 		
 		public var data:Object;
 		public function CameraEvent(type:String, data:Object, bubbles:Boolean=false, cancelable:Boolean=false)

@@ -369,7 +369,7 @@
 				greenscreenmoduleWindow.exitFunctionYes = e.exitFunctionYes;
 				greenscreenmoduleWindow.exitFunctionNo = e.exitFunctionNo;
 				greenscreenmoduleWindow.photoPath = e.photopath;
-				PopUpManager.addPopUp(greenscreenmoduleWindow, this, true) ;
+				PopUpManager.addPopUp(greenscreenmoduleWindow, this, false) ;
 				PopUpManager.centerPopUp(greenscreenmoduleWindow);
 
 			}
