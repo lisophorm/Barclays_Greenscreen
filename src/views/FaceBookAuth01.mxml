@@ -12,10 +12,6 @@
 			import com.alfo.utils.EncryptWrapper;
 			import com.lia.crypto.AES;
 			
-			import events.KioskError;
-			import events.UserEvent;
-			import events.ViewEvent;
-			
 			import flash.filters.DropShadowFilter;
 			import flash.media.StageWebView;
 			import flash.net.URLRequest;
@@ -27,7 +23,12 @@
 			import mx.rpc.events.ResultEvent;
 			
 			import spark.filters.DropShadowFilter;
-			import spark.primitives.Rect;	
+			import spark.primitives.Rect;
+			
+			import events.KioskError;
+			import events.UserEvent;
+			import events.ViewEvent;
+			
 			import model.Config;
 			
 			protected var webView:StageWebView;
@@ -158,8 +159,7 @@
 					//webView.removeEventListener(LocationChangeEvent.LOCATION_CHANGING,onURLChanging);
 					
 					//webView.addEventListener(LocationChangeEvent.LOCATION_CHANGING,onURLChanging);	
-					webView.addEventListener( Event.COMPLETE, logoutCompleted);
-					webView.loadURL("https://www.facebook.com/logout.php?access_token="+access_token+"&confirm=1&next="+fbLogout);	
+					fbAuthCompleted();
 				}
 				
 				// error
@@ -189,9 +189,9 @@
 				webView.stage=null;
 				this.parentApplication.dispatchEvent( new ViewEvent( ViewEvent.LOCATION_RESTART ));
 			}
-			protected function logoutCompleted(e:Event):void
+			protected function fbAuthCompleted():void
 			{
-				trace("**** LOGOUT COMPLETED ****");
+				trace("**** FBAUTH COMPLETED writing vars ****");
 				webView.removeEventListener(LocationChangeEvent.LOCATION_CHANGING,onURLChanging);
 				webView.removeEventListener( Event.COMPLETE, onURLCompleted);	
 				this.parentApplication.dispatchEvent( new Event("hideDropShadow"));
@@ -281,8 +281,14 @@
 					case "NO":// Token not found
 						this.parentApplication.dispatchEvent( new ViewEvent( ViewEvent.LOCATION_FACEBOOK ));
 						break;
-					case "OK":// Token save 
-						this.parentApplication.dispatchEvent( new ViewEvent( ViewEvent.LOCATION_FACEBOOK_REGISTERED ));
+					case "OK":// store data on thwe local servwer
+						saveData.send({urn: this.currentURN, 
+							
+							firstname:unescape(setToken.lastResult.first_name), 
+							lastname: unescape(setToken.lastResult.last_name), 
+							email: unescape(setToken.lastResult.email), 
+							optInTerms: optin_terms ? 1 : 0 });
+						
 						break;
 					case "ERROR":
 						this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, setToken.lastResult.message, "ERROR", ricomincia));
@@ -308,12 +314,30 @@
 				NativeApplication.nativeApplication.exit();
 			}
 			
+			protected function save(e:ResultEvent=null):void
+			{
+				// -> Do we need to send an isRegistered? We should divide Facebook and Direct registration perhaps
+				if (e.result.result=="OK")
+				{
+					this.parentApplication.dispatchEvent( new ViewEvent( ViewEvent.LOCATION_FACEBOOK_REGISTERED ));
+				} else
+				{
+					this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, e.result.message.toString(), "COMMUNICATION ERROR"));
+					
+				}
+			}
+			protected function error(e:FaultEvent):void
+			{
+				this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, e.fault.message.toString(), "COMMUNICATION ERROR"));
+				
+			}
 			
 		]]>
 	</fx:Script>
 	
 	<fx:Declarations>
-		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<s:HTTPService id="saveData" resultFormat="flashvars" method="POST" url="{(this.parentApplication).localURL+'register.php'}" result="save(event)" fault="error(event)" />
+
 		<s:HTTPService id="setToken" resultFormat="flashvars" method="POST" url="{(this.parentApplication).baseURL+'setuser.php'}" result="httpservice1_resultHandler(event)" fault="httpservice1_faultHandler(event)" />
 	</fx:Declarations>
 	
