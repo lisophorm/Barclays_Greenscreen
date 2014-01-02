@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=10">
+<title>Biometric Test</title>
+<link rel="stylesheet" type="text/css" href="style.css" />
+<script type="text/javascript" src="json2.js"></script>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript">
+
+var socket;
+
+$(document).ready(init);
+
+function init() {
+	$("#connect").show();
+	$("#connected input[type=submit]").click(submitHandler);
+	connectHandler();
+}
+        
+function connectHandler() {
+	try {
+		socket = new WebSocket("ws://127.0.0.1:1235");
+		socket.onopen = socketOpenHandler;
+		socket.onmessage = socketMessageHandler;
+		socket.onclose = socketCloseHandler;
+	} catch(exception) {
+		$("#lasterror").html("Error: " + exception);
+	}
+	return false;
+}
+        
+function socketOpenHandler() {
+	$("#connect").hide();
+	$("#connected").show();
+}
+        
+function socketMessageHandler(msg) {
+                
+	var decoded = JSON.parse(msg.data.replace(/[\u0000\u00ff]/g, ''));
+	$("#output").val($("#output").val() + "<client" + decoded.senderId + "> " + decoded.data + "\n").animate({ scrollTop: $("#output").height() }, 0);
+	if (decoded.data.substring(0, 8) == "register") {
+		$("#id").val(decoded.data.substr(decoded.data.indexOf(" ") + 1));
+    	StartCapture()
+	}
+	if (decoded.data == "cancel") {
+    	CancelAll()
+    	$("#id").val("");
+		$("#status").val("");
+	}
+}
+        
+function socketCloseHandler() {
+	$("#connect").show();
+	$("#connected").hide();
+	setTimeout(function (){
+		connectHandler();
+	}, 5000);
+}
+        
+function submitHandler() {
+	try {
+		var message = {};
+		message.command = "MESSAGE";
+		message.data = $("#message").val();
+		socket.send(JSON.stringify(message));
+		$("#message").val("");
+	} catch(exception) {
+		$("#lasterror").html("Error: " + exception);
+	}
+	return false;
+}
+
+function statusSend(status) {
+	try {
+		var message = {};
+		message.command = "MESSAGE";
+		
+		if(status == 101) {
+			message.code = "101";
+			message.data = "{'code':'101','msg':'Place finger on scanner'}";
+		}
+		if(status == 102) {
+			message.code = "102";
+			message.data = "{'code':'102','msg':'Lift finger and place a second time'}";
+		}
+		if(status == 103) {
+			message.code = "103";
+			message.data = "{'code':'103','msg':'Lift finger and place a last time'}";
+		}
+		if(status == 104) {
+			message.code = "104";
+			message.data = "{'code':'104','msg':'Scan successful'}";
+		}
+		if(status == 105) {
+			message.code = "105";
+			message.data = "{'code':'105','msg':'Low quality scan - try again'}";
+		}
+		if(status == 106) {
+			message.code = "106";
+			message.data = "{'code':'106','msg':'Error'}";
+		}
+		if(status == 107) {
+			message.code = "107";
+			message.data = "{'code':'107','msg':'Error - start all three scans again'}";
+		}
+		if(status == 201) {
+			message.code = "201";
+			message.data = "{'code':'201','msg':'Registration successful'}";
+		}
+		if(status == 202) {
+			message.code = "202";
+			message.data = "{'code':'202','msg':'Error'}";
+		}
+		if(status == 203) {
+			message.code = "203";
+			message.data = "{'code':'203','msg':'Customer is already in the DB'}";
+		}
+		if(status == 400) {
+			message.code = "400";
+			message.data = "{'code':'400','msg':'Registration cancelled'}";
+		}
+
+		socket.send(JSON.stringify(message));
+	} catch(exception) {
+		$("#lasterror").html("Error: " + exception);
+	}
+	return false;
+}
+
+</script>
+</head>
+<body>
+
+<div class="container">
+
+<h4>Register</h4>
+
+<form name="form_enroll" action="" method="post" class="pure-form pure-form-stacked">
+
+	<div class="pure-control-group">
+		<input type="text" name="id" id="id" title="ID" class="pure-input-1" />
+	</div>
+	
+	<div class="pure-control-group">
+		<input type="text" name="status" id="status" title="Status" class="pure-input-1" readonly />
+	</div>
+	
+	<div class="pure-control-group">
+		<button type="button" id="confirmed" name="submit_cmd" class="pure-button pure-button-primary" OnClick="StartCapture()">Register</button>
+	</div>
+
+</form>
+
+<hr />
+
+<h4>Websocket</h4>
+
+<div id="connect">
+
+<p>Trying to connect...</p>
+
+</div>
+<div id="lasterror">Alert error here
+</div>
+
+<div id="connected">
+	<form method="post" action="" class="pure-form pure-form-stacked">
+		<div class="pure-control-group">
+			<textarea id="output" class="pure-input-1"></textarea>
+		</div>
+		
+		<!--<div class="pure-control-group">
+			<label for="message">Message:</label>
+			<input type="text" id="message" name="message" class="pure-input-1" />
+		</div>
+		
+		<div class="pure-control-group">
+			<input type="submit" value="Send" class="pure-button pure-button-primary" />
+		</div>-->
+	</form>
+</div>
+
+</div>
+
+<OBJECT ID="BioPlugInActX" WIDTH=0 HEIGHT=0 CLASSID="CLSID:05E8280C-D45A-494F-AE42-840A40444AFF">
+  <param name="_Version" value="65536">
+  <param name="_ExtentX" value="2646">
+  <param name="_ExtentY" value="2646">
+  <param name="_StockProps" value="0">
+</OBJECT>
+
+<script language="vbScript">
+
+	BioPlugInActX.StopActiveIdentification
+
+	Dim intSuccessfulScans
+	Dim intRegisterStarted
+	
+	intRegisterStarted = 0
+
+	Sub BioPlugInActX_OnScan
+
+		If BioPlugInActX.result = "READY" Then
+
+		intSuccessfulScans = 0
+
+		form_enroll.status.value = "101 - Place finger on scanner"
+		statusSend(101)
+
+		ElseIf BioPlugInActX.result = 0 Then
+
+		intSuccessfulScans = intSuccessfulScans + 1
+		
+		If intSuccessfulScans < 4 Then
+
+			If intSuccessfulScans = 1 Then
+			
+				form_enroll.status.value = "102 - Lift finger then place a second time"
+				statusSend(102)
+				
+			ElseIf intSuccessfulScans = 2 Then
+
+				form_enroll.status.value = "103 - Lift finger then place a last time"
+				statusSend(103)
+				
+			Else
+				
+				form_enroll.status.value = "104 - Scan successful"
+				statusSend(104)
+
+			End If
+			
+		End If
+		
+		ElseIf BioPlugInActX.result = "BADSCAN" Then
+		
+		form_enroll.status.value = "105 - Low quality scan - try again!"
+		statusSend(105)
+		
+		ElseIf BioPlugInActX.result = "-1" Then
+
+		intSuccessfulScans = 0
+		
+		form_enroll.status.value = "107 - Error - start all three scans again!"
+		statusSend(107)
+		
+		End If
+
+	End Sub
+
+	Sub BioPlugInActX_OnRegister
+		
+		If BioPlugInActX.result = 0 Then
+		
+		form_enroll.status.value = "201 - Registration successful"
+		statusSend(201)
+
+		ElseIf BioPlugInActX.result = "-1" Then
+
+		BioPlugInActX.CancelRegistrationRequest
+
+		form_enroll.status.value = "202 - Error"
+		statusSend(202)
+
+		Else
+
+		form_enroll.status.value = "203 - Customer is already in the DB"
+		statusSend(203)
+
+		End If
+		
+		boolRegisterStarted = False
+		
+		intRegisterStarted = 0
+
+	End Sub
+
+	sub StartCapture
+	
+		BioPlugInActX.CancelRegistrationRequest
+		BioPlugInActX.StopActiveIdentification
+	
+		BioPlugInActX.RegisterSinglePrintU form_enroll.id.value
+		
+		
+	end sub
+	
+	sub CancelAll
+	
+		BioPlugInActX.CancelRegistrationRequest
+		statusSend(400)
+		
+	end sub
+</script>
+
+</body>
+</html>

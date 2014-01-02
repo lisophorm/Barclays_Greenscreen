@@ -21,12 +21,12 @@ package events
 		
 		public static var ERROR:String = "ERROR";
 		
-		public var userid:int=-1;
+		public var URN:String;
 		public var message:String="";
-		public function RegistrationEvent(type:String, userid:int=-1,msg:String="", bubbles:Boolean=false, cancelable:Boolean=false)
+		public function RegistrationEvent(type:String, URN:String, msg:String="", bubbles:Boolean=false, cancelable:Boolean=false)
 		{
 			trace(msg);
-			this.userid = userid;
+			this.URN = URN;
 			this.message = msg;
 			super(type, bubbles, cancelable);
 		}

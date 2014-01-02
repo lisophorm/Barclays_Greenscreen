@@ -1,5 +1,6 @@
 <?php require_once('Connections/localhost.php'); ?>
 <?php
+error_reporting(0);
 if (!function_exists("GetSQLValueString")) {
 function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDefinedValue = "") 
 {

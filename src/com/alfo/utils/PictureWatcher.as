@@ -3,33 +3,27 @@ package com.alfo.utils
 	import com.adobe.air.filesystem.FileMonitor;
 	import com.adobe.air.filesystem.events.FileMonitorEvent;
 	import com.alfo.utils.WatchEvent;
+	import com.utils.Console;
 	
-	import flash.events.Event;
+	import flash.events.EventDispatcher;
 	import flash.events.TimerEvent;
 	import flash.filesystem.File;
-	import flash.utils.Timer;
 	
-	import mx.core.UIComponent;
-	
-	public class PictureWatcher extends UIComponent
+	public class PictureWatcher extends EventDispatcher
 	{
 		public var wEvt:WatchEvent;
-		
 		public var monitor:FileMonitor;
-		
 		private var _watchFolder:String;
 		
 		public function PictureWatcher()
 		{
-			trace("picturewatcher init");
-			super();
-
 		}
 		public function setWatchFolder(folder:String):void {
 			_watchFolder=folder;
-
+			
 		}
 		public function startWatch():void {
+			Console.log("Watching folder: '"+_watchFolder+"'", this);
 			monitor = new FileMonitor();
 			monitor.addEventListener(FileMonitorEvent.CHANGE, onFileChange);
 			monitor.addEventListener(FileMonitorEvent.MOVE, onFileMove);

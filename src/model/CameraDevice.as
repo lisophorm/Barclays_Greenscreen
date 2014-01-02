@@ -60,6 +60,7 @@ package model
 				camera.setMode(_width, _height, 25); 
 				camera.setQuality(0,100);
 				video = new Video(_width*4, _height*4);
+				video.smoothing = true;
 				video.attachCamera(camera); 
 				bitmapData = new BitmapData(_width, _height);
 				photoCapture = new Bitmap(bitmapData, "auto", true);
@@ -168,7 +169,7 @@ package model
 			//this.dispatchEvent(  
 			//.text=Math.round(e.bytesLoaded/e.bytesTotal * 100).toString()+"%";
 			this.dispatchEvent( new CameraEvent( CameraEvent.PROGRESS, {title:'ENCODING PROGRESS: ', message: Math.round(e.bytesLoaded/e.bytesTotal * 100) + '%'} ) )
-			Console.log('ENCODING PROGRESS: ' + Math.round(e.bytesLoaded/e.bytesTotal * 100) + '%', this);
+			//Console.log('ENCODING PROGRESS: ' + Math.round(e.bytesLoaded/e.bytesTotal * 100) + '%', this);
 		}
 		protected function onEncodeComplete(e:Event):void 
 		{

@@ -31,6 +31,7 @@ package model
 			
 		}
 		
+		
 		public function startSocket():void
 		{	
 			
@@ -62,7 +63,7 @@ package model
 			} catch (e:Error)
 			{
 				
-				this.dispatchEvent( new RegistrationEvent( RegistrationEvent.ERROR, -1, e.message  ) );
+				this.dispatchEvent( new RegistrationEvent( RegistrationEvent.ERROR, null, e.message  ) );
 			}
 		}
 		
@@ -140,35 +141,35 @@ package model
 				{
 					case 101: 
 						//- Place finger on scanner
-						this.dispatchEvent( new RegistrationEvent( RegistrationEvent.SCAN_STEP_1, -1, data["msg"]  ) );
+						this.dispatchEvent( new RegistrationEvent( RegistrationEvent.SCAN_STEP_1, null, data["msg"]  ) );
 					break;
 					case 102:
 						//- Lift finger and place a second time
-						this.dispatchEvent( new RegistrationEvent( RegistrationEvent.SCAN_STEP_2, -1, data["msg"]  ) );
+						this.dispatchEvent( new RegistrationEvent( RegistrationEvent.SCAN_STEP_2, null, data["msg"]  ) );
 					break;
 					case 103:
 						//- Lift finger and place a last time
-						this.dispatchEvent( new RegistrationEvent( RegistrationEvent.SCAN_STEP_3, -1, data["msg"]  ) );
+						this.dispatchEvent( new RegistrationEvent( RegistrationEvent.SCAN_STEP_3, null, data["msg"]  ) );
 					break;
 					case 104:
 						//- Scan successful
-						this.dispatchEvent( new RegistrationEvent( RegistrationEvent.SCAN_COMPLETED, -1, data["msg"]  ) );
+						this.dispatchEvent( new RegistrationEvent( RegistrationEvent.SCAN_COMPLETED, null, data["msg"]  ) );
 					break;
 					case 105:
 						//- Low quality scan - try again
-						this.dispatchEvent( new RegistrationEvent( RegistrationEvent.SCAN_AGAIN, -1, data["msg"]  ) );
+						this.dispatchEvent( new RegistrationEvent( RegistrationEvent.SCAN_AGAIN, null, data["msg"]  ) );
 					break;
 					case 106:
 						//- Error
-						this.dispatchEvent( new RegistrationEvent( RegistrationEvent.ERROR, -1, data["msg"]  ) );
+						this.dispatchEvent( new RegistrationEvent( RegistrationEvent.ERROR, null, data["msg"]  ) );
 					break;
 					case 107:
 						//- Error - start all three scan again
-						this.dispatchEvent( new RegistrationEvent( RegistrationEvent.SCAN_RESTART, -1, data["msg"]  ) );
+						this.dispatchEvent( new RegistrationEvent( RegistrationEvent.SCAN_RESTART, null, data["msg"]  ) );
 					break;
 					case 108:
 						// Send 'cancel' to reset.
-						this.dispatchEvent( new RegistrationEvent( RegistrationEvent.SCAN_CANCELLED, -1, data["msg"]  ) );
+						this.dispatchEvent( new RegistrationEvent( RegistrationEvent.SCAN_CANCELLED, null, data["msg"]  ) );
 					break;
 					case 201:
 						//- Registration successful
@@ -176,7 +177,7 @@ package model
 					break;
 					case 202:
 						//- Registration Error
-						this.dispatchEvent( new RegistrationEvent( RegistrationEvent.ERROR, -1, data["msg"]  ) );
+						this.dispatchEvent( new RegistrationEvent( RegistrationEvent.ERROR, null, data["msg"]  ) );
 					break;
 					case 203:
 						//- Customer is already in the DB
@@ -185,16 +186,16 @@ package model
 					break;
 					case 301:
 						//- Identify Scan finger
-						this.dispatchEvent( new RegistrationEvent( RegistrationEvent.SCAN_READY, -1, data["msg"]  ) );
+						this.dispatchEvent( new RegistrationEvent( RegistrationEvent.SCAN_READY, null, data["msg"]  ) );
 					break;
 					case 302:
 						//- (Success, returns user ID)
 						if (data["msg"]=="000000000") //user not found
 						{
-							this.dispatchEvent( new RegistrationEvent( RegistrationEvent.USER_NOT_FOUND, -1, data["msg"] ) );	
+							this.dispatchEvent( new RegistrationEvent( RegistrationEvent.USER_NOT_FOUND, null, data["msg"] ) );	
 						} else if ( data["msg"]=="BADSCAN" )
 						{
-							this.dispatchEvent( new RegistrationEvent( RegistrationEvent.SCAN_AGAIN, -1, data["msg"]  ) );
+							this.dispatchEvent( new RegistrationEvent( RegistrationEvent.SCAN_AGAIN, null, data["msg"]  ) );
 						} else {
 							this.dispatchEvent( new RegistrationEvent( RegistrationEvent.USER_FOUND, data["msg"]  ) );
 						}
@@ -209,7 +210,7 @@ package model
 		}
 		private function messageReceivedHandler(event:MessageReceivedEvent):void
 		{
-			
+			Console.log("messageReceivedHandler", this);
 			try {
 				if (event.message.data!=null)
 				{
@@ -218,15 +219,31 @@ package model
 					handleCode( dataOut );
 				} else
 				{
-					this.dispatchEvent( new RegistrationEvent( RegistrationEvent.ERROR, -1, "Server communication error...Try again"  ) );
+					this.dispatchEvent( new RegistrationEvent( RegistrationEvent.ERROR, null, "Server communication error...Try again"  ) );
 				}
 			} catch (e:Error)
 			{
 				Console.log("Error:\n"+e.message, this)
-				this.dispatchEvent( new RegistrationEvent( RegistrationEvent.ERROR, -1, e.message  ) );
+				this.dispatchEvent( new RegistrationEvent( RegistrationEvent.ERROR, null, e.message  ) );
 			}
 		}
-		
+		public function openInternetExplorerWithSockets():void //not complete
+		{
+			if (flash.system.Capabilities.os.indexOf("Windows")!=-1)
+			{
+				Console.log("Open internet explorer", this)
+				var file:File=File.applicationDirectory.resolvePath("C:/Windows/System32/cmd.exe");
+				var nativeProcessInfo:NativeProcessStartupInfo=new NativeProcessStartupInfo();
+				nativeProcessInfo.executable=file;
+				nativeProcessInfo.arguments=new <String>["/C "];
+				
+				var process:NativeProcess=new NativeProcess();
+				process.start(nativeProcessInfo);
+			} else 
+			{
+				this.dispatchEvent( new RegistrationEvent( RegistrationEvent.ERROR, null, "Application requires Internet Explorer (windows) to run..."  ) );	
+			}
+		}
 		public function kill():void
 		{
 			Console.log("Attempting kill", this);

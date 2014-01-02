@@ -12,6 +12,7 @@
 	<fx:Script>
 		<![CDATA[
 			import com.alfo.utils.EncryptWrapper;
+			import com.alfo.utils.StringUtils;
 			import com.lia.crypto.AES;
 			import com.utils.Console;
 			
@@ -24,6 +25,7 @@
 			import events.GreenscreenEvent;
 			import events.GreenscreenModuleEvent;
 			import events.KioskError;
+			import events.KioskEvent;
 			import events.KioskProgressEvent;
 			import events.KioskWaitEvent;
 			import events.ViewEvent;
@@ -37,7 +39,7 @@
 			protected var webcamera:CameraDevice
 			private var urlRequest:URLRequest
 			private var file:File;
-			private var activeFile;
+			private var activeFile:File;
 			
 			private var currentURN:String;
 			
@@ -70,7 +72,7 @@
 					applicationType = data.type;
 					this.currentState = data.facebook ? "facebook" : "default";
 					publishPhoto.url = this.parentApplication.localURL+'publishphoto.php';
-					getUser.url = this.parentApplication.localURL+'getuser.php';
+					getUser.url = this.parentApplication.baseURL+'getuser.php';
 					
 					var passVars:Object=new Object;
 					passVars.urn=EncryptWrapper.Wrap(currentURN);
@@ -78,7 +80,7 @@
 					// LOOK-UP USER INFO FOR THIS URN
 					getUser.send(passVars);
 					fileTransfer=false;
-					this.setupCamera()
+					
 				} else {
 					trace("URN MISSING");
 				}					
@@ -106,6 +108,8 @@
 				if (this.currentState=="facebook")
 					facebookposts_check.selected = this.canPost;
 				trace("** USER INFO RETRIVED:\nUser's lastname:"+user.text+"\nPosts:"+posts);
+				
+				this.setupCamera()
 			}
 			
 			protected function httpservice_faultHandler(event:FaultEvent):void
@@ -130,7 +134,13 @@
 					if (CameraDevice.isSupported)
 					{
 						Console.log("standard camera not supported",this);
-						webcamera = new CameraDevice(320,240, this.currentURN);					
+						if (webcamera!=null)
+						{
+							webcamera.destroy();
+							webcamera = null;
+						}
+						
+						webcamera = new CameraDevice(320,240, this.currentURN); // actual camera will be x4 this size					
 						webcamera.addEventListener(CameraEvent.COMPLETE, takePhotoStandardCompleteHandler);
 						webcamera.addEventListener(CameraEvent.PROGRESS, progressUpdate );
 						
@@ -197,17 +207,19 @@
 			}
 			protected function checkWithUser( ):void
 			{
-				this.parentApplication.dispatchEvent ( new GreenscreenModuleEvent( acceptPhoto, cancelPhoto, this.activeFile.url ));
-				NativeApplication.nativeApplication.activate();
+				this.parentApplication.dispatchEvent ( new GreenscreenModuleEvent( acceptPhoto, cancelPhoto, this.activeFile.url ) );
+				NativeApplication.nativeApplication.activate(); // focus on top
 			}
 			
 			protected function acceptPhoto( e:Event=null ):void {
 				Console.log("User accepted photo", this);
 				var greenscreenModel:GreenscreenModel = new GreenscreenModel( this.currentURN, "Arsenal", 
-															"C:\\Users\\Ignite\\Desktop\\calibrator_greenscreen_nba\\");
+															"C:\\Users\\Ignite\\Desktop\\calibrator_greenscreen_barclays\\");
 				
 				greenscreenModel.addEventListener( GreenscreenEvent.WAIT, greenscreenWait);
 				greenscreenModel.addEventListener( GreenscreenEvent.ERROR, greenscreenError);
+				greenscreenModel.addEventListener( GreenscreenEvent.PHOTO_READY, greenscreenPhotoReady);
+				
 				greenscreenModel.send( this.activeFile );
 			}
 			protected function greenscreenWait( e:GreenscreenEvent=null ):void 
@@ -218,6 +230,20 @@
 			protected function greenscreenError( e:GreenscreenEvent=null ):void 
 			{
 				this.parentApplication.dispatchEvent( new KioskError( KioskError.ERROR,  e.data.message,  e.data.title ) ); 
+			}
+			protected var greenscreenPhoto:File;
+			protected function greenscreenPhotoReady( e:GreenscreenEvent ):void
+			{
+				//this.parentApplication.clearPopups();
+				greenscreenPhoto = File(e.data.file)
+				this.parentApplication.dispatchEvent ( new GreenscreenModuleEvent( acceptGreenscreenPhoto, cancelPhoto, greenscreenPhoto.url ));
+				NativeApplication.nativeApplication.activate();
+			}
+			protected function acceptGreenscreenPhoto( e:MouseEvent=null  ):void
+			{
+					Console.log("PHOTO ACCEPTED - Upload", this);
+					beginUpload( this.greenscreenPhoto );
+					
 			}
 			protected function cancelPhoto( e:Event=null ):void {}
 			
@@ -249,7 +275,7 @@
 			protected function uploadCompleteHandler(event:Event):void
 			{
 				this.parentApplication.dispatchEvent( new KioskProgressEvent( KioskProgressEvent.UPDATE_COMPLETE ));
-				trace("upload complete");
+				Console.log("Upload complete", this);
 				takePhotoButton.enabled = true;
 				statusText.text = "Photo Uploaded";
 				var passVars:Object=new Object();
@@ -260,8 +286,8 @@
 					passVars.facebook_optin= this.facebookposts_check.selected ? 1 : 0;
 				else
 					passVars.facebook_optin= 0;
+				
 				passVars.type = this.applicationType;
-
 				publishPhoto.send(passVars);
 				statusText.text = "Publishing on Facebook...";
 				this.parentApplication.dispatchEvent( new KioskProgressEvent(KioskProgressEvent.NOTIFY, "Publishing on Facebook..."));

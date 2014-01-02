@@ -161,7 +161,7 @@
 			}
 			protected function userRegistered( e:RegistrationEvent ):void
 			{
-				Console.log("userRegistered "+e.userid, this);
+				Console.log("userRegistered "+e.URN, this);
 				this.onNewUser( currentURN  );
 			}
 			protected function registrationError( e:RegistrationEvent ):void
@@ -171,9 +171,9 @@
 			}
 			protected function userFound( e:RegistrationEvent ):void
 			{
-				Console.log("userFound", this);
+				Console.log("userFound URN="+e.URN, this);
 				//if this is a registration type - then alreadyregistered otherwise move use
-				this.onAlreadyRegistered( e.userid, this.parentApplication.ApplicationType );
+				this.onAlreadyRegistered( e.URN, this.parentApplication.ApplicationType );
 			}
 			
 			protected function userNotFound( e:RegistrationEvent ):void
@@ -312,9 +312,9 @@
 				this.parentApplication.dispatchEvent(new ViewEvent(ViewEvent.LOCATION_SELECT_USER_TYPE) );
 				
 			}
-			protected function onAlreadyRegistered(uid:*, type:String):void
+			protected function onAlreadyRegistered(URN:*, type:String):void
 			{
-				this.parentApplication.dispatchEvent( new UserEvent(UserEvent.URN, uid));
+				this.parentApplication.dispatchEvent( new UserEvent(UserEvent.URN, URN));
 				this.parentApplication.dispatchEvent( new UserEvent(UserEvent.REGISTERED, type));
 				this.parentApplication.dispatchEvent(new ViewEvent(ViewEvent.LOCATION_SELECT_USER_TYPE));
 
@@ -410,12 +410,18 @@
 			{
 				Console.log(e.oldState+"->"+e.newState,this);
 			}
-				
 			
+			//protected function userdata_resultHandler( e:ResultEvent ):void {}
+			//protected function userdata_faultHandler( e:FaultEvent ):void {}
+				
 		]]>
 	</fx:Script>
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
+
+		<!-- s:HTTPService id="getUserData" resultFormat="flashvars" method="POST" url="{this.parentApplication.localURL+'getuser.php'}" result="userdata_resultHandler(event)" fault="userdata_faultHandler(event)"/-->
+			
+		
 		<!--s:HTTPService id="checkURN" resultFormat="flashvars" method="POST" url="http://www.ignitesocial.co.uk/ignite/checkuser.php" result="httpservice1_resultHandler(event)" fault="httpservice1_faultHandler(event)" /-->
 		<!--s:transitions>
 			<s:Transition id="toAnyFromAny" fromState="STEP1" toState="STEP2">

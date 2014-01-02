@@ -189,6 +189,7 @@
 				} else {
 					trace("No greenscreen file");
 				}
+				
 				file.addEventListener(Event.COMPLETE,uploadCompleteHandler);
 				file.addEventListener(Event.OPEN,openUploadHandler);
 				file.addEventListener(ProgressEvent.PROGRESS,updateProgress);

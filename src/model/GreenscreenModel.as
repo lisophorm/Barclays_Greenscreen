@@ -1,26 +1,18 @@
 package model
 {
-	import com.adobe.utils.StringUtil;
 	import com.alfo.utils.PictureWatcher;
-	import com.alfo.utils.StringUtils;
 	import com.alfo.utils.WatchEvent;
 	import com.utils.Console;
 	
 	import flash.desktop.NativeApplication;
 	import flash.desktop.NativeProcess;
 	import flash.desktop.NativeProcessStartupInfo;
-	import flash.events.Event;
 	import flash.events.EventDispatcher;
-	import flash.events.IOErrorEvent;
-	import flash.events.MouseEvent;
-	import flash.events.ProgressEvent;
 	import flash.filesystem.File;
 	import flash.filesystem.FileMode;
 	import flash.filesystem.FileStream;
 	
 	import events.GreenscreenEvent;
-	import events.KioskProgressEvent;
-	import events.KioskWaitEvent;
 	
 	public class GreenscreenModel extends EventDispatcher
 	{
@@ -31,7 +23,8 @@ package model
 		
 		protected var watchFolder:String;
 		
-		
+		protected var destinationFile:File;
+		protected var photo:File		
 		
 		public function GreenscreenModel(urn:String="DEFAULT_URN", team:String="arsenal", watchFolder:String="")
 		{
@@ -41,8 +34,6 @@ package model
 			
 			this.watchFolder = watchFolder;
 			createListeners();
-			
-			
 
 		}
 		public function createListeners():void
@@ -51,8 +42,8 @@ package model
 			{
 				// photoShop output Folder
 				finalWatch=new PictureWatcher();
-				finalWatch.setWatchFolder(watchFolder+"\\output");
-				finalWatch.addEventListener(WatchEvent.ON_ADD_PHOTO, onPhotoReady);
+				finalWatch.setWatchFolder( watchFolder+"\\output" );				
+				finalWatch.addEventListener( WatchEvent.ON_ADD_PHOTO, onPhotoReady );
 			} else {
 				// -> greenscreenevent
 				//this.parentApplication.dispatchEvent( new KioskError(KioskError.ERROR, "Settings Error", "Please change settings" ) );
@@ -104,24 +95,31 @@ package model
 			return true;
 		}
 
-			
+		
 			
 		public function send(photo:File):void
 		{
 			
-			if (this.writeConfig())
+			if (this.writeConfig()) // writes the urn.jsx configuration file with data for photoshop processing
 			{
-				this.dispatchEvent( new GreenscreenEvent( GreenscreenEvent.WAIT, { message: "PLEASE WAIT" }));
-				finalWatch.startWatch();			
+				this.dispatchEvent( new GreenscreenEvent( GreenscreenEvent.WAIT, { message: "PLEASE WAIT" })); //display wait dialogue
+				
+				finalWatch.startWatch();	// actively begin directory watch		
 				
 				//var destinationFile:File=File.applicationDirectory.resolvePath(watchFolder+"\\tmp\\ZZZZZZZZ.jpg");
-				var destinationFile:File=File.applicationDirectory.resolvePath(watchFolder+"\\tmp\\"+this.urn+".jpg");
+				destinationFile=File.applicationDirectory.resolvePath(watchFolder+"tmp\\"+this.urn+".jpg");
 				Console.log("Copy from "+photo.nativePath+" to "+destinationFile.nativePath, this);
-				photo.copyTo(destinationFile,true);
+				photo.copyTo(destinationFile,true); //copy photo
+				this.photo = photo;
 				var nativeProcessInfo:NativeProcessStartupInfo=new NativeProcessStartupInfo();
-				nativeProcessInfo.executable=destinationFile;
-				nativeProcessInfo.arguments=new <String>[watchFolder+"\\settings\\wrapup.jsx"];
-				
+
+				// for some reason these parameters are valid as opposed to those lifed of the NBA application
+				// path to photoshop should be in configuration
+				nativeProcessInfo.executable = new File("C:\\Program Files (x86)\\Adobe\\Adobe Photoshop CS6\\Photoshop.exe");
+				nativeProcessInfo.arguments=new <String>[""+watchFolder+"settings\\wrapup.jsx"];
+				//nativeProcessInfo.executable=destinationFile;
+				//nativeProcessInfo.arguments=new <String>[watchFolder+"settings\\wrapup.jsx"];
+				Console.log(nativeProcessInfo.executable.nativePath+" "+nativeProcessInfo.arguments[0], this);
 				var process:NativeProcess=new NativeProcess();
 				process.start(nativeProcessInfo);
 				NativeApplication.nativeApplication.activate();
@@ -146,8 +144,14 @@ package model
 		
 		protected function onPhotoReady(e:WatchEvent):void
 		{
+			Console.log("Photo is ready!!!", this);
 			finalWatch.stopWatch();
-			this.dispatchEvent( new GreenscreenEvent( GreenscreenEvent.PHOTO_READY, {}));
+			var finalFile:File=File.applicationDirectory.resolvePath(watchFolder+"output\\"+this.urn+".jpg");
+			var destFile:File = File.applicationDirectory.resolvePath(watchFolder+"destination\\"+this.urn+".jpg");
+			//var destFile:File = File.documentsDirectory.resolvePath("userdata/"+this.urn+"_greenscreen.jpg" );
+			finalFile.copyTo(destFile,true); //copy photo
+			
+			this.dispatchEvent( new GreenscreenEvent( GreenscreenEvent.PHOTO_READY, {file: destFile}));
 		}
 	}
 }

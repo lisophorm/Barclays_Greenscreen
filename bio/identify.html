@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=10">
+<title>Biometric Test</title>
+<link rel="stylesheet" type="text/css" href="style.css" />
+<script type="text/javascript" src="json2.js"></script>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript">
+
+var socket;
+
+$(document).ready(init);
+
+function init() {
+	$("#connect").show();
+	$("#connected input[type=submit]").click(submitHandler);
+	connectHandler();
+}
+        
+function connectHandler() {
+	try {
+		socket = new WebSocket("ws://127.0.0.1:1235");
+		socket.onopen = socketOpenHandler;
+		socket.onmessage = socketMessageHandler;
+		socket.onclose = socketCloseHandler;
+	} catch(exception) {
+		$("#lasterror").html("Error: " + exception);
+	}
+	return false;
+}
+        
+function socketOpenHandler() {
+	$("#connect").hide();
+	$("#connected").show();
+}
+        
+function socketMessageHandler(msg) {
+                
+	var decoded = JSON.parse(msg.data.replace(/[\u0000\u00ff]/g, ''));
+	$("#output").val($("#output").val() + "<client" + decoded.senderId + "> " + decoded.data + "\n").animate({ scrollTop: $("#output").height() }, 0);
+	if(decoded.data == 'identify') {
+		StartCapture()
+	}
+}
+        
+function socketCloseHandler() {
+	$("#connect").show();
+	$("#connected").hide();
+	setTimeout(function (){
+		connectHandler();
+	}, 5000);
+}
+        
+function submitHandler() {
+	try {
+		var message = {};
+		message.command = "MESSAGE";
+		message.data = "301";
+		message.message = $("#message").val();
+		socket.send(JSON.stringify(message));
+		$("#message").val("");
+	} catch(exception) {
+		$("#lasterror").html("Error: " + exception);
+	}
+	return false;
+}
+
+function statusSend(status) {
+	try {
+		var message = {};
+		message.command = "MESSAGE";
+		
+		if(status == 301) {
+			message.code = "301";
+			message.data = "{'code':'301','msg':'Scan finger'}";
+		}
+
+		socket.send(JSON.stringify(message));
+	} catch(exception) {
+		$("#lasterror").html("Error: " + exception);
+	}
+	return false;
+}
+
+function idSend(id) {
+	try {
+		var message = {};
+		message.command = "MESSAGE";
+			message.code = "302";
+			message.data = "{'code':'302','msg':'" + id + "'}";
+		socket.send(JSON.stringify(message));
+	} catch(exception) {
+		$("#lasterror").html("Error: " + exception);
+	}
+	return false;
+}
+
+</script>
+</head>
+<body>
+
+<div class="container">
+
+<h4>Identify</h4>
+
+<form name="form_login" action="" method="post" class="pure-form pure-form-stacked">
+	
+	<div class="pure-control-group">
+		<input type="text" name="status" id="status" title="Status" class="pure-input-1" readonly />
+	</div>
+
+	<div class="pure-control-group">
+		<button type="button" id="confirmed" name="submit_cmd" class="pure-button pure-button-primary" OnClick="StartCapture()">Identify</button>
+	</div>
+
+</form>
+
+<hr />
+
+<h4>Websocket</h4>
+
+<div id="connect">
+
+	<p>Trying to connect...</p>
+
+</div>
+
+<div id="connected">
+	<form method="post" action="" class="pure-form pure-form-stacked">
+		<div class="pure-control-group">
+			<textarea id="output" class="pure-input-1"></textarea>
+		</div>
+		
+		<!--<div class="pure-control-group">
+			<label for="message">Message:</label>
+			<input type="text" id="message" name="message" class="pure-input-1" />
+		</div>
+		
+		<div class="pure-control-group">
+			<input type="submit" value="Send" class="pure-button pure-button-primary" />
+		</div>-->
+	</form>
+</div>
+<div id="lasterror">Alert error here
+</div>
+</div>
+
+<OBJECT ID="BioPlugInActX" WIDTH=0 HEIGHT=0 CLASSID="CLSID:05E8280C-D45A-494F-AE42-840A40444AFF">
+  <param name="_Version" value="65536">
+  <param name="_ExtentX" value="2646">
+  <param name="_ExtentY" value="2646">
+  <param name="_StockProps" value="0">
+</OBJECT>
+
+<script language="vbScript">
+
+	Dim intCaptStarted
+	
+	intCaptStarted = 0
+
+	BioPlugInActX.CancelRegistrationRequest
+	BioPlugInActX.StopActiveIdentification
+
+	Sub BioPlugInActX_OnIdentify
+
+		form_login.status.value = BioPlugInActX.result
+		idSend(BioPlugInActX.result)
+		
+		intCaptStarted = 0
+
+	End Sub
+
+	sub StartCapture
+	
+		BioPlugInActX.CancelRegistrationRequest
+		BioPlugInActX.StopActiveIdentification
+
+		BioPlugInActX.IdentifyQuick 0
+		
+		form_login.status.value = "301 - Scan finger"
+		statusSend(301)
+
+	end sub
+
+</script>
+
+</body>
+</html>
