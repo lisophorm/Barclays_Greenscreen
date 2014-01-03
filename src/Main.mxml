@@ -579,7 +579,8 @@
 					case ViewEvent.LOCATION_FACEBOOK_REGISTERED:
 						trace("User has registered on facebook");
 						this.dispatchEvent( new UserEvent(UserEvent.REGISTERED, "facebook"));
-						this.dispatchEvent( new ViewEvent( ViewEvent.LOCATION_REGISTRATION_COMPLETE ));
+						this.dispatchEvent( new ViewEvent( ViewEvent.LOCATION_SELECT_TEAM ));
+						//this.dispatchEvent( new ViewEvent( ViewEvent.LOCATION_REGISTRATION_COMPLETE ));
 						
 						//	this.navigator.pushView(views.ExtraInfo, {urn: barcode});
 						break;

@@ -111,6 +111,7 @@
 				// -> Do we need to send an isRegistered? We should divide Facebook and Direct registration perhaps
 				if (e.result.result=="OK")
 				{
+					
 					this.parentApplication.dispatchEvent( new UserEvent(UserEvent.REGISTERED, "classic"));
 					this.parentApplication.dispatchEvent( new ViewEvent( ViewEvent.LOCATION_SELECT_TEAM ) );
 				} else

@@ -244,7 +244,7 @@
 	<!-- Menu -->
 	<!-- Field -->
 		<s:VGroup height="100%" width="100%" verticalAlign="middle" horizontalAlign="center"  >
-			<s:DataGroup id="CarouselGroup" updateComplete="createListeners(event)" horizontalCenter="0" height="260" width="1240" itemRenderer="views.renderer.logoItemRenderer">			
+			<s:DataGroup id="CarouselGroup" updateComplete="createListeners(event)" horizontalCenter="0"  width="1240" itemRenderer="views.renderer.logoItemRenderer">			
 				<s:layout>
 					<s:TileLayout orientation="rows" clipAndEnableScrolling="true"
 								  requestedColumnCount="-1" requestedRowCount="-1"
