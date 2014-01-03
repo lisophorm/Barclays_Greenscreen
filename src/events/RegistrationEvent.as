@@ -13,6 +13,8 @@ package events
 		public static var SCAN_AGAIN:String			= "SCAN_AGAIN";
 		public static var SCAN_RESTART:String 		= "SCAN_RESTART";
 		public static var SCAN_CANCELLED:String 	= "SCAN_CANCELLED";
+		public static var SCAN_REINITIALISE:String 	= "SCAN_REINITIALISE";
+		
 		
 		public static var USER_FOUND:String 			= "USER_FOUND";
 		public static var USER_REGISTERED:String 			= "USER_REGISTERED";

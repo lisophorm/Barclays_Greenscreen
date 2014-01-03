@@ -196,6 +196,9 @@ package model
 						} else if ( data["msg"]=="BADSCAN" )
 						{
 							this.dispatchEvent( new RegistrationEvent( RegistrationEvent.SCAN_AGAIN, null, data["msg"]  ) );
+						} else if ( data["msg"] == "-1" )
+						{
+							this.dispatchEvent( new RegistrationEvent( RegistrationEvent.SCAN_REINITIALISE, null, data["msg"]  ) );	
 						} else {
 							this.dispatchEvent( new RegistrationEvent( RegistrationEvent.USER_FOUND, data["msg"]  ) );
 						}

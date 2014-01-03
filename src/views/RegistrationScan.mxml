@@ -122,12 +122,18 @@
 					device.addEventListener( RegistrationEvent.SCAN_STEP_3, this.register_step_3);
 					device.addEventListener( RegistrationEvent.SCAN_COMPLETED, this.register_complete);
 					device.addEventListener( RegistrationEvent.SCAN_RESTART, this.scan_restart);
+					device.addEventListener( RegistrationEvent.SCAN_REINITIALISE, this.scan_reinitiate);
 						
 				}
 				
 				device.startSocket();
 				
 			}
+			protected function scan_reinitiate( e:RegistrationEvent ):void
+			{
+				this.init();
+			}
+
 			protected function scan_restart( e:RegistrationEvent ):void
 			{
 				
