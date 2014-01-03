@@ -175,6 +175,7 @@
 				password ="ignite123";
 				facebookAppID = pref.prefsXML..facebookAppID;
 				ApplicationType = pref.prefsXML..applicationtype.toString().toUpperCase();
+					
 				urn = int(pref.prefsXML..urnLength);
 				scoreFormat = pref.prefsXML..scoreFormat;
 				Console.log("baseURL: "+baseURL, this);

@@ -25,13 +25,14 @@ package model
 		
 		protected var destinationFile:File;
 		protected var photo:File		
+		protected var photoshop:String;
 		
-		public function GreenscreenModel(urn:String="DEFAULT_URN", team:String="arsenal", watchFolder:String="")
+		public function GreenscreenModel(urn:String="DEFAULT_URN", team:String="arsenal", watchFolder:String="", photoshop:String="")
 		{
 			Console.log("GreenscreenModel",this);
 			this.urn = urn;
 			this.team = team;
-			
+			this.photoshop = photoshop;	
 			this.watchFolder = watchFolder;
 			createListeners();
 
@@ -115,7 +116,7 @@ package model
 
 				// for some reason these parameters are valid as opposed to those lifed of the NBA application
 				// path to photoshop should be in configuration
-				nativeProcessInfo.executable = new File("C:\\Program Files (x86)\\Adobe\\Adobe Photoshop CS6\\Photoshop.exe");
+				nativeProcessInfo.executable = new File(photoshop);
 				nativeProcessInfo.arguments=new <String>[""+watchFolder+"settings\\wrapup.jsx"];
 				//nativeProcessInfo.executable=destinationFile;
 				//nativeProcessInfo.arguments=new <String>[watchFolder+"settings\\wrapup.jsx"];

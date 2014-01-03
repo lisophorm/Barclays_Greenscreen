@@ -3,10 +3,11 @@
   <serverIP>www.bpllive.com</serverIP>
   <facebookAppID>170716739801062</facebookAppID>
   <localIP>192.168.0.150/backend</localIP>
+  <photoshop><![CDATA[C:\Program Files (x86)\Adobe\Adobe Photoshop CS6\Photoshop.exe]]></photoshop>
   <urnLength>16</urnLength>
   <internetTimeout>10</internetTimeout>	
   <scoreFormat>99:99.99</scoreFormat>
-  <applicationtype>registration</applicationtype>
+  <applicationtype>Photocapture</applicationtype>
   <latitude></latitude>
   <longitude></longitude>
   <aespassword>asdghylmn84</aespassword>
