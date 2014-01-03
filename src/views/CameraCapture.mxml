@@ -43,7 +43,7 @@
 			private var activeFile:File;
 			
 			private var currentURN:String;
-			
+			private var team:String = "Arsenal"; 
 			private var progressPop:ProgressPopUp;
 			protected var fileTransfer:Boolean=false;
 			
@@ -70,6 +70,7 @@
 				{
 					currentURN = data.urn;
 					applicationType = data.type;
+					team = data.team? data.team : team;
 					this.currentState = data.facebook ? "facebook" : "default";
 					publishPhoto.url = this.parentApplication.localURL+'publishphoto.php';
 					getUser.url = this.parentApplication.baseURL+'getuser.php';
@@ -217,8 +218,10 @@
 				var pref:Config = new Config();
 				var photoshop:String = pref.prefsXML..photoshop.text().toString()
 				Console.log("User accepted photo "+ photoshop, this);
-				var calibrator:String = pref.prefsXML..calibrator.text().toString()
-				var greenscreenModel:GreenscreenModel = new GreenscreenModel( this.currentURN, "Arsenal", calibrator, photoshop);
+				var calibrator:String = pref.prefsXML..calibrator.text().toString();
+				
+				//accept photo arsenal need to be variable
+				var greenscreenModel:GreenscreenModel = new GreenscreenModel( this.currentURN, team, calibrator, photoshop);
 				
 				greenscreenModel.addEventListener( GreenscreenEvent.WAIT, greenscreenWait);
 				greenscreenModel.addEventListener( GreenscreenEvent.ERROR, greenscreenError);

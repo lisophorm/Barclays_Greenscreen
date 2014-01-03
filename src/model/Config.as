@@ -82,6 +82,8 @@ package model
 				prefsXML.aespassword = values.aespassword;
 				prefsXML.serverIP 		= values.serverIP;
 				prefsXML.facebookAppID  = values.facebookAppID;
+				prefsXML.photoshop  = values.photoshop;
+				prefsXML.calibrator  = values.calibrator;
 				prefsXML.urnLength 		= values.urnLength;
 				prefsXML.applicationtype = values.applicationtype;
 				prefsXML.scoreFormat	 = values.scoreFormat;

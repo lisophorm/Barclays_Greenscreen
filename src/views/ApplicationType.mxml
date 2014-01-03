@@ -38,6 +38,8 @@
 					this.facebookAPI_ID.text = data.xml.facebookAppID;
 					this.urnLength.text = data.xml.urnLength;
 					this.scoreFormat.text = data.xml.scoreFormat;
+					this.photoshop.text = data.xml.photoshop;
+					this.calibrator.text = data.xml.calibrator;
 					
 					this.radioGroup.selectedValue = data.xml.applicationtype;
 					
@@ -56,7 +58,9 @@
 					facebookAppID: facebookAPI_ID.text.toString(), 
 					urnLength: urnLength.text.toString(), 
 					applicationtype: radioGroup.selectedValue.toString(),
-					scoreFormat: scoreFormat.text.toString()} ) );
+					scoreFormat: scoreFormat.text.toString(),
+					photoshop: photoshop.text.toString(),
+					calibrator: calibrator.text.toString()} ) );
 				
 			}
 			protected function cancel(e:MouseEvent):void
@@ -78,42 +82,64 @@
 	
 	
 	
-	<s:VGroup horizontalAlign="center" verticalAlign="middle" width="100%" height="100%">
-		<s:Form id="configform" horizontalCenter="0" verticalCenter="0">
+	<s:VGroup horizontalAlign="left" verticalAlign="middle" width="1180" height="100%">
+		
 			<s:FormHeading label="CONFIGURATION DETAILS:" />
+			<s:Scroller width="100%" height="500" verticalScrollPolicy="auto" horizontalScrollPolicy="off">
+				<s:Group height="500" width="100%" textAlign="left">	
+
+				<s:Form id="configform" width="100%" height="100%">		
+						
+						<s:FormItem width="365" label="Remote Server url:" fontFamily="Arial">
+							<s:TextInput id="server" width="650" height="30" color="0x000000" fontFamily="Arial"/>
+						</s:FormItem>
+							
+						<s:FormItem width="365" label="Local Server url:" fontFamily="Arial">
+							<s:TextInput id="localserver" width="650" height="30" color="0x000000" fontFamily="Arial"/>
+						</s:FormItem>
+						
+						<s:FormItem width="365" label="Photoshop location:" fontFamily="Arial">				
+							<s:TextInput id="photoshop" width="650" height="30" color="0x000000" fontFamily="Arial"/>
+						</s:FormItem>
+						
+						<s:FormItem width="365" label="Calibrator location (watchfolder):" fontFamily="Arial">
+							<s:TextInput id="calibrator" width="650" height="30" color="0x000000" fontFamily="Arial"/>
+						</s:FormItem>
+						
+					
+						<s:HGroup>
+
+							<s:FormItem width="365" label="URN Length:" >
+									<s:TextInput id="urnLength" width="150" color="0x000000"  height="30" fontFamily="Arial"/>
+							</s:FormItem>
+							<s:FormItem width="365" label="Score format:" >
+								<s:TextInput id="scoreFormat" width="150" color="0x000000"  height="30" fontFamily="Arial"/>
+							</s:FormItem>
+							
+						</s:HGroup>
 			
-			<s:FormItem width="365" label="Remote Server url:" fontFamily="Arial">
-				<s:TextInput id="server" width="550" height="30" color="0x000000" fontFamily="Arial"/>
-			</s:FormItem>
-			<s:FormItem width="365" label="Local Server url:" fontFamily="Arial">
-				<s:TextInput id="localserver" width="550" height="30" color="0x000000" fontFamily="Arial"/>
-			</s:FormItem>
-			<s:HGroup>
+						<s:FormItem width="365" label="Facebook appID:" >
+							<s:TextInput id="facebookAPI_ID" width="650" color="0x000000" height="30" fontFamily="Arial"/>
+						</s:FormItem>
+			
+						<s:FormItem width="365" label="Application:">
+							<s:VGroup width="628">
+								
+									<s:RadioButton width="500" label="Registration Only" value="registration" group="{radioGroup}" skinClass="skins.vodafoneRadioButton" />
+									<s:RadioButton width="500" label="Photocapture" value="photocapture" group="{radioGroup}" skinClass="skins.vodafoneRadioButton" />
+									<s:RadioButton width="500" label="Simulator" value="simulator" group="{radioGroup}" skinClass="skins.vodafoneRadioButton" />
+									<s:RadioButton width="500" label="Green screen - Sit In" value="greenscreen" group="{radioGroup}" skinClass="skins.vodafoneRadioButton" />
+									<s:RadioButton width="500" label="Green screen - Celebrate" value="greenscreen_celebrate" group="{radioGroup}" skinClass="skins.vodafoneRadioButton" />
+									<s:RadioButton width="500" label="Helmet" value="helmet" group="{radioGroup}" skinClass="skins.vodafoneRadioButton" />
+							</s:VGroup>
+						
+						</s:FormItem>
+			
+						
+					</s:Form>	
+				</s:Group>
+			</s:Scroller>
 				
-			<s:FormItem width="365" label="URN Length:" >
-					<s:TextInput id="urnLength" width="150" color="0x000000"  height="30" fontFamily="Arial"/>
-			</s:FormItem>
-			<s:FormItem width="365" label="Score format:" >
-				<s:TextInput id="scoreFormat" width="150" color="0x000000"  height="30" fontFamily="Arial"/>
-			</s:FormItem>
-			</s:HGroup>
-
-			<s:FormItem width="365" label="Facebook appID:" >
-				<s:TextInput id="facebookAPI_ID" width="550" color="0x000000" height="30" fontFamily="Arial"/>
-			</s:FormItem>
-
-			<s:FormItem width="365" label="Application:">
-				<s:VGroup width="628">
-						<s:RadioButton width="500" label="Registration Only" value="registration" group="{radioGroup}" skinClass="skins.vodafoneRadioButton" />
-						<s:RadioButton width="500" label="Photocapture" value="photocapture" group="{radioGroup}" skinClass="skins.vodafoneRadioButton" />
-						<s:RadioButton width="500" label="Simulator" value="simulator" group="{radioGroup}" skinClass="skins.vodafoneRadioButton" />
-						<s:RadioButton width="500" label="Green screen - Sit In" value="greenscreen" group="{radioGroup}" skinClass="skins.vodafoneRadioButton" />
-						<s:RadioButton width="500" label="Green screen - Celebrate" value="greenscreen_celebrate" group="{radioGroup}" skinClass="skins.vodafoneRadioButton" />
-						<s:RadioButton width="500" label="Helmet" value="helmet" group="{radioGroup}" skinClass="skins.vodafoneRadioButton" />
-				</s:VGroup>
-			
-			</s:FormItem>
-		</s:Form>
 		<s:HGroup verticalAlign="middle">
 			<s:Button  label="Cancel" click="cancel(event)"  skinClass="skins.vodafoneButton"/>
 			<s:Spacer y="8" width="200" height="24"/>
