@@ -217,8 +217,8 @@
 				var pref:Config = new Config();
 				var photoshop:String = pref.prefsXML..photoshop.text().toString()
 				Console.log("User accepted photo "+ photoshop, this);
-				var greenscreenModel:GreenscreenModel = new GreenscreenModel( this.currentURN, "Arsenal", 
-															"C:\\Users\\Ignite\\Desktop\\calibrator_greenscreen_barclays\\", photoshop);
+				var calibrator:String = pref.prefsXML..calibrator.text().toString()
+				var greenscreenModel:GreenscreenModel = new GreenscreenModel( this.currentURN, "Arsenal", calibrator, photoshop);
 				
 				greenscreenModel.addEventListener( GreenscreenEvent.WAIT, greenscreenWait);
 				greenscreenModel.addEventListener( GreenscreenEvent.ERROR, greenscreenError);

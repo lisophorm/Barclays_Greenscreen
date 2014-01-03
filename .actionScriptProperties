@@ -86,7 +86,7 @@
   <flashCatalyst validateFlashCatalystCompatibility="false"/>
   <buildTargets>
     <buildTarget buildTargetName="default" platformId="default">
-      <airSettings airCertificatePath="/Users/Howard/Documents/workspace/CAR1008/release/ignite.p12" airTimestamp="true" anePathSet="true" version="1">
+      <airSettings airCertificatePath="C:/Users/Ignite/Desktop/wasserman.p12" airTimestamp="true" anePathSet="true" version="1">
         <airExcludes/>
         <anePaths/>
         <newLaunchParams/>
@@ -98,5 +98,3 @@
     </buildTarget>
   </buildTargets>
 </actionScriptProperties>
-
-
