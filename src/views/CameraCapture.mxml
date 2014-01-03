@@ -137,6 +137,7 @@
 						if (webcamera!=null)
 						{
 							webcamera.destroy();
+							videoholder.removeElement( webcamera );
 							webcamera = null;
 						}
 						
@@ -245,7 +246,9 @@
 					beginUpload( this.greenscreenPhoto );
 					
 			}
-			protected function cancelPhoto( e:Event=null ):void {}
+			protected function cancelPhoto( e:Event=null ):void {
+				this.setupCamera();
+			}
 			
 			protected function beginUpload(file:File):void
 			{

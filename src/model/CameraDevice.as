@@ -3,8 +3,6 @@ package model
 	import com.greensock.TweenMax;
 	import com.utils.Console;
 	
-	import flash.desktop.NativeProcess;
-	import flash.desktop.NativeProcessStartupInfo;
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.Sprite;
@@ -18,10 +16,8 @@ package model
 	import flash.geom.Matrix;
 	import flash.media.Camera;
 	import flash.media.Video;
-	import flash.system.Capabilities;
 	
 	import mx.core.UIComponent;
-	import mx.utils.DisplayUtil;
 	
 	import events.CameraEvent;
 	
@@ -51,15 +47,15 @@ package model
 		protected function init():void
 		{
 			
-			
+						
 			camera= Camera.getCamera();
 			if (camera!=null)
 			{
 				camera.addEventListener(StatusEvent.STATUS, statusHandler); 
 
-				camera.setMode(_width, _height, 25); 
+				camera.setMode(_width*3, _height*3, 25); 
 				camera.setQuality(0,100);
-				video = new Video(_width*4, _height*4);
+				video = new Video(_width*3, _height*3);
 				video.smoothing = true;
 				video.attachCamera(camera); 
 				bitmapData = new BitmapData(_width, _height);
@@ -136,26 +132,31 @@ package model
 		{
 			// save file
 			this.removeEventListener( Event.ENTER_FRAME, updatePhoto );
-			var finalCapture:BitmapData = new BitmapData(video.width, video.height);
-			finalCapture.draw( video );
-			video.visible = false;
-			video.attachCamera(null);
-			if (this.contains( video))
-				this.removeChild( video );
-			camera = null;
-			video = null;
-			
-			overlay = new Sprite();
-			overlay.graphics.beginFill(0xFFFFFF,1);
-			overlay.graphics.drawRect(0,0, _width, _height);
-			overlay.graphics.endFill();
-			this.addChild( overlay );
-			TweenMax.to( overlay, 1.5, { alpha:0, onComplete: hideOverlay});
-			
-			encoder.addEventListener(ProgressEvent.PROGRESS, onEncodingProgress);
-			encoder.addEventListener(Event.COMPLETE, onEncodeComplete);
-			encoder.encodeAsync(finalCapture);
-			
+			if (video!=null)
+			{
+				
+				
+				var finalCapture:BitmapData = new BitmapData(video.width, video.height);
+				finalCapture.draw( video );
+				video.visible = false;
+				video.attachCamera(null);
+				if (this.contains( video))
+					this.removeChild( video );
+				
+				camera = null;
+				video = null;
+				
+				overlay = new Sprite();
+				overlay.graphics.beginFill(0xFFFFFF,1);
+				overlay.graphics.drawRect(0,0, _width, _height);
+				overlay.graphics.endFill();
+				this.addChild( overlay );
+				TweenMax.to( overlay, 1.5, { alpha:0, onComplete: hideOverlay});
+				
+				encoder.addEventListener(ProgressEvent.PROGRESS, onEncodingProgress);
+				encoder.addEventListener(Event.COMPLETE, onEncodeComplete);
+				encoder.encodeAsync(finalCapture);
+			}
 			
 		}
 		protected function hideOverlay( e:Event=null ):void
