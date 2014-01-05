@@ -17,7 +17,9 @@ s|Label  {
 	
 }
 s|Label#frontMessage  {
-	fontSize:46;
+	fontSize:57;
+	fontFamily: "StandardRegularAllCase";
+	
 }
 
 #photoList s|Label  {
@@ -28,9 +30,12 @@ s|Label#frontMessage  {
 }
 #titleDisplay 
 {
-	fontSize: 28;
+	fontSize: 43;
 	fontFamily: "StandardRegularAllCase";
-	color:#FFFFFF;
+	color:#00AEEF;
+	textAlign: center;
+	
+	
 }
 .verysmallprint {
 	fontSize: 14;
@@ -53,10 +58,20 @@ s|FormHeading s|Label#labelDisplay {
 	color: #FFFFFF;
 	fontWeight: normal;
 }
+
+s|FormHeading#frontMessage s|Label#labelDisplay {
+	fontSize: 57;
+	fontFamily: "StandardRegularAllCase";
+	color: #FFFFFF;
+	fontWeight: normal;
+}
 s|FormItem
 {
-	skinClass: ClassReference("skins.vodafoneFormItem");
-	
+	skinClass: ClassReference("skins.BarclaysFormItem");	
+}
+s|FormItem s|Label#labelDisplay {
+	color: #00AEEF;
+	fontSize: 30;
 }
 #labelDisplay, .formItemLabelStyles {
 	fontSize: 32;
@@ -140,7 +155,17 @@ mx|ViewStack mx|VBox
 }
 .thankyou
 {
+	fontFamily: "StandardRegular";
+	
+	fontSize: 280;
+	color: #00AEEF;
+	lineHeight: 0px;
+}
+.tclink, .tcaccept#labelDisplay {
+	fontSize: 28;
 	fontFamily: "StandardRegularAllCase";
-	fontWeight:bold;
-	fontSize: 150;
+}
+.tclink {
+	textDecoration: underline;
+	fontFamily: "StandardRegularAllCaseBold";
 }

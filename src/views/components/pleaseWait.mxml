@@ -14,9 +14,9 @@
 	</fx:Declarations> 
 	<s:Rect id="tbFill" left="0" right="0" top="0" bottom="1" radiusX="30" filters="{[shadowfilter]}">
 		<s:fill>
-			<s:SolidColor color="#e60000"/>
+			<s:SolidColor color="#00AEEF"/>
 
 		</s:fill>
 	</s:Rect>
-	<s:Label x="81" y="124" color="#FFFFFF" textAlign="center" fontSize="64" text="{message}"/>
+	<s:Label x="81" y="124" color="#FFFFFF" textAlign="center" horizontalCenter="0" fontSize="64" text="{message}"  fontFamily="StandardRegularAllCase"/>
 </s:Group>

@@ -24,6 +24,12 @@
 }
 @font-face
 {
+	src: url("../fonts/ExpertSans/ExpertSans-Bold.ttf");
+	fontFamily: "StandardRegularAllCaseBold";
+	embedAsCFF: true;
+}
+@font-face
+{
 	src: url("../fonts/sky-text-regular.ttf");
 	fontFamily: "StandardSans";
 	embedAsCFF: true;

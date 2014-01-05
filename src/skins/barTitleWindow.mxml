@@ -23,7 +23,7 @@
 -->
 <s:SparkSkin xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark" 
     xmlns:fb="http://ns.adobe.com/flashbuilder/2009" blendMode="normal" mouseEnabled="false"
-    minWidth="76" minHeight="76" alpha.disabled="0.5" alpha.disabledWithControlBar="0.5">
+    minWidth="76" minHeight="80" alpha.disabled="0.5" alpha.disabledWithControlBar="0.5">
     
     <fx:Metadata>
         <![CDATA[ 
@@ -174,10 +174,10 @@
         </s:Group>
         
         <!--- layer 1: border @private -->
-        <s:Rect id="border" left="0" right="0" top="0" bottom="0" >
+        <s:Rect id="border" left="0" right="0" top="0" bottom="0"  >
             <s:stroke>
                 <!--- Defines the TitleWindowSkin class's border stroke. The default value is 1. -->
-                <s:SolidColorStroke id="borderStroke" weight="1" />
+                <s:SolidColorStroke id="borderStroke" color="#00AEEF" weight="1" />
             </s:stroke>
         </s:Rect>
         
@@ -200,19 +200,19 @@
             <s:Group id="topGroup" mask="{topGroupMask}">
                 
                 <!--- layer 0: title bar fill @private -->
-                <s:Rect id="tbFill" left="0" right="0" top="0" bottom="1">
+                <s:Rect id="tbFill" left="0" alpha="0" right="0" top="0" bottom="1">
                     <s:fill>
                         <s:LinearGradient rotation="90">
-                            <s:GradientEntry color="0xbb0000"
+                            <s:GradientEntry color="0xFFFFFF"
                                              color.inactiveGroup="0xEAEAEA"/>
-                            <s:GradientEntry color="0xbb0000"
+                            <s:GradientEntry color="0xFFFFFF"
                                              color.inactiveGroup="0xCECECE"/>
                         </s:LinearGradient>
                     </s:fill>
                 </s:Rect>
                 
                 <!--- layer 1: title bar highlight @private -->
-                <s:Rect id="tbHilite" left="0" right="0" top="0" bottom="0">
+                <s:Rect id="tbHilite" left="0" right="0" top="0" bottom="0" alpha="0">
                     <s:stroke>
                         <s:LinearGradientStroke rotation="90" weight="1">
                             <s:GradientEntry color="0xbb0000" />
@@ -229,7 +229,7 @@
                 </s:Rect>
                 
                 <!--- layer 2: title bar divider @private -->
-                <s:Rect id="tbDiv" left="0" right="0" height="1" bottom="0">
+                <s:Rect id="tbDiv" left="0" right="0" height="1" alpha="0" bottom="0">
                     <s:fill>
                         <s:SolidColor color="0x000000" alpha="0.75" />
                     </s:fill>
@@ -237,17 +237,16 @@
                 
                 <!-- layer 3: text -->
                 <!--- @copy spark.components.Panel#titleDisplay -->
-                <s:Label id="titleDisplay" maxDisplayedLines="1"
-                         left="9" right="36" top="1" bottom="0" minHeight="30"
-                         verticalAlign="middle" fontWeight="bold" />
+                <s:Label id="titleDisplay" maxDisplayedLines="1" 
+                         left="9" right="36" top="1" bottom="0" minHeight="80" 
+                         verticalAlign="middle" horizontalCenter="0" />
                 
                 <!-- layer 4: moveArea -->
                 <!--- @copy spark.components.TitleWindow#moveArea -->
                 <s:Group id="moveArea" left="0" right="0" top="0" bottom="0" />
                 
                 <!--- @copy spark.components.TitleWindow#closeButton -->
-                <s:Button id="closeButton" skinClass="spark.skins.spark.TitleWindowCloseButtonSkin"
-                          width="15" height="15" right="7" top="7" />
+                <s:Button id="closeButton" skinClass="skins.TitleCloseButton" width="80" height="80" right="7" top="7"  color="0x00AEEF" />
             </s:Group>
             
             <!--

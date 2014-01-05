@@ -66,7 +66,7 @@
 			bottomRightRadiusY="10"
 			>
 		<s:stroke>
-			<s:SolidColorStroke id="borderStroke" color="0xff0000" weight="4"/>
+			<s:SolidColorStroke id="borderStroke" color="0x00AEEF" weight="4"/>
 		</s:stroke>
 		<s:fill>
 			<s:SolidColor id="bgFill" color="0xf1f1f1" alpha="1"  />
@@ -85,7 +85,7 @@
 		</s:filters>
 	</s:Rect>
 	<s:BorderContainer width="574" height="259" backgroundAlpha="0" borderVisible="false" >
-		<s:TextArea x="12" width="574" height="259" borderVisible="false"  contentBackgroundAlpha="0"
+		<s:TextArea x="12" width="574" height="259" borderVisible="false"  contentBackgroundAlpha="0" fontFamily="StandardRegularAllCase"
 					fontSize="36" editable="false" selectable="false" text="{message}" fontWeight="bold" textAlign="center" verticalAlign="middle" skinClass="spark.skins.spark.TextAreaSkin"/>
 
 	</s:BorderContainer>

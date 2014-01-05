@@ -14,6 +14,7 @@
 			import com.utils.Console;
 			
 			import mx.core.IVisualElement;
+			import mx.core.UIComponent;
 			import mx.events.FlexEvent;
 			import mx.rpc.events.FaultEvent;
 			import mx.rpc.events.ResultEvent;
@@ -31,6 +32,7 @@
 			
 			
 			public var data:Object;
+			protected var currentIndex:int
 			
 			[Bindable]
 			public var type:String = "Game";
@@ -53,7 +55,7 @@
 			public function init(event:Event=null):void
 			{
 				Console.log("*** INIT SELECTTEAM ***", this);
-		
+				currentIndex = -1;
 				if (this.parentApplication.data!=null)
 				{
 					data = this.parentApplication.data;
@@ -165,7 +167,9 @@
 			
 			private function mySelect(event:MouseEvent):void
 			{
-					var currentIndex:int = -1;
+					 
+					if ( this.currentIndex> 0 )
+						(CarouselGroup.getElementAt( this.currentIndex ) as UIComponent).filters = null;
 					
 					for(var j:uint = 0; j < CarouselGroup.numElements; j++)
 					{
@@ -184,10 +188,22 @@
 						}); 
 					*/
 					Console.log( "currentIndex: "+ teamDataList[currentIndex].@name, this );
-					publish( teamDataList[currentIndex].@id )
+					
+			}
+			protected function accept( e:Event ):void
+			{
+				if (this.currentIndex>=0)
+				{
+					publish( teamDataList[currentIndex].@id )	
+				} else
+				{
+					this.parentApplication.dispatchEvent( new KioskError( KioskError.ERROR,  "No team selected. Please select your team and try again.", "Please select team"));
+				}
+				
 			}
 			protected function publish( teamID:int ):void
 			{
+				this.parentApplication.dispatchEvent( new KioskProgressEvent( KioskProgressEvent.NOTIFY, "Publishing..." ));
 				publishSelectTeam.url = this.parentApplication.localURL+'userteam.php';
 				Console.log("publishing to "+publishSelectTeam.url, this);
 				var passVars:Object=new Object();
@@ -223,12 +239,13 @@
 			private function myRollOver(event:MouseEvent):void
 			{	
 				//Console.log("Rollover", this);
+				
 				event.currentTarget.filters =[myGlowIs];
 			}
 			//Roll Out ... Remove Glow
 			private function myRollOut(event:MouseEvent):void
 			{
-			
+				if (CarouselGroup.getElementAt( currentIndex )!=event.currentTarget)
 				event.currentTarget.filters = null;
 			}
 			]]>
@@ -243,15 +260,21 @@
 	</fx:Declarations>
 	<!-- Menu -->
 	<!-- Field -->
-		<s:VGroup height="100%" width="100%" verticalAlign="middle" horizontalAlign="center"  >
-			<s:DataGroup id="CarouselGroup" updateComplete="createListeners(event)" horizontalCenter="0"  width="1240" itemRenderer="views.renderer.logoItemRenderer">			
+	
+		<s:VGroup height="100%" width="100%" horizontalAlign="center"  >
+			<s:Spacer height="80" />
+			<s:Label id="frontMessage" horizontalCenter="0"  text="PLEASE SELECT YOUR TEAM" />
+			<s:Spacer height="70" />
+			<s:DataGroup id="CarouselGroup" updateComplete="createListeners(event)" horizontalCenter="0"  width="1200" itemRenderer="views.renderer.logoItemRenderer">			
 				<s:layout>
 					<s:TileLayout orientation="rows" clipAndEnableScrolling="true"
 								  requestedColumnCount="-1" requestedRowCount="-1"
-								  verticalGap="12" horizontalGap="12" useVirtualLayout="true" />
+								  verticalGap="50" horizontalGap="0" useVirtualLayout="true" />
 				</s:layout>
 				<s:XMLListCollection  id="teamList"   source="{teamDataList}"/>	
 			</s:DataGroup>
+			<s:Spacer height="90" />
+			<s:Button label="CONTINUE" click="accept(event)" skinClass="skins.barclaysButton" />
 		</s:VGroup>
 			
 			

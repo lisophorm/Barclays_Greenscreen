@@ -115,7 +115,7 @@
 			
 			protected function httpservice_faultHandler(event:FaultEvent):void
 			{
-				this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, event.fault.faultString, "NETWORK ERROR"));
+				this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, event.fault.faultString, "NETWORK ERROR", this.restart));
 
 			}
 			
@@ -377,7 +377,7 @@
 	
 	<s:VGroup styleName="Game" horizontalAlign="center" verticalAlign="middle" width="100%" height="592" verticalCenter="0">
 		<s:VGroup id="videoholder" horizontalCenter="0" verticalCenter="0">
-			<s:HGroup width="100%" horizontalAlign="center"><s:Button id="takePhotoButton" horizontalCenter="0" label="Shoot Photo" skinClass="skins.vodafoneButton"/></s:HGroup>
+			<s:HGroup width="100%" horizontalAlign="center"><s:Button id="takePhotoButton" horizontalCenter="0" label="Shoot Photo" skinClass="skins.barclaysButton"/></s:HGroup>
 		</s:VGroup>		
 		<s:VGroup>
 			<s:Label id="statusText" />

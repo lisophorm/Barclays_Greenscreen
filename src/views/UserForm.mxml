@@ -153,34 +153,34 @@
 		<s:HTTPService id="saveData" resultFormat="flashvars" method="POST" url="{(this.parentApplication).localURL+'register.php'}" result="save(event)" fault="error(event)" />
 	</fx:Declarations>
 	
-	<s:Form width="100%" id="userform" horizontalCenter="0" verticalCenter="0">
+	<s:Form width="100%" id="userform" horizontalCenter="105" verticalCenter="30">
 		<s:layout>
 			<s:FormLayout/>
 		</s:layout>
-		<s:FormHeading label="Please enter your details" />
-		
-		<s:FormItem label="First Name:" skinClass="skins.vodafoneFormItem" >
-			<s:TextInput id="userFirstName" width="650" skinClass="skins.vodafoneTextInput" />
+		<s:FormHeading id="frontMessage" label="PLEASE ENTER YOUR DETAILS" />
+		<s:Spacer height="30" />
+		<s:FormItem label="First Name:" skinClass="skins.BarclaysFormItem" >				
+			<s:TextInput id="userFirstName" width="500" height="54" skinClass="skins.BarclaysTextInput" />
 		</s:FormItem>
 		
-		<s:FormItem label="Last Name:"  skinClass="skins.vodafoneFormItem">
-			<s:TextInput id="userLastName" width="650" skinClass="skins.vodafoneTextInput" />
+		<s:FormItem label="Last Name:" skinClass="skins.BarclaysFormItem">
+			<s:TextInput id="userLastName" width="500" height="54" skinClass="skins.BarclaysTextInput" />
 		</s:FormItem>
 		
-		<s:FormItem label="Email address:" skinClass="skins.vodafoneFormItem">
-			<s:TextInput id="userEmail" width="650" skinClass="skins.vodafoneTextInput" />
+		<s:FormItem label="Email address:" skinClass="skins.BarclaysFormItem">
+			<s:TextInput id="userEmail" width="500" height="54" skinClass="skins.BarclaysTextInput" />
 		</s:FormItem>
 		
-		<s:FormItem label="Mobile Number:"  skinClass="skins.vodafoneFormItem">
-			<s:TextInput id="userMobile" width="650" skinClass="skins.vodafoneTextInput" />
+		<s:FormItem label="Mobile Number:"  skinClass="skins.BarclaysFormItem">
+			<s:TextInput id="userMobile" width="500" height="54" skinClass="skins.BarclaysTextInput" />
 		</s:FormItem>
 	
 	<s:HGroup width="100%" horizontalAlign="center">
 		
-		<s:Button label="CANCEL" click="clearForm()" skinClass="skins.vodafoneButton"/>
-		<s:Spacer width="100" />
+		<s:Button label="CANCEL" click="clearForm()" skinClass="skins.barclaysButton"/>
+		<s:Spacer width="50" />
 		
-		<s:Button label="SUBMIT" click="submit(event)" skinClass="skins.vodafoneButton"/>
+		<s:Button label="SUBMIT" click="submit(event)" skinClass="skins.barclaysButton"/>
 	</s:HGroup>
 	
 	</s:Form>

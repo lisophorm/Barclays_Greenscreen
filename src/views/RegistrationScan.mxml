@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		xmlns:s="library://ns.adobe.com/flex/spark" 
-		creationComplete="created()"
+		creationComplete="created()" 
 		remove="exit(event)" xmlns:mx="library://ns.adobe.com/flex/mx">
 	<fx:Script>
 		<![CDATA[
@@ -63,11 +63,14 @@
 			public function created(event:FlexEvent=null):void
 			{
 				Console.log("*** CREATE ***", this);
+				
+			
 				init();
 				this.removeEventListener( Event.INIT, init);
 				this.addEventListener( Event.INIT, init);
 				this.removeEventListener(StateChangeEvent.CURRENT_STATE_CHANGE, onStateChange);
 				this.addEventListener(StateChangeEvent.CURRENT_STATE_CHANGE, onStateChange);
+			
 			}
 			public function init(event:Event=null):void
 			{
@@ -97,7 +100,30 @@
 				*/
 				this.executeBindings(true);
 			}
-			
+			protected function simulate(e:Event):void
+			{
+				switch (this.currentState)
+				{
+					case "DEFAULT":
+						//this.currentState = "REGISTER_BEGIN";
+						this.readyToScan();
+						//onBeginRegister()
+						break;
+					
+					case "REGISTER_BEGIN":
+						this.currentState = "STEP1";
+						break;
+					case "STEP1":
+						this.currentState = "STEP2";
+						break;
+					case "STEP2":
+						this.currentState = "STEP3";
+						break;
+					case "STEP3":
+						this.currentState = "REGISTER_COMPLETE";
+						break;
+				}
+			}
 			//Prepare device for scanning
 			protected function startListen(event:Event=null):void
 			{
@@ -143,24 +169,24 @@
 			{
 				this.frontMessage.text = "I HAD A PROBLEM READING THAT - PLEASE TRY AGAIN.";	
 			}
-			protected function register_step_1( e:RegistrationEvent ):void
+			protected function register_step_1( e:RegistrationEvent=null ):void
 			{
 				Console.log("CHANGING STATE -> STEP1", this);
 				this.currentState = "STEP1";
 			}
-			protected function register_step_2( e:RegistrationEvent ):void
+			protected function register_step_2( e:RegistrationEvent=null ):void
 			{
 				this.currentState = "STEP2";
 			}
-			protected function register_step_3( e:RegistrationEvent ):void
+			protected function register_step_3( e:RegistrationEvent=null ):void
 			{
 				this.currentState = "STEP3";
 			}
-			protected function register_complete( e:RegistrationEvent ):void
+			protected function register_complete( e:RegistrationEvent=null ):void
 			{
 				this.currentState = "REGISTER_COMPLETE";
 			}
-			protected function readyToScan( e:RegistrationEvent ):void
+			protected function readyToScan( e:RegistrationEvent=null ):void
 			{
 				Console.log("readyToScan", this);
 				frontMessage.text = "PLEASE SCAN YOUR FINGER";
@@ -182,7 +208,7 @@
 				this.onAlreadyRegistered( e.URN, this.parentApplication.ApplicationType );
 			}
 			
-			protected function userNotFound( e:RegistrationEvent ):void
+			protected function userNotFound( e:RegistrationEvent=null ):void
 			{			
 				Console.log("userNotFound ", this);
 				//register with device first
@@ -402,7 +428,7 @@
 				trace("cazzo");
 			}
 		
-			protected function onBeginRegister(event:MouseEvent):void
+			protected function onBeginRegister(event:MouseEvent=null):void
 			{
 				Console.log("onBeginRegister", this);
 				this.currentState = "REGISTER_BEGIN";
@@ -451,11 +477,12 @@
 		
 	</s:states>
 	
-	<s:VGroup horizontalAlign="center" verticalAlign="middle" height="574" width="100%">
+	<s:VGroup horizontalAlign="center" verticalAlign="top" height="574" width="100%">
 		
-		
+		<s:Spacer height="130" height.DEFAULT="260" />
 		<s:VGroup horizontalAlign="center">
-			<s:Label id="frontMessage" horizontalCenter="0" verticalCenter="0"  
+			
+			<s:Label id="frontMessage" horizontalCenter="0"
 					 text="PLEASE SCAN YOUR FINGER"
 					 text.REGISTER_BEGIN = "REGISTRATION SCAN - PLEASE SCAN FINGER"
 					 text.SCANNING_RESTART = "READING ERROR - PLEASE TRY AGAIN!"
@@ -468,52 +495,53 @@
 			
 			<s:TextInput id="barcodeInput" includeInLayout="false" addedToStage="getBarcodeFocus()"  visible="false" text="" textAlign="left"/>
 
-			<s:HGroup verticalAlign="middle"  includeInLayout="false" id="userNotFoundModule">
-				<s:Button label="Scan Again" click="init(event)" skinClass="skins.vodafoneButton"/>
-				<s:Button label="Register" click="onBeginRegister(event)" skinClass="skins.vodafoneButton"/>
+			<s:HGroup  includeInLayout="false" id="userNotFoundModule" paddingTop="105">
+				<s:Button label="Scan Again" click="init(event)" skinClass="skins.barclaysButton" width="227"/>
+				<s:Spacer width="45" />
+				<s:Button label="Register" click="onBeginRegister(event)" skinClass="skins.barclaysButton" width="227"/>
 				
 			</s:HGroup>
 			
-			<s:HGroup verticalAlign="middle" id="userFingerScanStepModule">
+			<s:HGroup id="userFingerScanStepModule" paddingTop="105" height="250">
 				<s:HGroup includeIn="REGISTER_BEGIN" >
 					<s:BitmapImage source="assets/images/fingerprint_gray.png" />
-					<s:Spacer width="20" />
+					<s:Spacer width="5" />
 					<s:BitmapImage source="assets/images/fingerprint_gray.png" />
-					<s:Spacer width="20" />
+					<s:Spacer width="5" />
 					<s:BitmapImage source="assets/images/fingerprint_gray.png" />
 				</s:HGroup>
 				<s:HGroup includeIn="STEP1" >
 					<s:BitmapImage source="assets/images/fingerprint_orange.png" />
-					<s:Spacer width="20" />
+					<s:Spacer width="5" />
 					<s:BitmapImage source="assets/images/fingerprint_gray.png" />
-					<s:Spacer width="20" />
+					<s:Spacer width="5" />
 					<s:BitmapImage source="assets/images/fingerprint_gray.png" />
 				</s:HGroup>
 				<s:HGroup includeIn="STEP2" >
 					<s:BitmapImage source="assets/images/fingerprint_blue.png" />
-					<s:Spacer width="20" />
+					<s:Spacer width="5" />
 					<s:BitmapImage source="assets/images/fingerprint_orange.png" />
-					<s:Spacer width="20" />
+					<s:Spacer width="5" />
 					<s:BitmapImage source="assets/images/fingerprint_gray.png" />
 				</s:HGroup>
 				<s:HGroup includeIn="STEP3" >
 					<s:BitmapImage source="assets/images/fingerprint_blue.png" />
-					<s:Spacer width="20" />
+					<s:Spacer width="5" />
 					<s:BitmapImage source="assets/images/fingerprint_blue.png" />
-					<s:Spacer width="20" />
+					<s:Spacer width="5" />
 					<s:BitmapImage source="assets/images/fingerprint_orange.png" />
 				</s:HGroup>
 				<s:HGroup includeIn="REGISTER_COMPLETE" >
 					<s:BitmapImage source="assets/images/fingerprint_orange.png" />
-					<s:Spacer width="20" />
+					<s:Spacer width="5" />
 					<s:BitmapImage source="assets/images/fingerprint_orange.png" />
-					<s:Spacer width="20" />
+					<s:Spacer width="5" />
 					<s:BitmapImage source="assets/images/fingerprint_orange.png" />
 				</s:HGroup>
 			</s:HGroup>
 			
 		</s:VGroup>
-		
+		<!--s:Button click="simulate(event)" label="Simulate" /-->
 	</s:VGroup>
 	
 </s:Group>

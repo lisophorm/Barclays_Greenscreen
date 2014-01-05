@@ -73,7 +73,7 @@
 				bottomRightRadiusX="10"
 				bottomRightRadiusY="10">
 			<s:stroke>
-				<s:SolidColorStroke id="borderStroke" color="0xe60000" weight="4"/>
+				<s:SolidColorStroke id="borderStroke" color="0x00AEEF" weight="4"/>
 			</s:stroke>
 			<s:fill>
 				<s:SolidColor id="bgFill" color="0xf1f1f1" alpha="1"  />
@@ -96,9 +96,9 @@
 		
 			<s:Image id="finalPhoto" source="{photoPath}" width="800" height="600"/>		
 			<s:HGroup>
-				<s:Button id="accept" width="200" label="ACCEPT" click="accept_clickHandler(event)"/> 
+				<s:Button id="accept" width="200" label="ACCEPT" click="accept_clickHandler(event)" skinClass="skins.barclaysButton"/> 
 				<s:Spacer width="161" height="20"/>
-				<s:Button id="cancel" width="200" label="CANCEL" click="cancel_clickHandler(event)"/> 
+				<s:Button id="cancel" width="200" label="CANCEL" click="cancel_clickHandler(event)" skinClass="skins.barclaysButton"/> 
 			</s:HGroup>
 		</s:VGroup>
 	</s:Group> 
