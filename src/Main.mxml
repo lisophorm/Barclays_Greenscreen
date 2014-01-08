@@ -66,7 +66,11 @@
 			
 			public var eventLocation:String="";
 			
+			[Bindable]
+			protected var MAX_HEIGHT:int = 1080;
 			
+			[Bindable] 
+			protected var MAX_WIDTH:int = 1920;
 			
 			public static var APPLICATION_TYPE_REGISTRATION:String	 = "REGISTRATION";
 			public static var APPLICATION_TYPE_PHOTO:String			 = "PHOTOCAPTURE";
@@ -109,9 +113,10 @@
 			{
 				stage.displayState =  StageDisplayState.FULL_SCREEN_INTERACTIVE;
 				
-				stage.scaleMode = "noScale";
+				stage.scaleMode = StageScaleMode.NO_SCALE;
 				this.reScaleMainContent();
 			}
+			
 			protected function reScaleMainContent():void
 			{
 //				screenScale();
@@ -126,8 +131,38 @@
 
 			protected function get scale():Number
 			{
-				return Math.min( 1366/this.stage.stageWidth,  768/this.stage.stageHeight);
+				//return Math.min( 1366/this.stage.stageWidth,  768/this.stage.stageHeight);
+				return Math.min( this.stage.stageWidth / MAX_WIDTH,  this.stage.stageHeight / (MAX_HEIGHT));
 			}
+			
+			protected function screenScale():void
+			{
+				/*
+				if (Capabilities.screenResolutionX!=MAX_RES_X || Capabilities.screenResolutionY!=MAX_RES_Y)
+				{
+					MAX_HEIGHT = MAX_HEIGHT;
+					
+					trace("INITIAL MAX_WIDTH:"+MAX_WIDTH);
+					trace("INITIAL MAX_HEIGHT:"+MAX_HEIGHT);
+					
+					// if screen capability is smaller than design resolution do inital scale
+					if (MAX_WIDTH > Capabilities.screenResolutionX || MAX_HEIGHT > Capabilities.screenResolutionY)
+					{
+						RELATIVE_SCALE = Math.min(1, Math.min(MAX_WIDTH/ Capabilities.screenResolutionX, MAX_HEIGHT/ (Capabilities.screenResolutionY)));
+					}
+					MAX_RES_X = Capabilities.screenResolutionX;
+					MAX_RES_Y = Capabilities.screenResolutionY;
+					trace("RELATIVE_SCALE:"+RELATIVE_SCALE);
+					trace("screenResolutionX:"+Capabilities.screenResolutionX);
+					trace("screenResolutionY:"+Capabilities.screenResolutionY);
+					MAX_WIDTH  = MAX_WIDTH * RELATIVE_SCALE;
+					MAX_HEIGHT = MAX_HEIGHT * RELATIVE_SCALE;
+					trace("MAX_WIDTH:"+MAX_WIDTH);
+					trace("MAX_HEIGHT:"+MAX_HEIGHT);
+				}
+				*/
+			}
+			
 			protected function onresize(e:Event=null):void
 			{
 				trace("*** RESIZE");
@@ -227,8 +262,6 @@
 				navigationTimer = new Timer(200, 0);
 				navigationTimer.addEventListener( TimerEvent.TIMER, checkNavigationHover );
 				navigationTimer.start();
-
-				
 			}
 			protected var navigationTimer:Timer;
 			protected var navigationTimerCount:int=0;
@@ -257,7 +290,7 @@
 					if (navigationVisible)
 					{
 						//	Console.log("Hide Navigation", this)
-						hideNavigation()
+						//hideNavigation()
 					}
 				}
 				
@@ -400,6 +433,7 @@
 				PopUpManager.addPopUp(tcWindow, this, true);
 				PopUpManager.centerPopUp(tcWindow);
 			}
+			
 			protected function gotoView( stackStr:String="", obj:Object=null ) :void
 			{
 				var indexSeq:Array = ["RegisterView", "SelectUserType", "FaceBookAuth01", "UserForm", "SelectTeam","CameraCapture", "ScoreCapture", "TaskCompleteCapture", "GreenScreen","GreenScreenCelebrate", "SelectApplication", "Thankyou", "FaceBookLogoutOverride"]
@@ -518,6 +552,7 @@
 			//NAVIGATION HANDLING BETWEEN VIEWS
 			protected function doNavigation(e:ViewEvent):void
 			{
+				trace("Main :: doNavigation :: " + e.location);
 				Console.log("doNavigation:"+e.location, this);
 				clearPopups();
 				hideDropshadow();
@@ -745,6 +780,12 @@
 				this.dispatchEvent( new ViewEvent( ViewEvent.LOCATION_RESTART ));
 				
 			}
+			
+			protected function thankyouView(e:Event = null):void
+			{
+		//		this.dispatchEvent( new ViewEvent(ViewEvent.
+			}
+			
 			protected function config(event:MouseEvent=null):void
 			{
 				if (loggedIn)
@@ -966,20 +1007,21 @@
 	<fx:Style source="assets/css/Fonts.css" />
 	<fx:Style source="assets/css/Main.css" />
 		
-	<s:BorderContainer id="navigationbar" alpha="0" includeInLayout="false" borderAlpha="0" width="{this.stage.stageWidth}" height="90" click="fullscreen(event)">
+	<s:BorderContainer id="navigationbar" includeInLayout="false" borderAlpha="0" width="{this.stage.stageWidth}" height="150" click="fullscreen(event)">
 		<s:backgroundFill>
 			<s:LinearGradient rotation="90">
 				<s:GradientEntry color="0x000000" alpha=".5"/>
 				<s:GradientEntry color="0x000000" alpha=".1"/>
 			</s:LinearGradient>
 		</s:backgroundFill>
-		<s:HGroup verticalAlign="middle" width="100%" height="90">
+		<s:HGroup verticalAlign="middle" width="100%" height="150">
 			<s:HGroup left="20" paddingLeft="20">
 				<s:Button skinClass="skins.BasicButton" styleName="nav" icon="@Embed('assets/images/logo_live_small.png')" click="{defaultView()}"/>
 			</s:HGroup>
-			<s:HGroup width="100%" horizontalAlign="right" paddingRight="0" verticalAlign="middle" height="90">
+			<s:HGroup width="100%" horizontalAlign="right" paddingRight="0" verticalAlign="middle" height="150">
 				<s:Button skinClass="skins.BasicButton" styleName="nav" icon="@Embed('assets/images/core/nm-no-connection.gif')" id="connStatus" label="{ML.t('NO CONNECTION')}" color="0xFFFFFF" visible="false" />
 				<s:Button skinClass="skins.BasicButton" styleName="nav" icon="@Embed('assets/images/core/home_logo.png')" click="{defaultView()}"/>
+				<s:Button label="thanks!" click="{gotoView('Thankyou')}"/>
 				<s:Button skinClass="skins.BasicButton" styleName="nav" label="{ML.t('Quit')}" click="exitApplication(event)" id="quitButton" color="0xFFFFFF" visible="{loggedIn}" includeInLayout="{loggedIn}" />
 				<s:Button skinClass="skins.BasicButton" styleName="nav" icon="@Embed('assets/images/core/padlock.png')" click="config(event)" color="0xFFFFFF" />
 			</s:HGroup>		
@@ -988,9 +1030,9 @@
 	
 	<s:VGroup id="contentholder" width="100%" height="100%" verticalAlign="middle" horizontalAlign="center">
 		
-	<s:Group id="holder" horizontalCenter="0" verticalCenter="0" width="1366" height="768">
+	<s:Group id="holder" horizontalCenter="0" verticalCenter="0" width="100%" height="100%">
 		
-		<s:BorderContainer id="borderHolder" width="100%" height="100%" borderVisible="false" backgroundImage="@Embed('./assets/images/Background.png')">
+		<s:BorderContainer id="borderHolder" width="100%" height="100%" borderVisible="false" backgroundImage="@Embed('./assets/images/Background2.png')">
 			<!--s:Image includeInLayout="false" alpha="0.5" x="0" y="0" top="0" left="0" right="1280" bottom="720"  source="@Embed('../guides/Instructions_1280x720px_Page_01.jpg')" width="1280" height="720" smooth="true" /-->	
 		
 			

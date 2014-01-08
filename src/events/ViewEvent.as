@@ -23,17 +23,20 @@ package events
 		public static var LOCATION_GAME_COMPLETE:String = "Game Complete";
 
 		
-		
-
 		public var object:Object = null;
 		public var location:String = "";
 
 		public function ViewEvent(location:String = "HOME", val:Object=null, bubbles:Boolean=false, cancelable:Boolean=false)
 		{
-			trace("**** View '"+location+"'");
+			trace("**** ViewEvent '"+location+"'");
 			object = val;
 			this.location = location
 			super(ViewEvent.NAVIGATE, bubbles, cancelable);
+		}
+		
+		override public function clone():Event
+		{
+			return new ViewEvent(location, object, bubbles, cancelable);
 		}
 	}
 }

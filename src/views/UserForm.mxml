@@ -6,6 +6,7 @@
 		>
 	<fx:Script>
 		<![CDATA[
+			import com.alfo.utils.VirtualKeyboard;
 			import com.utils.Console;
 			
 			import mx.events.FlexEvent;
@@ -30,6 +31,7 @@
 			protected var currentURN:String;
 			public var optin_marketing:Boolean;
 			public var optin_terms:Boolean;
+			private var virtualKeyboard:VirtualKeyboard;
 			
 			public function created(event:FlexEvent=null):void
 			{
@@ -58,6 +60,9 @@
 				validatorArr.push(validateEmail);
 				validatorArr.push(validateMobile);
 				saveData.url = (this.parentApplication).localURL+'register.php';
+				
+				//virtualKeyboard = new VirtualKeyboard();
+				//virtualKeyboard.slideUp("C:\\Program Files (x86)\\Chessware\\Touch-It");
 			}
 			protected function clearData():void
 			{

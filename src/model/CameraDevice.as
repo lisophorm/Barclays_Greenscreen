@@ -46,9 +46,7 @@ package model
 		
 		protected function init():void
 		{
-			
-						
-			camera= Camera.getCamera();
+			camera= Camera.getCamera(Settings.cameraID.toString());
 			if (camera!=null)
 			{
 				camera.addEventListener(StatusEvent.STATUS, statusHandler); 

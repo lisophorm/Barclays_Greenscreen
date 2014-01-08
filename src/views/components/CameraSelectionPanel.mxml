@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:List xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		xmlns:s="library://ns.adobe.com/flex/spark" 
+		xmlns:mx="library://ns.adobe.com/flex/mx" 
+		contentBackgroundColor="0x000000"
+		change="{dispatchEvent(new CameraSelectionEvent(CameraSelectionEvent.CAMERA_SELECTED, selectedIndex))}">
+	
+	<fx:Metadata>
+		[Event(name="camera_selected", type="events.CameraSelectionEvent")]
+	</fx:Metadata>
+	
+	<fx:Script>
+		<![CDATA[
+			import events.CameraSelectionEvent;
+		]]>
+	</fx:Script>
+	
+</s:List>

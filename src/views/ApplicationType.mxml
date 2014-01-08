@@ -1,20 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		xmlns:s="library://ns.adobe.com/flex/spark" 
-		remove="exit(event)" creationComplete="created(event)" 
+		remove="exit(event)" creationComplete="created(event)" xmlns:components="views.components.*" 
 		>
 	<fx:Script>
 		<![CDATA[
 			import com.utils.Console;
 			
+			import mx.collections.ArrayCollection;
+			import mx.collections.ArrayList;
 			import mx.events.FlexEvent;
 			
 			import spark.events.IndexChangeEvent;
 			
 			import events.ApplicationEvent;
+			import events.CameraSelectionEvent;
 			import events.ViewEvent;
 			
 			import model.Config;
+			import model.Settings;
+			
 			
 			[Bindable]
 			public var data:Object;
@@ -46,13 +51,42 @@
 				}
 				
 			}
+			
 			protected function exit(event:Event=null):void
 			{
 				trace("*** EXIT APPLICATIONTYPE ***");
 			}
+			
 			protected function submit(e:MouseEvent):void
 			{
 				trace("serverIP:"+ server.text.toString()+"facebookAppID:"+ facebookAPI_ID.text.toString()+"urnLength:"+ urnLength.text.toString()+"applicationtype:"+ radioGroup.selectedValue.toString()+"scoreFormat:"+scoreFormat.text.toString());
+				
+			//	var cameraNames : Array = Camera.names;
+				
+			//	trace("ApplicationType :: submit :: " + cameraNames.length);
+				
+				configureApplication();
+				/*
+				if(cameraNames.length > 1)
+				{
+					var cameraNamesList : ArrayList = new ArrayList(cameraNames);
+					cameraList.dataProvider = cameraNamesList;
+					cameraList.visible = true;
+				}else
+				{
+				}
+				*/
+			}
+			
+			protected function cameraSelectedHandler(event : CameraSelectionEvent):void
+			{
+				Settings.cameraID = event.cameraID;
+				cameraList.visible = false;
+				configureApplication();
+			}
+			
+			protected function configureApplication():void
+			{
 				this.parentApplication.dispatchEvent( new ApplicationEvent( ApplicationEvent.SAVE_TYPE, { serverIP: server.text.toString(),
 					localIP:localserver.text.toString(),
 					facebookAppID: facebookAPI_ID.text.toString(), 
@@ -60,9 +94,9 @@
 					applicationtype: radioGroup.selectedValue.toString(),
 					scoreFormat: scoreFormat.text.toString(),
 					photoshop: photoshop.text.toString(),
-					calibrator: calibrator.text.toString()} ) );
-				
+					calibrator: calibrator.text.toString()} ) );				
 			}
+			
 			protected function cancel(e:MouseEvent):void
 			{
 				this.parentApplication.dispatchEvent( new ViewEvent(ViewEvent.LOCATION_RESTART ));
@@ -150,4 +184,8 @@
 		
 		
 	</s:VGroup>
+	
+	<components:CameraSelectionPanel id="cameraList" visible="false" 
+									 x="{width/2 - cameraList.width/2}" y="{height/2 - cameraList.height/2}"
+									 camera_selected="{cameraSelectedHandler(event)}"/>
 </s:Group>

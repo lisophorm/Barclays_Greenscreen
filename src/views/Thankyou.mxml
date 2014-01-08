@@ -4,15 +4,20 @@
 		remove="exit(event)" creationComplete="created(event)" 
 		xmlns:components="views.components.*">
 	
-	<fx:Script>
+	<fx:Metadata>
+		[Event(name="restart", type="events.ViewEvent")]
+	</fx:Metadata>
+	
+	<fx:Script>	
 		<![CDATA[
-			import events.ViewEvent;
-			
-			import flash.utils.setInterval;
-			
-			import model.ML;
+			import com.greensock.TweenMax;
+			import com.utils.Console;
 			
 			import mx.events.FlexEvent;
+			
+			import events.ViewEvent;
+			
+			import model.ML;
 			
 			
 			protected var intervallo:Number;
@@ -21,25 +26,34 @@
 			{
 				this.addEventListener( Event.INIT, init);
 			}
+			
 			public function init(event:Event=null):void
 			{
-				trace("*** INIT THANKYOU ***");
-				intervallo=setInterval(close,2000);
+				trace("Thankyou :: init");
+				Console.log("*** Thankyou :: init ***", this);
+				TweenMax.delayedCall(2, close);
+				//intervallo=setInterval(close,2000);
 				//var temp:File=File.applicationDirectory.resolvePath("/data/data/air.BarclaysFaceBook01/cache/webviewCache");
 				
 			}
 			
 			protected function exit(event:Event):void
 			{
+				Console.log("*** Thankyou :: exit ***", this);
 				// TODO Auto-generated method stub
-				clearInterval(intervallo);
-				trace("*** EXIT APPLICATIONTYPE ***");	
+				TweenMax.killTweensOf(this);
+			//	clearInterval(intervallo);
+//				trace("*** EXIT APPLICATIONTYPE ***");	
 			}
-			protected function close():void {
-
-				clearInterval(intervallo);
+			
+			protected function close():void 
+			{
+				trace("Thankyou :: close");
+				Console.log("*** Thankyou :: close ***", this);
+				TweenMax.killTweensOf(this);
+			//	clearInterval(intervallo);
 				//navigator.popToFirstView();
-				this.parentApplication.dispatchEvent(new ViewEvent( ViewEvent.LOCATION_RESTART ));
+				parentApplication.dispatchEvent(new ViewEvent( ViewEvent.LOCATION_RESTART ));
 				
 			}
 		]]>
@@ -51,6 +65,6 @@
 	<s:VGroup width="100%" height="597" horizontalAlign="center" verticalAlign="middle">
 		<s:Spacer width="10" height="40"/>
 		<s:Label styleName="thankyou" text="THANK"  />
-		<s:Label styleName="thankyou" text="YOU"  paddingTop="-50"  />
+		<s:Label styleName="thankyou" text="YOU"  paddingTop="-50" />
 	</s:VGroup>
 </s:Group>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!-- Source File: C:\Users\emirates\Desktop\Vodafone RFID registration_final_vfhu_001.csv -->
+<!-- Number of Records: 19 -->
+<!-- Created with: CSVed 2.2.1, at: 2012.04.21. 18:53:25 -->
+<!-- Start of the body -->
+<Document source="C:\Users\emirates\Desktop\Vodafone RFID registration_final_vfhu_001.csv">
+   <Row>
+      <Column0>Please scan your wristband</Column0>
+      <Column1>Kérjük, érintsd a csuklópántod a leolvasóhoz</Column1>
+   </Row>
+
+   <Row>
+      <Column0>Terms and conditions</Column0>
+      <Column1>Részvételi Feltételek</Column1>
+   </Row>
+
+   <Row>
+      <Column0>I don’t have a Facebook account</Column0>
+      <Column1>Nincs Facebook hozzáférésem</Column1>
+   </Row>
+
+   <Row>
+      <Column0>Facebook connect</Column0>
+      <Column1>Belépés Facebook azonosítóval</Column1>
+   </Row>
+
+   <Row>
+      <Column0>Name</Column0>
+      <Column1>Név</Column1>
+   </Row>
+
+   <Row>
+      <Column0>Published Facebook posts</Column0>
+      <Column1>Közzétett Facebook bejegyzések száma</Column1>
+   </Row>
+
+   <Row>
+      <Column0>Enter time</Column0>
+      <Column1>Idő megadása</Column1>
+   </Row>
+
+   <Row>
+      <Column0>Save score</Column0>
+      <Column1>Pontszám mentése</Column1>
+   </Row>
+
+   <Row>
+      <Column0>Please enter your details below</Column0>
+      <Column1>Kérjük, add meg a következő adatokat</Column1>
+   </Row>
+
+   <Row>
+      <Column0>First name</Column0>
+      <Column1>Keresztnév</Column1>
+   </Row>
+
+   <Row>
+      <Column0>Last name</Column0>
+      <Column1>Családnév</Column1>
+   </Row>
+
+   <Row>
+      <Column0>Email address</Column0>
+      <Column1>Email cím</Column1>
+   </Row>
+
+   <Row>
+      <Column0>Mobile number</Column0>
+      <Column1>Mobiltelefonszám</Column1>
+   </Row>
+
+   <Row>
+      <Column0>Cancel</Column0>
+      <Column1>Mégsem</Column1>
+   </Row>
+
+   <Row>
+      <Column0>Submit</Column0>
+      <Column1>Elküld</Column1>
+   </Row>
+
+   <Row>
+      <Column0>I agree to the Terms and Conditions</Column0>
+      <Column1>Elfogadom a Részvételi Feltételeket</Column1>
+   </Row>
+
+   <Row>
+      <Column0>By tapping submit you agree to the</Column0>
+      <Column1>Az &quot;Elküld&quot; gomb megnyomásával elfogadod az</Column1>
+   </Row>
+	<Row>
+		<Column0>I accept marketing approach from Vodafone</Column0>
+		<Column1>Elfogadom marketing megkeresést a Vodafone-tól</Column1>
+	</Row>
+   <Row>
+      <Column0>"I agree that the specified personal information of Vodafone Hungary's own marketing activities, direct marketing, market research and information for telephone or other electronic means (eg SMS, MMS, E-mail), an automated calling system, or by mail use. I understand that Vodafone Hungary 1476 Budapest, PO Box: 350 postal and electronic addresses through ugyfelszolgalat.hu @ vodafone.com ask the registered personal information deleted, modified, or treated with the data to information."</Column0>
+      <Column1>„Hozzájárulok, hogy megadott személyes adataimat a Vodafone Magyarország Zrt. saját marketing tevékenységéhez, közvetlen üzletszerzés, piackutatás és tájékoztatás céljára telefonon vagy egyéb elektronikus hírközlési úton (pl. SMS, MMS, E-mail), automatizált hívórendszeren keresztül, illetve postai úton felhasználja. Tudomásul veszem, hogy a Vodafone Magyarország Zrt. 1476 Budapest, Pf.:350. postai és az ugyfelszolgalat.hu@vodafone.com elektronikus címeken keresztül kérhetem a nyilvántartott személyes adataim törlését, módosítását, illetőleg a kezelt adatokról való tájékoztatást.”</Column1>
+   </Row>
+
+   <Row>
+      <Column0>Take photo</Column0>
+      <Column1>Fotó készítése</Column1>
+   </Row>
+
+   <Row>
+      <Column0>Thank you</Column0>
+      <Column1>Köszönjük</Column1>
+   </Row>
+
+</Document>
+<!-- End of the body -->
