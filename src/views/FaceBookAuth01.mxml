@@ -10,12 +10,14 @@
 			import com.alfo.DelayedExecution;
 			import com.alfo.utils.CleanWebView;
 			import com.alfo.utils.EncryptWrapper;
+			import com.greensock.TweenMax;
 			import com.lia.crypto.AES;
 			
 			import flash.filters.DropShadowFilter;
 			import flash.media.StageWebView;
 			import flash.net.URLRequest;
 			import flash.utils.clearInterval;
+			import flash.utils.setInterval;
 			
 			import mx.events.FlexEvent;
 			import mx.managers.PopUpManager;
@@ -48,6 +50,8 @@
 			public var currentURN:String;
 			public var optin_marketing:Boolean;
 			public var optin_terms:Boolean;
+			
+			protected var resizeTimer:Timer;
 			
 			protected var intervallo:Number;
 			
@@ -84,6 +88,11 @@
 				if (this.webView!=null)
 				{
 					this.webView.dispose();
+				}
+				if(resizeTimer.hasEventListener(TimerEvent.TIMER)) {
+					resizeTimer.stop();
+					resizeTimer.removeEventListener(TimerEvent.TIMER,resizeWebApp);
+					resizeTimer=null;
 				}
 				trace("*** EXIT FACEBOOKAUTH01 ***");
 			}
@@ -223,11 +232,13 @@
 			{
 				trace("CREATING BROWSER");
 				
-				
+				resizeTimer=new Timer(1000);
+				resizeTimer.addEventListener(TimerEvent.TIMER,resizeWebApp);
+				resizeTimer.start();
 				//				busone.x=container.width/2-50;
 				//				busone.y=container.height/2-50;
 				// can this be done more generic?
-				resizeWebApp();
+				
 				// set cookies to true (try to delete cookies at end!);
 				webView.addEventListener(ErrorEvent.ERROR, onURLError );
 				webView.addEventListener( Event.COMPLETE, onURLCompleted);	 // FIRES WHEN LOADING IS DONE
@@ -245,19 +256,37 @@
 				trace("webview error"+event.text);
 			}
 			
-			public function resizeWebApp():void
+			public function resizeWebApp(e:Event=null):void
 			{
-				
 				if (webView!=null)
 				{
-					var scale:Number = Math.min( 1366/this.stage.stageWidth,  768/this.stage.stageHeight);
+					
+					var punto:Point=container.localToGlobal(new Point());
+					
+					trace("FaceBookAuth01 :: resizeWebApp :: " + punto.x + " :: " + punto.y);
+					
+					/*
+					var xOffset:int;
+					var yOffset:int;
+					
+					if(stage)
+					{
+						xOffset = (stage.stageWidth - container.width) / 2;
+						yOffset = (stage.stageHeight - container.height) / 2;
+					}
+					*/
+					
+					webView.viewPort = new Rectangle(stage.stageWidth * .1, stage.stageHeight * .2, stage.stageWidth * .8, stage.stageHeight * .7);
+					
+					
+					/*var scale:Number = Math.min( 1366/this.stage.stageWidth,  768/this.stage.stageHeight);
 					var offsetY : Number = 80;
 					var dx:Number = ((this.stage.stageWidth-1366*scale)/2);
 					var dy:Number = ((this.stage.stageHeight-(768)*scale)/2)+offsetY;
 					var dwidth:Number = 1366 * scale;
 					var dheight:Number = (768-(offsetY)) * scale-20;
 					var r:Rectangle = new Rectangle(dx, dy, dwidth, dheight);
-					webView.viewPort = r;
+					webView.viewPort = r;*/
 					
 				}
 				
@@ -342,15 +371,16 @@
 		<s:HTTPService id="setToken" resultFormat="flashvars" method="POST" url="{(this.parentApplication).baseURL+'setuser.php'}" result="httpservice1_resultHandler(event)" fault="httpservice1_faultHandler(event)" />
 	</fx:Declarations>
 	
-	<s:BorderContainer width="100%" height="100%" id="container" borderAlpha="0" >
-		
-		<s:VGroup width="100%" height="100%" horizontalAlign="center" verticalAlign="middle">
-			<s:Label id="status_label" includeInLayout="false" text="status" color="0x000000" />
-			<s:Label text="loading" id="busone" />
-			<!--
-			<s:BusyIndicator horizontalCenter="0" verticalCenter="0" width="100" height="100" rotationInterval="200" symbolColor="#1caed0" id="busone" />
-			-->
+		<s:VGroup horizontalAlign="center" verticalAlign="middle" width="100%" height="100%" >
 			
+		
+				<s:VGroup width="80%" height="80%" horizontalAlign="center" verticalAlign="middle" id="container">
+					<s:Label id="status_label" includeInLayout="false" text="status" color="0x000000" />
+					<s:Label text="loading" id="busone" />
+					<!--
+					<s:BusyIndicator horizontalCenter="0" verticalCenter="0" width="100" height="100" rotationInterval="200" symbolColor="#1caed0" id="busone" />
+					-->
+					
+				</s:VGroup>
 		</s:VGroup>
-	</s:BorderContainer>
 </s:Group>

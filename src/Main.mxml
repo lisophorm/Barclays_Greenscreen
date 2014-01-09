@@ -436,6 +436,7 @@
 			
 			protected function gotoView( stackStr:String="", obj:Object=null ) :void
 			{
+				Console.log("Main :: gotoView :: " + stackStr, this);
 				var indexSeq:Array = ["RegisterView", "SelectUserType", "FaceBookAuth01", "UserForm", "SelectTeam","CameraCapture", "ScoreCapture", "TaskCompleteCapture", "GreenScreen","GreenScreenCelebrate", "SelectApplication", "Thankyou", "FaceBookLogoutOverride"]
 				var lastScreen:DisplayObject;
 				var nextScreen:DisplayObject;
@@ -553,7 +554,7 @@
 			protected function doNavigation(e:ViewEvent):void
 			{
 				trace("Main :: doNavigation :: " + e.location);
-				Console.log("doNavigation:"+e.location, this);
+				Console.log("Main :: doNavigation:"+e.location, this);
 				clearPopups();
 				hideDropshadow();
 				switch (e.location)
@@ -561,7 +562,8 @@
 					case ViewEvent.LOCATION_RESTART:
 						//this.navigator.popToFirstView(fadeTrans);
 						trace("*** RESTART WAS CALLED ***");
-						deleteWindowsCookies();
+						Console.log("Main :: doNavigation :: LOCATION_RESTART ", this);
+//						deleteWindowsCookies();
 						gotoView("RegisterView");
 						//gotoView("SelectUserType")
 						//gotoView("UserForm");
@@ -1021,7 +1023,7 @@
 			<s:HGroup width="100%" horizontalAlign="right" paddingRight="0" verticalAlign="middle" height="150">
 				<s:Button skinClass="skins.BasicButton" styleName="nav" icon="@Embed('assets/images/core/nm-no-connection.gif')" id="connStatus" label="{ML.t('NO CONNECTION')}" color="0xFFFFFF" visible="false" />
 				<s:Button skinClass="skins.BasicButton" styleName="nav" icon="@Embed('assets/images/core/home_logo.png')" click="{defaultView()}"/>
-				<s:Button label="thanks!" click="{gotoView('Thankyou')}"/>
+				<s:Button label="thanks!" click="{gotoView('FaceBookAuth01')}"/>
 				<s:Button skinClass="skins.BasicButton" styleName="nav" label="{ML.t('Quit')}" click="exitApplication(event)" id="quitButton" color="0xFFFFFF" visible="{loggedIn}" includeInLayout="{loggedIn}" />
 				<s:Button skinClass="skins.BasicButton" styleName="nav" icon="@Embed('assets/images/core/padlock.png')" click="config(event)" color="0xFFFFFF" />
 			</s:HGroup>		
