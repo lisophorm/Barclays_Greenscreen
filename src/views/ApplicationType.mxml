@@ -61,12 +61,11 @@
 			{
 				trace("serverIP:"+ server.text.toString()+"facebookAppID:"+ facebookAPI_ID.text.toString()+"urnLength:"+ urnLength.text.toString()+"applicationtype:"+ radioGroup.selectedValue.toString()+"scoreFormat:"+scoreFormat.text.toString());
 				
-			//	var cameraNames : Array = Camera.names;
+				var cameraNames : Array = Camera.names;
 				
 			//	trace("ApplicationType :: submit :: " + cameraNames.length);
 				
-				configureApplication();
-				/*
+				
 				if(cameraNames.length > 1)
 				{
 					var cameraNamesList : ArrayList = new ArrayList(cameraNames);
@@ -74,8 +73,8 @@
 					cameraList.visible = true;
 				}else
 				{
+					configureApplication();
 				}
-				*/
 			}
 			
 			protected function cameraSelectedHandler(event : CameraSelectionEvent):void
@@ -181,7 +180,6 @@
 			<s:Button label="Force Logout Facebook" click="forceLogout(event)" />
 
 		</s:HGroup>
-		
 		
 	</s:VGroup>
 	

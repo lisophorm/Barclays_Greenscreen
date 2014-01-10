@@ -10,8 +10,6 @@ package events
 		public static var LOCATION_CONFIG:String = "Config";
 		public static var LOCATION_FACEBOOK_FORCELOGOUT:String = "Force logout";
 
-
-
 		public static var LOCATION_STANDARD_REGISTRATION:String = "Standard registration";
 		public static var LOCATION_SELECT_USER_TYPE:String = "Select user type";
 		public static var LOCATION_FACEBOOK:String = "Facebook";
@@ -22,6 +20,7 @@ package events
 		public static var LOCATION_GAME:String = "Game";
 		public static var LOCATION_GAME_COMPLETE:String = "Game Complete";
 
+		public static var LOCATION_WELCOME_BACK : String = "WelcomeBack";
 		
 		public var object:Object = null;
 		public var location:String = "";

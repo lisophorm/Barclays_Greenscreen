@@ -1,7 +1,9 @@
 /* CSS file */
 @namespace s "library://ns.adobe.com/flex/spark";
 @namespace mx "library://ns.adobe.com/flex/mx";
+@namespace components "views.components/*";
 
+@namespace components1 "views.components.*";
 global
 {
 	/*
@@ -59,6 +61,14 @@ s|Label#frontMessage  {
 	fontFamily:"StandardRegularAllCase";
 	color:#FFFFFF;
 }
+
+.welcomeBackHeader{
+	fontSize: 112;
+	fontFamily:"PremiereLeague";
+	color:#FFFFFF;
+}
+
+.welcomeBack
 
 .verysmallprint {
 	fontSize: 14;
@@ -191,4 +201,14 @@ mx|ViewStack mx|VBox
 .tclink {
 	textDecoration: underline;
 	fontFamily: "StandardRegularAllCaseBold";
+}
+s|Label#welcomeBackUser{
+	fontSize:95;
+	fontFamily: "StandardRegularAllCase";
+	color:#00AEEF;
+}
+components1|CameraSelectionPanel{
+	fontSize:50;
+	fontFamily: "StandardRegularAllCase";
+	color:#00AEEF;
 }

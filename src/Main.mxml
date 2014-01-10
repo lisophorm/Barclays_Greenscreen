@@ -437,7 +437,7 @@
 			protected function gotoView( stackStr:String="", obj:Object=null ) :void
 			{
 				Console.log("Main :: gotoView :: " + stackStr, this);
-				var indexSeq:Array = ["RegisterView", "SelectUserType", "FaceBookAuth01", "UserForm", "SelectTeam","CameraCapture", "ScoreCapture", "TaskCompleteCapture", "GreenScreen","GreenScreenCelebrate", "SelectApplication", "Thankyou", "FaceBookLogoutOverride"]
+				var indexSeq:Array = ["RegisterView", "SelectUserType", "FaceBookAuth01", "UserForm", "SelectTeam","CameraCapture", "ScoreCapture", "TaskCompleteCapture", "GreenScreen","GreenScreenCelebrate", "SelectApplication", "Thankyou", "FaceBookLogoutOverride", "WelcomeBack"]
 				var lastScreen:DisplayObject;
 				var nextScreen:DisplayObject;
 				var nextIndex:int=-1;
@@ -511,7 +511,11 @@
 						{
 							nextScreen = FaceBookLogoutOverride;
 						}
-
+						if (stackStr == "WelcomeBack")
+						{
+							nextScreen = WelcomeBack;
+							WelcomeBack.urn = barcode;
+						}
 					}
 				}
 				
@@ -581,12 +585,12 @@
 						{
 							if (this.ApplicationType == APPLICATION_TYPE_REGISTRATION)
 							{
-								
 								showError("YOU HAVE ALREADY REGISTERED.", "USER REGISTERED");
 								RegisterView.init();
 							} else 
 							{
-								this.dispatchEvent( new ViewEvent( ViewEvent.LOCATION_GAME ));
+								//show welcome back screen
+								gotoView("WelcomeBack");
 							}
 						} else
 						{
@@ -700,13 +704,15 @@
 					case ViewEvent.LOCATION_GAME_COMPLETE:
 						gotoView("Thankyou");
 						break;
+					
+					case ViewEvent.LOCATION_WELCOME_BACK:
+						gotoView("WelcomeBack");
+						break;
 					default:
 						
 				}
-				
-				
-				
 			}
+			
 			protected function error(e:KioskError=null):void
 			{
 				trace("Error: "+e.message);
@@ -889,6 +895,7 @@
 				barcode = e.urn;
 				trace("recorded barcode:"+barcode);
 			}
+			
 			protected function setScore(e:UserEvent):void
 			{
 				score = e.score;
@@ -1023,7 +1030,7 @@
 			<s:HGroup width="100%" horizontalAlign="right" paddingRight="0" verticalAlign="middle" height="150">
 				<s:Button skinClass="skins.BasicButton" styleName="nav" icon="@Embed('assets/images/core/nm-no-connection.gif')" id="connStatus" label="{ML.t('NO CONNECTION')}" color="0xFFFFFF" visible="false" />
 				<s:Button skinClass="skins.BasicButton" styleName="nav" icon="@Embed('assets/images/core/home_logo.png')" click="{defaultView()}"/>
-				<s:Button label="thanks!" click="{gotoView('FaceBookAuth01')}"/>
+				<s:Button label="welcome!" click="{gotoView('WelcomeBack')}"/>
 				<s:Button skinClass="skins.BasicButton" styleName="nav" label="{ML.t('Quit')}" click="exitApplication(event)" id="quitButton" color="0xFFFFFF" visible="{loggedIn}" includeInLayout="{loggedIn}" />
 				<s:Button skinClass="skins.BasicButton" styleName="nav" icon="@Embed('assets/images/core/padlock.png')" click="config(event)" color="0xFFFFFF" />
 			</s:HGroup>		
@@ -1077,6 +1084,9 @@
 				</mx:VBox>
 				<mx:VBox hideEffect="{hideFX}"  showEffect="{showFX}">
 					<views:FaceBookLogoutOverride id="FaceBookLogoutOverride" />
+				</mx:VBox>
+				<mx:VBox hideEffect="{hideFX}"  showEffect="{showFX}">
+					<views:WelcomeBackView id="WelcomeBack" />
 				</mx:VBox>
 				
 			</mx:ViewStack>

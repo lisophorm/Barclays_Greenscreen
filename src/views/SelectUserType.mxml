@@ -113,7 +113,7 @@
 	
 	
 	<s:VGroup horizontalAlign="center" width="100%" height="100%">
-		<s:Spacer height="182" />
+		<s:Spacer height="330" />
 		<s:Label id="frontMessage" horizontalCenter="0"   
 				 text="CHOOSE YOUR METHOD OF REGISTRATION" />
 		<s:Spacer height="21" />
@@ -123,7 +123,7 @@
 		</s:HGroup>
 		<s:Spacer height="75" />
 
-		<s:Button label="FACEBOOK" width="227" click="facebook()" skinClass="skins.barclaysButton"/>
+		<!--<s:Button label="FACEBOOK" width="227" click="facebook()" skinClass="skins.barclaysButton"/>-->
 		<s:Spacer height="15" />
 		<s:Button label="EMAIL" width="227" click="standard()" skinClass="skins.barclaysButton"/>
 

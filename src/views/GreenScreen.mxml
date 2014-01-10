@@ -276,6 +276,9 @@
 				if (greenScreenPrefs.basePath!=null)
 				{
 					var dir : File = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+"\\captures");
+					
+					trace("GreenScreen :: emptyCaptures :: " + dir.url);
+					
 					dir.deleteDirectory(true);
 					dir.createDirectory();
 					

@@ -87,12 +87,6 @@
 				CleanWebView.wipeOut();
 				startListen();
 				
-				var fonts : Array = Font.enumerateFonts();
-				for each(var f : Font in fonts)
-				{
-					trace("RegistrationScan :: init :: font :: " + f.fontName);
-				}
-				
 				//	if (!systemManager.stage.hasEventListener(KeyboardEvent.KEY_DOWN))
 				/*
 				try
@@ -237,6 +231,8 @@
 			
 			protected function userFound( e:RegistrationEvent = null ):void
 			{
+				
+				
 				currentState="USER_FOUND";
 				Console.log("userFound URN="+e.URN, this);
 				//if this is a registration type - then alreadyregistered otherwise move use
@@ -379,11 +375,12 @@
 			}
 			protected function onAlreadyRegistered(URN:*, type:String):void
 			{
+				trace("RegistrationScan :: onAlreadyRegistered :: " + URN);
 				this.parentApplication.dispatchEvent( new UserEvent(UserEvent.URN, URN));
 				this.parentApplication.dispatchEvent( new UserEvent(UserEvent.REGISTERED, type));
 				this.parentApplication.dispatchEvent(new ViewEvent(ViewEvent.LOCATION_SELECT_USER_TYPE));
-
 			}
+			
 			protected function onDuplicate():void
 			{
 				//this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, "SORRY - BUT YOU CAN ONLY PLAY ONCE", "ERROR", init));			
