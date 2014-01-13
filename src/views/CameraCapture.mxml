@@ -25,7 +25,7 @@
 			import events.KioskProgressEvent;
 			import events.KioskWaitEvent;
 			import events.ViewEvent;
-			
+			import views.components.CameraWindow;
 			import model.CameraDevice;
 			import model.Config;
 			import model.GreenscreenModel;
@@ -50,6 +50,8 @@
 			
 			[Bindable]
 			public var data:Object;
+			
+			private var cameraWindow:CameraWindow;
 			
 			protected var applicationType:int = 0;
 			public function created(event:FlexEvent=null):void
@@ -79,11 +81,33 @@
 					
 				} else {
 					trace("URN MISSING");
-				}					
+				}	
+				
+				// code specific to opening second screen and attaching CameraWindow View
+				
+				trace("Main screen:"+ Screen.mainScreen.visibleBounds.left+" "+Screen.mainScreen.visibleBounds.top);
+				var secondscreen:Number=0;
+				for(var i:Number=0;i<Screen.screens.length;i++) {
+					trace(i+" screen:"+Screen.screens[i].visibleBounds.left+" "+Screen.screens[i].visibleBounds.top);
+					if(Screen.screens[i].visibleBounds.left != Screen.mainScreen.visibleBounds.left) {
+						secondscreen=i;
+					}
+				}
+				trace("secondary screen is:"+secondscreen);
+				cameraWindow=new CameraWindow();
+				cameraWindow.open();
+				cameraWindow.move(Screen.screens[secondscreen].visibleBounds.left,Screen.screens[secondscreen].visibleBounds.top);
+				cameraWindow.width=Screen.screens[secondscreen].visibleBounds.width;
+				cameraWindow.height=Screen.screens[secondscreen].visibleBounds.height;
 				
 			}
 			protected function exit(e:Event=null):void
 			{
+				if(cameraWindow) {
+					cameraWindow.close();
+					cameraWindow=null;
+				}
+				
 				trace("*** EXIT CAMERACAPTURE ***");
 				if (webcamera!=null)
 				{

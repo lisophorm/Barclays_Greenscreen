@@ -3,8 +3,8 @@
   <serverIP>www.bpllive.com</serverIP>
   <facebookAppID>170716739801062</facebookAppID>
   <localIP>192.168.0.150/backend</localIP>
-  <photoshop><![CDATA[C:\Program Files (x86)\Adobe\Adobe Photoshop CS6\Photoshop.exe]]></photoshop>
-  <calibrator><![CDATA[C:\Users\Ignite\Desktop\calibrator_greenscreen_barclays\]]></calibrator>
+  <photoshop><![CDATA[C:\Program Files (x86)\Photoshop\x64\Photoshop.exe]]></photoshop>
+  <calibrator><![CDATA[C:\Users\Alfonso\Desktop\calibrator_greenscreen_nba\]]></calibrator>
   <urnLength>16</urnLength>
   <internetTimeout>10</internetTimeout>	
   <scoreFormat>99:99.99</scoreFormat>

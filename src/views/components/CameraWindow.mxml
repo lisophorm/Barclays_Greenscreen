@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- aircomponents/src/myComponents/DocumentWindow.mxml -->
+<s:Window xmlns:fx="http://ns.adobe.com/mxml/2009"
+		  xmlns:s="library://ns.adobe.com/flex/spark"
+		  xmlns:mx="library://ns.adobe.com/flex/mx"
+		  width="550" height="450" currentState="camera" showStatusBar="false" systemChrome="none"
+		  transparent="false" xmlns:components="views.components.*">
+	<s:states>
+		<s:State name="preview"/>
+		<s:State name="camera"/>
+	</s:states>
+	
+	<s:BorderContainer width="100%" height="100%" borderVisible="false" >
+		<s:BitmapImage source="@Embed('assets/images/nba_background.jpg')" width="100%" height="100%" scaleMode="zoom"/>
+		<s:VGroup width="100%" height="100%" horizontalAlign="center" verticalAlign="bottom" id="logos">
+			<s:HGroup width="100%" verticalAlign="bottom">
+				<s:HGroup width="50%" horizontalAlign="left" verticalAlign="bottom">
+					<components:NBALogo />
+				</s:HGroup>
+				<s:HGroup width="50%" horizontalAlign="right" verticalAlign="bottom">
+					<components:SponsorLogo id="sponsorLogo" currentState="HP" />
+				</s:HGroup>
+			</s:HGroup>
+		</s:VGroup>
+	</s:BorderContainer>	
+	<s:VGroup  width="100%" height="100%" horizontalAlign="center"
+			   verticalAlign="middle">
+		<s:VGroup includeIn="camera">
+			<s:Label id="message" text="{(this.parentApplication).baseURL}" textAlign="center" width="{cnvWebcam.width}"
+					 horizontalCenter="0" verticalCenter="0"/>
+			<s:BorderContainer width="800" height="600" backgroundColor="0x006CB7" borderVisible="false">
+
+			
+			<mx:Canvas width="800" height="600"  id="cnvWebcam" x="0" y="0">
+			</mx:Canvas>
+			</s:BorderContainer>
+		</s:VGroup>
+		<s:BitmapImage id="windowPreview" includeIn="preview" width="90%" height="90%" smooth="true" smoothingQuality="high" scaleMode="letterbox" />
+	</s:VGroup>
+	
+</s:Window>
