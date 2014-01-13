@@ -61,31 +61,8 @@
 			{
 				trace("serverIP:"+ server.text.toString()+"facebookAppID:"+ facebookAPI_ID.text.toString()+"urnLength:"+ urnLength.text.toString()+"applicationtype:"+ radioGroup.selectedValue.toString()+"scoreFormat:"+scoreFormat.text.toString());
 				
-				var cameraNames : Array = Camera.names;
 				
 			//	trace("ApplicationType :: submit :: " + cameraNames.length);
-				
-				
-				if(cameraNames.length > 1)
-				{
-					var cameraNamesList : ArrayList = new ArrayList(cameraNames);
-					cameraList.dataProvider = cameraNamesList;
-					cameraList.visible = true;
-				}else
-				{
-					configureApplication();
-				}
-			}
-			
-			protected function cameraSelectedHandler(event : CameraSelectionEvent):void
-			{
-				Settings.cameraID = event.cameraID;
-				cameraList.visible = false;
-				configureApplication();
-			}
-			
-			protected function configureApplication():void
-			{
 				this.parentApplication.dispatchEvent( new ApplicationEvent( ApplicationEvent.SAVE_TYPE, { serverIP: server.text.toString(),
 					localIP:localserver.text.toString(),
 					facebookAppID: facebookAPI_ID.text.toString(), 
@@ -93,7 +70,21 @@
 					applicationtype: radioGroup.selectedValue.toString(),
 					scoreFormat: scoreFormat.text.toString(),
 					photoshop: photoshop.text.toString(),
-					calibrator: calibrator.text.toString()} ) );				
+					calibrator: calibrator.text.toString()} ) );			
+			}
+			
+			protected function selectCamera(event : MouseEvent):void
+			{
+				var cameraNames : Array = Camera.names;
+				var cameraNamesList : ArrayList = new ArrayList(cameraNames);
+				cameraList.dataProvider = cameraNamesList;
+				cameraList.visible = true;
+			}
+			
+			protected function cameraSelectedHandler(event : CameraSelectionEvent):void
+			{
+				Settings.cameraID = event.cameraID;
+				cameraList.visible = false;
 			}
 			
 			protected function cancel(e:MouseEvent):void
@@ -120,7 +111,8 @@
 			<s:FormHeading label="CONFIGURATION DETAILS:" />
 			<s:Scroller width="100%" height="500" verticalScrollPolicy="auto" horizontalScrollPolicy="off">
 				<s:Group height="500" width="100%" textAlign="left">	
-
+				<s:VGroup>
+					
 				<s:Form id="configform" width="100%" height="100%">		
 						
 						<s:FormItem width="365" label="Remote Server url:" fontFamily="Arial">
@@ -170,6 +162,8 @@
 			
 						
 					</s:Form>	
+				<s:Button label="Choose Webcam" skinClass="skins.vodafoneButton" click="selectCamera(event)"/>
+				</s:VGroup>
 				</s:Group>
 			</s:Scroller>
 				
@@ -183,7 +177,7 @@
 		
 	</s:VGroup>
 	
-	<components:CameraSelectionPanel id="cameraList" visible="false" 
+	<components:CameraSelectionPanel id="cameraList" visible="false" itemRenderer="views.renderer.CameraSelectionItemRenderer"
 									 x="{width/2 - cameraList.width/2}" y="{height/2 - cameraList.height/2}"
 									 camera_selected="{cameraSelectedHandler(event)}"/>
 </s:Group>

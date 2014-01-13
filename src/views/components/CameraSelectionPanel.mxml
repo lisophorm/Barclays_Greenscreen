@@ -3,6 +3,7 @@
 		xmlns:s="library://ns.adobe.com/flex/spark" 
 		xmlns:mx="library://ns.adobe.com/flex/mx" 
 		contentBackgroundColor="0x000000"
+		width="600"
 		change="{dispatchEvent(new CameraSelectionEvent(CameraSelectionEvent.CAMERA_SELECTED, selectedIndex))}">
 	
 	<fx:Metadata>
@@ -14,5 +15,7 @@
 			import events.CameraSelectionEvent;
 		]]>
 	</fx:Script>
-	
+	<s:layout>
+		<s:VerticalLayout useVirtualLayout="false" requestedMinRowCount="1"/>
+	</s:layout>
 </s:List>
