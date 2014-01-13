@@ -105,6 +105,8 @@
 			protected var popupWait:pleaseWait;
 			
 			public var data:Object = null;
+			
+			[Bindable]
 			protected var loggedIn:Boolean = false;
 			
 			private var skins_vodafoneFormItem_obj:skins.vodafoneFormItem;
@@ -1030,7 +1032,7 @@
 			<s:HGroup width="100%" horizontalAlign="right" paddingRight="0" verticalAlign="middle" height="150">
 				<s:Button skinClass="skins.BasicButton" styleName="nav" icon="@Embed('assets/images/core/nm-no-connection.gif')" id="connStatus" label="{ML.t('NO CONNECTION')}" color="0xFFFFFF" visible="false" />
 				<s:Button skinClass="skins.BasicButton" styleName="nav" icon="@Embed('assets/images/core/home_logo.png')" click="{defaultView()}"/>
-				<s:Button label="welcome!" click="{gotoView('WelcomeBack')}"/>
+				<!--<s:Button label="welcome!" click="{gotoView('WelcomeBack')}"/>-->
 				<s:Button skinClass="skins.BasicButton" styleName="nav" label="{ML.t('Quit')}" click="exitApplication(event)" id="quitButton" color="0xFFFFFF" visible="{loggedIn}" includeInLayout="{loggedIn}" />
 				<s:Button skinClass="skins.BasicButton" styleName="nav" icon="@Embed('assets/images/core/padlock.png')" click="config(event)" color="0xFFFFFF" />
 			</s:HGroup>		
