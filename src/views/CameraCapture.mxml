@@ -25,11 +25,12 @@
 			import events.KioskProgressEvent;
 			import events.KioskWaitEvent;
 			import events.ViewEvent;
-			import views.components.CameraWindow;
+			
 			import model.CameraDevice;
 			import model.Config;
 			import model.GreenscreenModel;
 			
+			import views.cameracapture.secondscreen.CameraSecondScreenWindow;
 			import views.components.ProgressPopUp;
 			
 			protected var webcamera:CameraDevice
@@ -51,7 +52,7 @@
 			[Bindable]
 			public var data:Object;
 			
-			private var cameraWindow:CameraWindow;
+			private var cameraWindow:CameraSecondScreenWindow;
 			
 			protected var applicationType:int = 0;
 			public function created(event:FlexEvent=null):void
@@ -94,7 +95,7 @@
 					}
 				}
 				trace("secondary screen is:"+secondscreen);
-				cameraWindow=new CameraWindow();
+				cameraWindow=new CameraSecondScreenWindow();
 				cameraWindow.open();
 				cameraWindow.move(Screen.screens[secondscreen].visibleBounds.left,Screen.screens[secondscreen].visibleBounds.top);
 				cameraWindow.width=Screen.screens[secondscreen].visibleBounds.width;
@@ -153,7 +154,7 @@
 				{
 					if (CameraDevice.isSupported)
 					{
-						Console.log("standard camera not supported",this);
+						//Console.log("standard camera not supported",this);
 						if (webcamera!=null)
 						{
 							webcamera.destroy();
@@ -172,7 +173,7 @@
 						takePhotoButton.addEventListener( MouseEvent.CLICK, webcamera.takePhoto);	
 					} else 
 					{
-						Console.log("camera not supported",this);
+					//	Console.log("camera not supported",this);
 						this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, "CAMERA NOT SUPPORTED", "DEVICE ERROR"));
 						statusText.text = "Camera not supported on this device.";	
 					}
@@ -188,7 +189,7 @@
 				if (CameraUI.isSupported)
 				{
 					
-					Console.log("CameraUI is supported",this);
+					//Console.log("CameraUI is supported",this);
 					var myCam:CameraUI = new CameraUI();
 					myCam.launch(MediaType.IMAGE);
 					myCam.addEventListener(MediaEvent.COMPLETE,takePhotoCompleteHandler);
@@ -236,7 +237,7 @@
 				
 				var pref:Config = new Config();
 				var photoshop:String = pref.prefsXML..photoshop.text().toString()
-				Console.log("User accepted photo "+ photoshop, this);
+				//Console.log("User accepted photo "+ photoshop, this);
 				var calibrator:String = pref.prefsXML..calibrator.text().toString();
 				
 				//accept photo arsenal need to be variable
@@ -250,7 +251,7 @@
 			}
 			protected function greenscreenWait( e:GreenscreenEvent=null ):void 
 			{
-				Console.log( e.data.message, this);
+				//Console.log( e.data.message, this);
 				this.parentApplication.dispatchEvent( new KioskWaitEvent(  e.data.message ) ); 
 			}
 			protected function greenscreenError( e:GreenscreenEvent=null ):void 
@@ -267,7 +268,7 @@
 			}
 			protected function acceptGreenscreenPhoto( e:MouseEvent=null  ):void
 			{
-					Console.log("PHOTO ACCEPTED - Upload", this);
+					//Console.log("PHOTO ACCEPTED - Upload", this);
 					beginUpload( this.greenscreenPhoto );
 					
 			}
@@ -278,7 +279,7 @@
 			protected function beginUpload(file:File):void
 			{
 				urlRequest = new URLRequest(this.parentApplication.localURL+"uploader.php");
-				Console.log("event.data.file.url; = "+file.url, this);
+				//Console.log("event.data.file.url; = "+file.url, this);
 				takePhotoButton.enabled = false;
 				this.file = file;
 				file.addEventListener(Event.COMPLETE,uploadCompleteHandler);
@@ -289,10 +290,12 @@
 				fileTransfer=true;
 				this.parentApplication.dispatchEvent( new KioskProgressEvent(KioskProgressEvent.NOTIFY, "Uploading file" ) );
 			}
+			
 			protected function onFileError(error:IOErrorEvent):void
 			{
 				this.parentApplication.dispatchEvent( new KioskError(KioskError.ERROR, error.text.toString(), "I/O error while uploading the file" ) );
 			}
+			
 			protected function updateProgress(event:ProgressEvent):void
 			{
 				var perc:Number=Math.round(event.bytesLoaded*100/event.bytesTotal);
@@ -303,7 +306,7 @@
 			protected function uploadCompleteHandler(event:Event):void
 			{
 				this.parentApplication.dispatchEvent( new KioskProgressEvent( KioskProgressEvent.UPDATE_COMPLETE ));
-				Console.log("Upload complete", this);
+				//Console.log("Upload complete", this);
 				takePhotoButton.enabled = true;
 				statusText.text = "Photo Uploaded";
 				var passVars:Object=new Object();

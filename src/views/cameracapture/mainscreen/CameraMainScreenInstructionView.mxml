@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 width="100%" height="100%" xmlns:layout="org.osmf.layout.*">
+	
+	<fx:Metadata>
+		[Event(name="nextScreen", type="events.CameraCaptureEvent")]
+	</fx:Metadata>
+	
+	<fx:Script>
+		<![CDATA[
+			import events.CameraCaptureEvent;
+		]]>
+	</fx:Script>
+	
+	<s:layout>
+		<s:VerticalLayout horizontalAlign="center"/>
+	</s:layout>
+	
+	<s:Spacer height="300"/>
+	<s:Label id="cameraInstruction" textAlign="center"
+			 text="YOU ARE NOW READY TO HAVE YOUR PHOTO TAKEN.{'\n'}ONCE YOU PRESS CONTINUE YOU HAVE 10 SECONDS TO GET IN POSITION."/>
+	<s:Spacer height="20"/>
+	<s:Group id="imageGroup" width="512">
+		<s:Rect width="512" height="332" top="10">
+			<s:fill>
+				<s:SolidColor color="0xFFFFFF"/>
+			</s:fill>
+		</s:Rect>
+		<s:SWFLoader source="@Embed('assets/swf/instruction.swf')" horizontalCenter="0"/>
+	</s:Group>
+	<s:Spacer height="20"/>
+	<s:Button label="CONTINUE" skinClass="skins.barclaysButton" click="{dispatchEvent(new CameraCaptureEvent(CameraCaptureEvent.NEXT_SCREEN))}"/>	
+	<s:VGroup width="100%" horizontalAlign="center" top="300">
+	</s:VGroup>
+</s:Group>

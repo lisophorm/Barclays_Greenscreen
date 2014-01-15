@@ -35,7 +35,7 @@
 			}
 			public function init(event:Event=null):void
 			{
-				Console.log("*** INIT SELECTUSERTYPE ***", this);
+				//Console.log("*** INIT SELECTUSERTYPE ***", this);
 				validatorArr = new Array();
 				validatorArr.push(validateTerms);
 				timer = new Timer(100,1);
@@ -44,7 +44,7 @@
 			}
 			public function exit( e:Event = null):void
 			{
-				Console.log("*** EXIT SELECTUSERTYPE ***", this);
+				//Console.log("*** EXIT SELECTUSERTYPE ***", this);
 			}
 			protected function start( e:TimerEvent ):void
 			{
@@ -102,13 +102,6 @@
 						   requiredFieldError="You must agree the terms of use" 
 						   tooLongError="You must agree to the Terms of Use.">
 		</mx:StringValidator>
-		
-		<!--s:Button x="259" y="591" label="Terms And Conditions"  click="tandcd_clickHandler(event)" skinClass="skins.vodafoneButton"/-->
-<!--		<mx:StringValidator id="validateMarketing"
-							source="{marketCheck}"
-							required="true"
-							property="selected" maxLength="4" requiredFieldError="{ML.t('You must accept marketing approach from Vodafone." tooLongError="You must accept marketing approach from Vodafone.')}">
-		</mx:StringValidator>-->
 	</fx:Declarations>
 	
 	

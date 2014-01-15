@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="100%" height="100%">
+	
+	<fx:Script>
+		<![CDATA[
+			public function setTeam(teamID:String):void
+			{
+				var cupFilename : String = teamID + "_cup.png";
+				var file : File = File.documentsDirectory.resolvePath("userdata/greenscreen/cups/" + cupFilename);
+				var url : String = file.url;
+				cupImage.source = url;
+			}
+		]]>
+	</fx:Script>
+	
+	<s:layout>
+		<s:VerticalLayout horizontalAlign="center"/>
+	</s:layout>
+	<s:Spacer height="60"/>
+	<s:Group>
+		<s:Rect width="600" height="450">
+			<s:fill>
+				<s:SolidColor color="0xFFFFFF"/>
+			</s:fill>
+		</s:Rect>
+		<s:Image id="cupImage" horizontalCenter="0" top="30" height="150"/>
+	</s:Group>
+</s:Group>

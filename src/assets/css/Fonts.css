@@ -65,3 +65,9 @@
 	fontFamily: PremiereLeague;
 	embedAsCFF: true;
 }
+
+@font-face
+{
+	src:url("../fonts/ExpertSans/ExpertSans-Regular.ttf");
+	fontFamily:ExpertSans;
+}

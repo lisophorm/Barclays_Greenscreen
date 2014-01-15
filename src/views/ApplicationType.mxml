@@ -31,13 +31,13 @@
 			}
 			public function init(event:Event=null):void
 			{
-				Console.log("*** INIT APPLICATIONTYPE ***", this);
+				//Console.log("*** INIT APPLICATIONTYPE ***", this);
 				
 				if (this.parentApplication.data!=null)
 				{
 					
 					data = this.parentApplication.data;
-					Console.log("data:"+data.xml.applicationtype, this );
+					//Console.log("data:"+data.xml.applicationtype, this );
 					this.server.text = data.xml.serverIP;
 					this.localserver.text = data.xml.localIP;
 					this.facebookAPI_ID.text = data.xml.facebookAppID;

@@ -23,7 +23,7 @@ package com.alfo.utils
 			
 		}
 		public function startWatch():void {
-			Console.log("Watching folder: '"+_watchFolder+"'", this);
+		//	Console.log("Watching folder: '"+_watchFolder+"'", this);
 			monitor = new FileMonitor();
 			monitor.addEventListener(FileMonitorEvent.CHANGE, onFileChange);
 			monitor.addEventListener(FileMonitorEvent.MOVE, onFileMove);

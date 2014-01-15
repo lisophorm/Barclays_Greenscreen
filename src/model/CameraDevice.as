@@ -1,5 +1,6 @@
 package model
 {
+	import com.alfo.utils.GreenScreenPrefs;
 	import com.greensock.TweenMax;
 	import com.utils.Console;
 	
@@ -23,6 +24,7 @@ package model
 	
 	import ru.inspirit.image.encoder.JPGAsyncEncoder;
 
+	[Event(name="COMPLETE", type="events.CameraEvent")]
 	public class CameraDevice extends UIComponent
 	{
 		protected var camera:Camera;
@@ -33,22 +35,25 @@ package model
 		protected var encoder:JPGAsyncEncoder = new JPGAsyncEncoder(85);
 		protected var bitmapData:BitmapData;
 		protected var overlay:Sprite;
-		protected var mat:Matrix=new Matrix();
+		protected var mat:Matrix;
 		protected var URN:String = "";
-		public function CameraDevice(_width:int=320, _height:int=240, URN:String = "")
+		private var greenScreenPrefs:GreenScreenPrefs;
+		
+		public function CameraDevice(_width:int=600, _height:int=450, URN:String = "aurn")
 		{
 			this._width = _width;
 			this._height = _height;
 			this.URN = URN;
 			this.destroy();
-			this.init()
+			this.init();
+			greenScreenPrefs = new GreenScreenPrefs();
 		}
 		
-		protected function init():void
+		public function init():void
 		{
-			camera= Camera.getCamera(Settings.cameraID.toString());
-			if (camera!=null)
+			if (!camera)
 			{
+				camera= Camera.getCamera(Settings.cameraID.toString());
 				camera.addEventListener(StatusEvent.STATUS, statusHandler); 
 
 				camera.setMode(_width*3, _height*3, 25); 
@@ -60,6 +65,7 @@ package model
 				photoCapture = new Bitmap(bitmapData, "auto", true);
 				this.addChild( photoCapture );
 				
+				mat = new Matrix();
 				mat.scale(_width/video.width,_height/video.height);
 				mat.translate(0,0);
 				
@@ -68,14 +74,13 @@ package model
 				this.width = _width;
 				this.height = _height;
 				this.onAllowClick();
-			} else {
-				
 			}
 			
 		}
 		public function destroy():void
 		{
 			this.removeEventListener( Event.ENTER_FRAME, updatePhoto );
+			
 			if (video!=null) {
 				video.attachCamera(null);
 				if (this.contains(video))
@@ -90,11 +95,12 @@ package model
 			video = null;
 			camera = null;
 			photoCapture = null;
+			bitmapData = null;
 		}
+		
 		protected function statusHandler( e:StatusEvent ):void
-		{
-			
-			Console.log( e.code, camera);
+		{	
+		//	Console.log( e.code, camera);
 			if (camera.muted) 
 			{ 
 				this.onAllowClick();
@@ -105,7 +111,7 @@ package model
 		}
 		protected function onAllowClick():void
 		{
-			Console.log("onAllowClick", this);
+			//Console.log("onAllowClick", this);
 			this.onDenyClick();
 			this.addEventListener( MouseEvent.CLICK, takePhoto);
 			this.addEventListener( Event.ENTER_FRAME, updatePhoto);
@@ -120,20 +126,15 @@ package model
 			
 		protected function updatePhoto( e:Event = null ):void
 		{
-
 			photoCapture.bitmapData.draw( video, mat );
-		
-			
-			
 		}
+		
 		public function takePhoto( e:Event = null ):void
 		{
 			// save file
 			this.removeEventListener( Event.ENTER_FRAME, updatePhoto );
 			if (video!=null)
 			{
-				
-				
 				var finalCapture:BitmapData = new BitmapData(video.width, video.height);
 				finalCapture.draw( video );
 				video.visible = false;
@@ -177,7 +178,7 @@ package model
 
 			var now:Date = new Date();
 			var randomName:String  = "IMG" + now.fullYear + now.month +now.day +now.hours + now.minutes + now.seconds + ".jpg";
-			var destFile:File = File.documentsDirectory.resolvePath("userdata/"+( URN=="" ? URN : randomName ));
+			var destFile : File = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+"\\captures\\capture.jpg") ;
 
 			var stream:FileStream = new FileStream();
 			stream = new FileStream();
@@ -187,16 +188,12 @@ package model
 			//stream.writeUTFBytes(outputString);
 			stream.close();
 			
-			Console.log("Image Saved: "+destFile.url, this);
-			
-			this.dispatchEvent( new CameraEvent( CameraEvent.COMPLETE, {file: destFile} ) );
+			this.dispatchEvent( new CameraEvent( CameraEvent.COMPLETE, {file: destFile}, true, true) );
 			
 		}
 		public static function get isSupported():Boolean
 		{
 			return Camera.isSupported;
 		}
-		
-	
 	}
 }

@@ -108,6 +108,7 @@
 					photoPath.text=greenScreenPrefs.photoShopPath;
 				}
 			}
+			
 			protected function exit( e:Event = null ):void
 			{
 				tidy();

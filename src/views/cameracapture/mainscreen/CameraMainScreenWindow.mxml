@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" 
+		 xmlns:mainscreen="views.cameracapture.mainscreen.*"
+		 width="100%" height="100%"
+		 creationComplete="creationCompleteHandler(event)" 
+		 remove="removedHandler(event)"
+		 xmlns:layout="org.osmf.layout.*">
+	
+	<fx:Script>
+		<![CDATA[
+			import com.alfo.utils.GreenScreenPrefs;
+			import com.alfo.utils.PictureWatcher;
+			import com.alfo.utils.WatchEvent;
+			
+			import events.CameraCaptureEvent;
+			import events.CameraEvent;
+			import events.ViewEvent;
+			
+			import views.cameracapture.secondscreen.CameraSecondScreenWindow;
+			
+			private var data:Object;
+			
+			private var teamID:String = "arsenal";
+			
+			private var greenScreenPrefs:GreenScreenPrefs = new GreenScreenPrefs();
+			private var finalWatch:PictureWatcher;
+			private var folderWatch:PictureWatcher;
+			
+			[Bindable]
+			private var cameraWindow:CameraSecondScreenWindow;
+			
+			protected function creationCompleteHandler(event : Event):void
+			{
+				addEventListener(Event.INIT, init);
+			}
+			
+			public function init(event : Event):void
+			{
+				currentState = "instruction";
+				
+				data = this.parentApplication.data;
+				
+				var secondscreen:Number=0;
+				for(var i:Number=0;i<Screen.screens.length;i++) 
+				{
+					if(Screen.screens[i].visibleBounds.left != Screen.mainScreen.visibleBounds.left) {
+						secondscreen=i;
+					}
+				}
+				cameraWindow=new CameraSecondScreenWindow();
+				cameraWindow.open();
+				cameraWindow.move(Screen.screens[secondscreen].visibleBounds.left,Screen.screens[secondscreen].visibleBounds.top);
+				cameraWindow.width=Screen.screens[secondscreen].visibleBounds.width;
+				cameraWindow.height=Screen.screens[secondscreen].visibleBounds.height;
+				cameraWindow.addEventListener(CameraEvent.COMPLETE, photoCaptureCompleteHandler);
+				cameraWindow.currentState = "instruction";
+				cameraWindow.setTeam(teamID);
+			}
+			
+			protected function updateCountdown(event:CameraCaptureEvent):void
+			{
+				if(cameraWindow)
+				{
+					cameraWindow.updateCountdownDisplay(event);
+				}
+			}
+			
+			protected function instructionContinueHandler(event:CameraCaptureEvent):void
+			{
+				//photoCaptureStartHandler();
+				currentState='countdown';
+			}
+			
+			protected function photoCaptureStartHandler():void
+			{
+				emptyCaptures();
+				if (greenScreenPrefs.basePath!=null && greenScreenPrefs.photoShopPath!=null)
+				{					
+					// watches for the canon camera photos
+					folderWatch=new PictureWatcher();
+					folderWatch.setWatchFolder(greenScreenPrefs.basePath+"\\captures");
+					folderWatch.addEventListener(WatchEvent.ON_ADD_PHOTO,compositImage);
+					folderWatch.startWatch();
+					
+					// photoShop output Folder
+					finalWatch=new PictureWatcher();
+					finalWatch.setWatchFolder(greenScreenPrefs.basePath+"\\output");
+					finalWatch.addEventListener(WatchEvent.ON_ADD_PHOTO,displayFinalPhoto);
+				}
+			}
+			
+			public function photoCaptureCompleteHandler(event:CameraEvent):void
+			{
+				var file : File = File.documentsDirectory.resolvePath("userdata/greenscreen/complete/complete.jpg");
+				currentState = "result";
+				cameraWindow.setResultImage(file.url);
+				mainScreenResult.imageURL = file.url;
+			}
+			
+			public function removedHandler(event : Event):void
+			{
+				if(cameraWindow)
+				{
+					cameraWindow.close();
+					cameraWindow = null;
+				}
+			}
+			
+			protected function retakeHandler(event : CameraCaptureEvent):void
+			{
+				currentState="countdown";
+			}
+			
+			protected function cameraCompleteHandler(event:CameraCaptureEvent):void
+			{
+				this.parentApplication.dispatchEvent( new ViewEvent( ViewEvent.LOCATION_RESTART ));
+			}
+			
+			protected function compositImage(event : WatchEvent):void
+			{
+				folderWatch.stopWatch();
+				finalWatch.startWatch();
+				var photo:File=File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+"\\captures\\capture.jpg");
+				photo.copyTo(File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+"\\tmp\\lastpicture.jpg"),true);
+				
+				var file:File=File.applicationDirectory.resolvePath(greenScreenPrefs.photoShopPath);
+				
+				trace("CameraMainScreen :: compositImage :: " + file.url);
+				
+				var nativeProcessInfo:NativeProcessStartupInfo=new NativeProcessStartupInfo();
+				nativeProcessInfo.executable=file;
+				nativeProcessInfo.arguments=new <String>[greenScreenPrefs.basePath+"\\settings\\wrapup.jsx"];
+				
+				var process:NativeProcess=new NativeProcess();
+				process.start(nativeProcessInfo);
+			}
+			
+			protected function displayFinalPhoto(evt:WatchEvent):void 
+			{
+				finalWatch.stopWatch();
+			}
+			
+			protected function emptyCaptures():void 
+			{
+				if (greenScreenPrefs.basePath!=null)
+				{
+					var dir : File = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+"\\captures");
+					dir.deleteDirectory(true);
+					dir.createDirectory();
+					
+					dir = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+"\\tmp");
+					dir.deleteDirectory(true);
+					dir.createDirectory();
+					
+					dir = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+"\\output");
+					dir.deleteDirectory(true);
+					dir.createDirectory();
+				}
+			}
+			
+			protected function exit( e:Event = null ):void
+			{
+				tidy();
+			}
+			
+			// called when exiting from the component
+			protected function tidy(e:Event = null):void
+			{				
+				var dello:File=File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+"\\tmp\\lastpicture.jpg");
+				if(dello.exists) {
+					dello.deleteFile();
+				}
+				
+				finalWatch.removeEventListener(WatchEvent.ON_ADD_PHOTO, displayFinalPhoto);
+				finalWatch.stopWatch();
+				emptyCaptures();
+			}
+		]]>
+	</fx:Script>
+	
+	<s:states>
+		<s:State name="instruction"/>
+		<s:State name="countdown" enterState="{cameraWindow.currentState='countdown'}"/>
+		<s:State name="wait" enterState="{cameraWindow.currentState='wait'}"/>
+		<s:State name="result" enterState="{cameraWindow.currentState='result'}"/>
+		<s:State name="thankyou" enterState="{cameraWindow.currentState='thankyou'}"/>
+	</s:states>
+	
+	<mainscreen:CameraMainScreenInstructionView nextScreen="{instructionContinueHandler(event)}" includeIn="instruction"/>
+	<mainscreen:CameraMainScreenCountdownView nextScreen="{currentState='wait'}" 
+											  tick="{updateCountdown(event)}" includeIn="countdown"/>
+	<mainscreen:CameraMainScreenWaitView includeIn="wait"/>
+	<mainscreen:CameraMainScreenResultView id="mainScreenResult" includeIn="result" retake="retakeHandler(event)" nextScreen="{currentState='thankyou'}"/>
+	<mainscreen:CameraMainScreenThankyouView includeIn="thankyou" cameraComplete="cameraCompleteHandler(event)"/>
+</s:Group>

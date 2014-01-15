@@ -212,3 +212,39 @@ components1|CameraSelectionPanel{
 	fontFamily: "StandardRegularAllCase";
 	color:#00AEEF;
 }
+
+s|Label#cameraInstruction{
+	fontSize:40;
+	color:#FFFFFF;
+	fontFamily:"ExpertSans";
+}
+
+s|Label#countdownInstruction{
+	fontSize:57;
+	color:#FFFFFF;
+	fontFamily:"ExpertSans";
+}
+
+s|Label#countdownValueMain{
+	fontSize:480;
+	fontFamily:"PremiereLeague";
+	color:#00AEEF;
+}
+
+s|Label#countdownValueSecond{
+	fontSize:140;
+	fontFamily:"PremiereLeague";
+	color:#FFFFFF;
+}
+
+s|Label#cameraFullMessageMain{
+	fontSize:280;
+	fontFamily:"PremiereLeague";
+	color:#00AEEF;
+}
+
+s|Label#cameraFullMessageSecond{
+	fontSize:200;
+	fontFamily:"PremiereLeague";
+	color:#00AEEF;
+}

@@ -25,7 +25,7 @@ package model
 			
 			
 			// Detecting online/offline network connectivity with a URLMonitor
-			Console.log("monitoring: "+url, this);
+			//Console.log("monitoring: "+url, this);
 			
 			monitor = new URLMonitor(new URLRequest(url)); // change URL to URL desired
 			monitor.addEventListener(StatusEvent.STATUS, onStatusChange);

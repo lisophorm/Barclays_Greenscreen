@@ -9,10 +9,6 @@
 	
 	<fx:Script>
 		<![CDATA[
-			import com.greensock.TweenMax;
-			import com.greensock.easing.Sine;
-			import com.utils.Console;
-			
 			import mx.core.IVisualElement;
 			import mx.core.UIComponent;
 			import mx.events.FlexEvent;
@@ -22,12 +18,8 @@
 			import spark.filters.GlowFilter;
 			
 			import events.KioskError;
-			import events.KioskEvent;
 			import events.KioskProgressEvent;
-			import events.UserEvent;
 			import events.ViewEvent;
-			
-			import model.ML;
 			
 			
 			
@@ -54,14 +46,14 @@
 			}
 			public function init(event:Event=null):void
 			{
-				Console.log("*** INIT SELECTTEAM ***", this);
+				//Console.log("*** INIT SELECTTEAM ***", this);
 				currentIndex = -1;
 				if (this.parentApplication.data!=null)
 				{
 					data = this.parentApplication.data;
 					currentURN = data.urn;
 					
-					Console.log( data.urn, this );
+					//Console.log( data.urn, this );
 					
 				}
 				teamFile = File.applicationDirectory.resolvePath('assets/xml/teams.xml')
@@ -74,14 +66,14 @@
 				
 				// If it exists read it 
 				if (teamFile.exists) {
-					Console.log("team file exists", this);
+					//Console.log("team file exists", this);
 					stream = new FileStream();
 					stream.open(teamFile, FileMode.READ);
 					processXMLData();
 				}
 				else //Otherwise make a file and save it
 				{
-					Console.log("no file", this);
+					//Console.log("no file", this);
 					this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, teamFile.url+" NOT FOUND", "COMMUNICATION ERROR", this.init));
 				}
 				
@@ -101,12 +93,12 @@
 			
 			private function processXMLData():void 
 			{
-				Console.log("file size:"+stream.bytesAvailable, this);
+				//Console.log("file size:"+stream.bytesAvailable, this);
 				
 				var xml:XML = XML(stream.readUTFBytes(stream.bytesAvailable));
 				stream.close();
 				teamDataList = (xml..team);
-				Console.log(teamDataList, this);
+				//Console.log(teamDataList, this);
 			}
 			
 			// this function was attempting to add a series of dummy elements to thin out the scrollbar by increasing the number of elements.
@@ -116,7 +108,7 @@
 				if (list.length()>0)
 				{
 					
-					Console.log( list[0].toString(), this);
+					//Console.log( list[0].toString(), this);
 					var itemNo:int = 40;
 					var node:XML = XML(list[0]).copy();
 					node.@logo = ""; 
@@ -144,7 +136,7 @@
 			
 			private function createListeners( e:Event= null ):void
 			{
-				Console.log("createListeners "+CarouselGroup.numElements, this);
+				//Console.log("createListeners "+CarouselGroup.numElements, this);
 				for(var j:uint = 0; j < CarouselGroup.numElements; j++)
 				{
 					var item:IVisualElement = CarouselGroup.getElementAt( j );
@@ -176,7 +168,7 @@
 						if (CarouselGroup.getElementAt( j )==event.currentTarget)
 						{
 							currentIndex = j;
-							Console.log("currentIndex: "+currentIndex,this)
+							//Console.log("currentIndex: "+currentIndex,this)
 						}
 					}
 					/*
@@ -187,25 +179,26 @@
 							} 
 						}); 
 					*/
-					Console.log( "currentIndex: "+ teamDataList[currentIndex].@name, this );
+					//Console.log( "currentIndex: "+ teamDataList[currentIndex].@name, this );
 					
 			}
 			protected function accept( e:Event ):void
 			{
 				if (this.currentIndex>=0)
 				{
-					publish( teamDataList[currentIndex].@id )	
+					publish( teamDataList[currentIndex].@id )
 				} else
 				{
 					this.parentApplication.dispatchEvent( new KioskError( KioskError.ERROR,  "No team selected. Please select your team and try again.", "Please select team"));
 				}
-				
 			}
+			
 			protected function publish( teamID:int ):void
 			{
-				this.parentApplication.dispatchEvent( new KioskProgressEvent( KioskProgressEvent.NOTIFY, "Publishing..." ));
+				//this.parentApplication.dispatchEvent( new KioskProgressEvent( KioskProgressEvent.NOTIFY, "Publishing..." ));
+				
 				publishSelectTeam.url = this.parentApplication.localURL+'userteam.php';
-				Console.log("publishing to "+publishSelectTeam.url, this);
+				//Console.log("publishing to "+publishSelectTeam.url, this);
 				var passVars:Object=new Object();
 				passVars.urn=currentURN;
 				passVars.team_id= teamID;
@@ -216,7 +209,7 @@
 			protected function publish_success(event:ResultEvent):void
 			{
 				//this.parentApplication.dispatchEvent( new KioskProgressEvent( KioskProgressEvent.UPDATE_COMPLETE ));
-				Console.log("publish_success: "+event.result.result, this);
+				//Console.log("publish_success: "+event.result.result, this);
 				if(event.result.result!="SUCCESS") 
 				{
 					this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, event.result.message, "ERROR", init));
@@ -232,7 +225,7 @@
 			}
 			protected function complete():void
 			{
-				this.parentApplication.dispatchEvent( new ViewEvent( ViewEvent.LOCATION_REGISTRATION_COMPLETE, data ) );
+				this.parentApplication.dispatchEvent( new ViewEvent( ViewEvent.LOCATION_SELECT_USER_TYPE ) );
 			}
 			
 			//Roll Over ... Add Glow
@@ -261,7 +254,7 @@
 	<!-- Menu -->
 	<!-- Field -->
 	
-		<s:VGroup height="100%" width="100%" horizontalAlign="center"  >
+		<s:VGroup horizontalAlign="center" width="100%" verticalCenter="0">
 			<s:Spacer height="80" />
 			<s:Label id="frontMessage" horizontalCenter="0"  text="PLEASE SELECT YOUR TEAM" />
 			<s:Spacer height="70" />

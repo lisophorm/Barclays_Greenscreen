@@ -29,8 +29,8 @@
 			
 			public function init(event:Event=null):void
 			{
-				trace("Thankyou :: init");
-				Console.log("*** Thankyou :: init ***", this);
+				//trace("Thankyou :: init");
+				//Console.log("*** Thankyou :: init ***", this);
 				TweenMax.delayedCall(2, close);
 				//intervallo=setInterval(close,2000);
 				//var temp:File=File.applicationDirectory.resolvePath("/data/data/air.BarclaysFaceBook01/cache/webviewCache");
@@ -39,7 +39,7 @@
 			
 			protected function exit(event:Event):void
 			{
-				Console.log("*** Thankyou :: exit ***", this);
+			//	Console.log("*** Thankyou :: exit ***", this);
 				// TODO Auto-generated method stub
 				TweenMax.killTweensOf(this);
 			//	clearInterval(intervallo);
@@ -48,8 +48,8 @@
 			
 			protected function close():void 
 			{
-				trace("Thankyou :: close");
-				Console.log("*** Thankyou :: close ***", this);
+			//	trace("Thankyou :: close");
+			//	Console.log("*** Thankyou :: close ***", this);
 				TweenMax.killTweensOf(this);
 			//	clearInterval(intervallo);
 				//navigator.popToFirstView();

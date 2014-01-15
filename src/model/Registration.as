@@ -9,6 +9,7 @@ package model
 	import flash.system.Capabilities;
 	import flash.utils.Timer;
 	
+	import events.DebugEvent;
 	import events.RegistrationEvent;
 
 	public class Registration extends EventDispatcher
@@ -51,7 +52,7 @@ package model
 		
 				if (!hasStarted)
 				{
-					Console.log("startSocket "+server, this);
+					//Console.log("startSocket "+server, this);
 			
 					server.start();
 				} else {
@@ -69,20 +70,20 @@ package model
 		
 		private function clientAddedHandler(event:AIRServerEvent):void
 		{
-			Console.log("Client added: " + event.client.id + "\n", this);
+		//	Console.log("Client added: " + event.client.id + "\n", this);
 			delayedIdleSocket();
 		}
 		
 		private function clientRemovedHandler(event:AIRServerEvent):void
 		{
-			Console.log("Client removed: " + event.client.id + "\n", this);
+			//Console.log("Client removed: " + event.client.id + "\n", this);
 		}
 		
 		public function stopSocket(e:Event = null):void
 		{
 			if (server!=null && hasStarted)
 			{
-				Console.log("stopping socket", this);
+				//Console.log("stopping socket", this);
 				server.stop();
 				//kill(); //TODO:: This stops the finger print reader to laucnh - but it never returns
 			}
@@ -95,7 +96,7 @@ package model
 		protected function idleSocket():void
 		{
 			var idMsg:Message = identifyMessage;
-			Console.log("sending message "+idMsg.data, this)
+			//Console.log("sending message "+idMsg.data, this)
 			
 			server.sendMessageToAllClients(idMsg);
 		}
@@ -110,7 +111,7 @@ package model
 		{
 			var message:Message=new Message();
 			message.data=msg;
-			Console.log("sending message: "+message.data, this);
+			//Console.log("sending message: "+message.data, this);
 			server.sendMessageToAllClients(message);
 		}
 			
@@ -136,7 +137,10 @@ package model
 		{
 			if (data!=null)
 			{
-				Console.log("handleCode:"+ data["code"]+ " "+data["msg"],this);
+				dispatchEvent(new DebugEvent(DebugEvent.DEBUG, data["code"]));
+				trace("Registration :: handleCode" + data["code"]);
+				
+				//Console.log("handleCode:"+ data["code"]+ " "+data["msg"],this);
 				switch ( int(data["code"]) ) //'code' parameter is integer
 				{
 					case 101: 
@@ -173,7 +177,8 @@ package model
 					break;
 					case 201:
 						//- Registration successful
-						this.dispatchEvent( new RegistrationEvent( RegistrationEvent.USER_REGISTERED, data["msg"]  ) );
+						// I THINK THE URN SHOULD BE CREATED HERE
+						this.dispatchEvent( new RegistrationEvent( RegistrationEvent.USER_REGISTERED, null, data["msg"]  ) );
 					break;
 					case 202:
 						//- Registration Error
@@ -213,12 +218,12 @@ package model
 		}
 		private function messageReceivedHandler(event:MessageReceivedEvent):void
 		{
-			Console.log("messageReceivedHandler", this);
+			//Console.log("messageReceivedHandler", this);
 			try {
 				if (event.message.data!=null)
 				{
 					var dataOut:Object = by.blooddy.crypto.serialization.JSON.decode(event.message.data.toString());
-					Console.log(event.message.data.toString(), this);
+					//Console.log(event.message.data.toString(), this);
 					handleCode( dataOut );
 				} else
 				{
@@ -226,7 +231,7 @@ package model
 				}
 			} catch (e:Error)
 			{
-				Console.log("Error:\n"+e.message, this)
+				//Console.log("Error:\n"+e.message, this)
 				this.dispatchEvent( new RegistrationEvent( RegistrationEvent.ERROR, null, e.message  ) );
 			}
 		}
@@ -234,7 +239,7 @@ package model
 		{
 			if (flash.system.Capabilities.os.indexOf("Windows")!=-1)
 			{
-				Console.log("Open internet explorer", this)
+				//Console.log("Open internet explorer", this)
 				var file:File=File.applicationDirectory.resolvePath("C:/Windows/System32/cmd.exe");
 				var nativeProcessInfo:NativeProcessStartupInfo=new NativeProcessStartupInfo();
 				nativeProcessInfo.executable=file;
@@ -249,10 +254,10 @@ package model
 		}
 		public function kill():void
 		{
-			Console.log("Attempting kill", this);
+			//Console.log("Attempting kill", this);
 			if (flash.system.Capabilities.os.indexOf("Windows")!=-1)
 			{
-				Console.log("Kill Device!", this)
+				//Console.log("Kill Device!", this)
 				var file:File=File.applicationDirectory.resolvePath("C:/Program Files/BioPlugin/M2SysPlugIn.exe");
 				var nativeProcessInfo:NativeProcessStartupInfo=new NativeProcessStartupInfo();
 				nativeProcessInfo.executable=file;

@@ -39,7 +39,7 @@
 			}
 			public function init(event:Event=null):void
 			{
-				Console.log("*** INIT USERFORM ***", this);
+				//Console.log("*** INIT USERFORM ***", this);
 				clearData();
 				if (this.parentApplication.data!=null)
 				{
@@ -48,11 +48,11 @@
 					this.currentURN = data.urn;
 					optin_marketing = data.optin_marketing;
 					optin_terms = data.optin_terms;
-					Console.log("CURRENT URN: "+this.currentURN, this);
+					//Console.log("CURRENT URN: "+this.currentURN, this);
 
 				} else
 				{				
-					Console.log("NO CURRENT URN", this);
+					//Console.log("NO CURRENT URN", this);
 				}
 				validatorArr = new Array();
 				validatorArr.push(validateName);

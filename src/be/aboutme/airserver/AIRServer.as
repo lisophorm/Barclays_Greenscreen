@@ -74,7 +74,7 @@ package be.aboutme.airserver
 		public function start():void
 		{
 			//open all endpoints
-			Console.log("Start "+started+" "+endPoints,this);
+			//Console.log("Start "+started+" "+endPoints,this);
 			for each(var endPoint:IEndPoint in endPoints)
 			{
 				//add event listeners to the endpoint
@@ -82,7 +82,7 @@ package be.aboutme.airserver
 				//open it
 				
 				endPoint.open();
-				Console.log("open",this);
+				//Console.log("open",this);
 			}
 			started = true;
 		}

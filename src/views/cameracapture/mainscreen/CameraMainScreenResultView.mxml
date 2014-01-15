@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 width="100%" height="100%">
+	
+	<fx:Metadata>
+		[Event(name="retake", type="events.CameraCaptureEvent")]
+		[Event(name="nextScreen", type="events.CameraCaptureEvent")]
+	</fx:Metadata>
+	
+	<s:layout>
+		<s:VerticalLayout horizontalAlign="center"/>
+	</s:layout>
+	<fx:Script>
+		<![CDATA[
+			import events.CameraCaptureEvent;
+			
+			[Bindable]
+			public var imageURL : String;
+		]]>
+	</fx:Script>
+	
+	<s:Spacer height="200"/>
+	<s:Group>
+		<s:VGroup horizontalAlign="center" width="100%">
+			<s:Image width="800" height="600" source="{imageURL}"/>
+			<s:Spacer height="80"/>
+			<s:HGroup gap="60">
+				<s:Button label="RETAKE PHOTO" skinClass="skins.barclaysButton" 
+						  click="{dispatchEvent(new CameraCaptureEvent(CameraCaptureEvent.RETAKE))}"/>
+				<s:Button label="FINISH" skinClass="skins.barclaysButton" click="{dispatchEvent(new CameraCaptureEvent(CameraCaptureEvent.NEXT_SCREEN))}"/>
+			</s:HGroup>
+		</s:VGroup>
+	</s:Group>
+	
+</s:Group>

@@ -3,44 +3,35 @@
 		xmlns:s="library://ns.adobe.com/flex/spark" 
 		creationComplete="created()" 
 		addedToStage="addedToStageHander(event)"
-		remove="exit(event)" xmlns:mx="library://ns.adobe.com/flex/mx">
+		remove="exit(event)" xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:components="views.components.*">
 	<fx:Script>
 		<![CDATA[
 			import com.alfo.utils.CleanWebView;
 			import com.alfo.utils.EncryptWrapper;
 			import com.alfo.utils.StringUtils;
-			import com.lia.crypto.AES;
-			import com.utils.Console;
 			
-			import flash.desktop.NativeApplication;
-			import flash.desktop.SystemIdleMode;
-			import flash.display.Sprite;
-			import flash.display.StageAlign;
-			import flash.display.StageScaleMode;
+			import flash.display.StageDisplayState;
 			import flash.events.Event;
-			import flash.events.StageVideoAvailabilityEvent;
+			import flash.events.FocusEvent;
+			import flash.events.KeyboardEvent;
+			import flash.events.MouseEvent;
+			import flash.events.SoftKeyboardEvent;
 			
-			import mx.core.FlexGlobals;
 			import mx.events.FlexEvent;
 			import mx.events.StateChangeEvent;
-			import mx.messaging.channels.StreamingAMFChannel;
 			import mx.rpc.events.FaultEvent;
 			import mx.rpc.events.ResultEvent;
 			import mx.rpc.http.HTTPService;
 			
 			import spark.events.TextOperationEvent;
-			import spark.filters.GlowFilter;
 			
+			import events.DebugEvent;
 			import events.KioskError;
-			import events.KioskEvent;
 			import events.RegistrationEvent;
 			import events.UserEvent;
 			import events.ViewEvent;
 			
-			import model.ML;
 			import model.Registration;
-			
-			import views.components.tandcWindow;
 			
 			private var currentURN:String;
 			
@@ -50,8 +41,6 @@
 			
 			[Bindable]
 			public var barcode:String = null;
-			
-			
 			
 			[Bindable]
 			public var gameNumber:String = "1";
@@ -64,7 +53,7 @@
 			
 			public function created(event:FlexEvent=null):void
 			{
-				Console.log("*** CREATE ***", this);
+			//	Console.log("*** CREATE ***", this);
 				
 			
 				init();
@@ -78,7 +67,7 @@
 			{
 				this.currentState = "";
 				currentURN = null;
-				Console.log("*** INITIATING DEVICE ***", this);
+			//	Console.log("*** INITIATING DEVICE ***", this);
 				frontMessage.text = "PLEASE WAIT - INITIALISING SCANNER";
 				//userNotFoundModule.includeInLayout = userNotFoundModule.visible= false;
 				//userFingerScanStepModule.includeInLayout = userFingerScanStepModule.visible = false;
@@ -148,15 +137,15 @@
 			protected function startListen(event:Event=null):void
 			{
 				//stopListen();
-				trace("* Listen ON")
+			//	trace("* Listen ON")
 				if (device==null)
 				{
-					Console.log("Start Device", this)
+				//	Console.log("Start Device", this)
 					//systemManager.stage.addEventListener(KeyboardEvent.KEY_DOWN, checkKey);
 					device = new Registration(); 
 					device.addEventListener( RegistrationEvent.SCAN_READY, this.readyToScan);
 					device.addEventListener( RegistrationEvent.SCAN_AGAIN, this.scan_again);
-					device.addEventListener( RegistrationEvent.USER_REGISTERED, this.userRegistered);
+					device.addEventListener( RegistrationEvent.USER_REGISTERED, this.userRegistered); // when scan complete
 					device.addEventListener( RegistrationEvent.ERROR, this.registrationError);
 					device.addEventListener( RegistrationEvent.USER_FOUND, this.userFound);
 					device.addEventListener( RegistrationEvent.USER_NOT_FOUND, this.userNotFound);
@@ -166,10 +155,11 @@
 					device.addEventListener( RegistrationEvent.SCAN_STEP_1, this.register_step_1);
 					device.addEventListener( RegistrationEvent.SCAN_STEP_2, this.register_step_2);
 					device.addEventListener( RegistrationEvent.SCAN_STEP_3, this.register_step_3);
-					device.addEventListener( RegistrationEvent.SCAN_COMPLETED, this.register_complete);
+					device.addEventListener( RegistrationEvent.SCAN_COMPLETED, this.register_complete); // when scan complete
 					device.addEventListener( RegistrationEvent.SCAN_RESTART, this.scan_restart);
 					device.addEventListener( RegistrationEvent.SCAN_REINITIALISE, this.scan_reinitiate);
-						
+					
+					device.addEventListener(DebugEvent.DEBUG, debugEventHandler);
 				}
 				
 				device.startSocket();
@@ -192,7 +182,7 @@
 			
 			protected function register_step_1( e:RegistrationEvent=null ):void
 			{
-				Console.log("CHANGING STATE -> STEP1", this);
+				//Console.log("CHANGING STATE -> STEP1", this);
 				this.currentState = "STEP1";
 			}
 			
@@ -204,19 +194,25 @@
 			{
 				this.currentState = "STEP3";
 			}
+			
 			protected function register_complete( e:RegistrationEvent=null ):void
 			{
+				// this one is called when the user has successfully scanned their finger
+				// ignore on the whole, all the good stuff happens in userRegistered, which seems to be usually called at 
+				// the same time
+				trace("RegistrationScan :: register_complete");
 				this.currentState = "REGISTER_COMPLETE";
 			}
 			protected function readyToScan( e:RegistrationEvent=null ):void
 			{
-				Console.log("readyToScan", this);
 				//frontMessage.text = "PLEASE SCAN YOUR FINGER";
 				currentState="READY_TO_SCAN";
 			}
+			
 			protected function userRegistered( e:RegistrationEvent = null ):void
 			{
-				Console.log("userRegistered "+e.URN, this);
+				trace("RegistrationScan :: userRegistered :: " + e.URN);
+				//Console.log("userRegistered "+e.URN, this);
 				frontMessage.visible = true;
 				welcomeScreen.visible 
 				this.onNewUser( currentURN  );
@@ -225,16 +221,14 @@
 			protected function registrationError( e:RegistrationEvent = null ):void
 			{
 				currentState="REGISTRATION_ERROR";
-				Console.log("registrationError "+e.message, this);
+				//Console.log("registrationError "+e.message, this);
 				this.onError( e.message );
 			}
 			
 			protected function userFound( e:RegistrationEvent = null ):void
 			{
-				
-				
 				currentState="USER_FOUND";
-				Console.log("userFound URN="+e.URN, this);
+				//Console.log("userFound URN="+e.URN, this);
 				//if this is a registration type - then alreadyregistered otherwise move use
 				this.onAlreadyRegistered( e.URN, this.parentApplication.ApplicationType );
 			}
@@ -242,34 +236,35 @@
 			protected function userNotFound( e:RegistrationEvent=null ):void
 			{			
 				currentState="USER_NOT_FOUND";
-				Console.log("userNotFound ", this);
+				//Console.log("userNotFound ", this);
 				//register with device first
 				//userNotFoundModule.includeInLayout = userNotFoundModule.visible= true;
 				frontMessage.text = "USER NOT FOUND";
 			}
 			
-			protected function get uniqueID():Number
+			public function get uniqueID():Number
 			{
-				return Number((new Date()).time);
+				var unique : Number =  Number((new Date()).time);
+				trace("RegistrationScan :: getUniqueID :: " + unique);
+				return unique;
 			}
-			
 			
 			protected function exit(e:Event=null):void
 			{
-				Console.log("*** EXIT Registration ***", this);
+			//	Console.log("*** EXIT Registration ***", this);
 				//this.removeEventListener( Event.INIT, init);
 				stopListen();
 			}
 			private function stopListen(event:Event=null):void
 			{
-				trace("* Listen OFF")
+				//trace("* Listen OFF")
 				if (device!=null)
 					device.stopSocket();
 			}
 			
 			protected function urn_changeHandler(event:TextOperationEvent):void
 			{
-				trace("check urn");
+				//trace("check urn");
 				
 			}
 			
@@ -277,7 +272,7 @@
 			{
 				//focusManager.setFocus(urn);
 				//urn.selectAll();
-				trace("focus out handler");
+				//trace("focus out handler");
 			}
 			
 			protected function urn_softKeyboardActivatingHandler(event:SoftKeyboardEvent):void
@@ -291,7 +286,7 @@
 			
 			protected function checkKey(e:KeyboardEvent=null):void
 			{
-				trace("checking key");
+			//	trace("checking key");
 				if (e.keyCode == Keyboard.ENTER  && (this.parentApplication).urn==barcodeInput.text.length)
 				{
 					lookupBarCode();
@@ -308,20 +303,20 @@
 			protected function lookupBarCode(e:FlexEvent=null):void
 			{
 			
-				trace("barcode before:"+barcodeInput.text);
+				//trace("barcode before:"+barcodeInput.text);
 				barcode = com.alfo.utils.StringUtils.trim(String(barcodeInput.text.toLocaleUpperCase()));
 				// only for hungarian
 				barcode = barcode.split("Ö").join("0");
 				
 				barcode = barcode.toUpperCase();
 				//	barcode.replace(String.fromCharCode(5), "");
-				trace("barcode converted:"+barcode);
+				//trace("barcode converted:"+barcode);
 				
 				for (var i:int=0;i<barcode.length;i++)
 				{
-					trace(barcode.charAt(i)+" "+barcode.charCodeAt(i))
+					//trace(barcode.charAt(i)+" "+barcode.charCodeAt(i))
 				}
-				trace("Looking up barcode:"+barcode+" => "+(this.parentApplication).urn.toString()+"=="+barcode.length.toString());
+				//trace("Looking up barcode:"+barcode+" => "+(this.parentApplication).urn.toString()+"=="+barcode.length.toString());
 				
 				if ((this.parentApplication).urn==barcode.length)
 				{
@@ -343,7 +338,7 @@
 						service.addEventListener(ResultEvent.RESULT, userValidCheck);
 						service.resultFormat = "flashvars";
 						service.send(params);
-						trace("REQUEST TO SERVER MADE");
+					//	trace("REQUEST TO SERVER MADE");
 						
 					} else
 					{
@@ -358,21 +353,19 @@
 					barcodeInput.text = barcode = "";
 					barcodeWriter.text ="";
 				}
-				
 			}
+			
 			protected function userCheckFailed(event:FaultEvent):void
 			{
-				
 //				this.parentApplication.dispatchEvent(new events.KioskError(KioskError.ERROR,event.fault.faultDetail.toString(), event.fault.faultString.toString(), init) );
 			}
 			protected function onNewUser(uid:*):void
 			{
-				
 				this.parentApplication.dispatchEvent( new UserEvent(UserEvent.URN, uid) );
 				this.parentApplication.dispatchEvent( new UserEvent(UserEvent.REGISTERED) );
-				this.parentApplication.dispatchEvent(new ViewEvent(ViewEvent.LOCATION_SELECT_USER_TYPE) );
-				
+				this.parentApplication.dispatchEvent(new ViewEvent(ViewEvent.LOCATION_SELECT_TEAM) );
 			}
+			
 			protected function onAlreadyRegistered(URN:*, type:String):void
 			{
 				trace("RegistrationScan :: onAlreadyRegistered :: " + URN);
@@ -458,7 +451,7 @@
 		
 			protected function onBeginRegister(event:MouseEvent=null):void
 			{
-				Console.log("onBeginRegister", this);
+				//Console.log("onBeginRegister", this);
 				this.currentState = "REGISTER_BEGIN";
 				
 				//userFingerScanStepModule.includeInLayout = userFingerScanStepModule.visible = true;
@@ -468,7 +461,7 @@
 			}
 			protected function onStateChange( e:StateChangeEvent ):void
 			{
-				Console.log(e.oldState+"->"+e.newState,this);
+				//Console.log(e.oldState+"->"+e.newState,this);
 			}
 			
 			//protected function userdata_resultHandler( e:ResultEvent ):void {}
@@ -478,6 +471,12 @@
 			{
 				trace("RegistrationScan :: addedToStageHandler :: " + stage.stageWidth);
 			//	registerOnceLabel.width = stage.stageWidth;
+			}
+			
+			protected function debugEventHandler(event : DebugEvent):void
+			{
+				var date : Date = new Date();
+				debugPanel.text += "socket event :: " + event.socketCode + " :: " + date.minutes + ":" + date.seconds +  "\n";
 			}
 			
 		]]>
@@ -525,7 +524,7 @@
 		<s:Spacer height="68"/>
 		<s:Label id="registerOnceLabel" textAlign="center" width="1000" styleName="registrationThree" text="REGISTER ONCE, USING YOUR FINGERPRINT {'\n'}AS YOUR UNIQUE IDENTIFIER*.{'\n'}IT'S THEN QUICK AND EASY TO PLAY ANY ACTIVITY{'\n'}AT BARCLAYS PREMIER LEAGUE LIVE"/>
 		<s:Spacer height="60"/>
-		<s:Label id="allFingerprintsLabel" textAlign="center" width="1000" styleName="registrationFour" text="PLEASE SCAN YOUR FINGER TO START"/>
+		<s:Label id="allFingerprintsLabel" textAlign="center" width="1000" styleName="registrationFour" text="*ALL FINGERPRINTS ARE DELETED DIRECTLY AFTER THE EVENT."/>
 	</s:VGroup>
 	
 	<s:VGroup horizontalAlign="center" verticalAlign="top" height="574" width="100%">
@@ -534,7 +533,7 @@
 		<s:VGroup horizontalAlign="center">
 			
 			<s:Label id="frontMessage" horizontalCenter="0"
-					 text="PLEASE SCAN YOUR FINGER"
+					 text="PLEASE PLACE YOUR FINGER 3 TIMES"
 					 text.REGISTER_BEGIN = "REGISTRATION SCAN - PLEASE SCAN FINGER"
 					 text.SCANNING_RESTART = "READING ERROR - PLEASE TRY AGAIN!"
 					 text.STEP1="PLEASE PLACE YOUR FINGER 3 TIMES"
@@ -595,5 +594,5 @@
 		</s:VGroup>
 		<!--s:Button click="simulate(event)" label="Simulate" /-->
 	</s:VGroup>
-	
+	<components:DebugPanel width="300" height="200" id="debugPanel" visible="false"/>
 </s:Group>

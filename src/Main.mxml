@@ -3,7 +3,7 @@
 					   xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:views="views.*"
 					   horizontalCenter="center" width="100%" height="100%"
 					   creationComplete="init(event)"  resize="onresize()" backgroundColor="0x000000"
-					   addedToStage="fullscreen()" showStatusBar="false">
+					   addedToStage="fullscreen()" showStatusBar="false" xmlns:mainscreen="views.cameracapture.mainscreen.*" xmlns:components="views.components.*">
 	<fx:Script>
 		<![CDATA[
 			import com.greensock.TweenMax;
@@ -15,6 +15,7 @@
 			import spark.filters.DropShadowFilter;
 			
 			import events.ApplicationEvent;
+			import events.DebugEvent;
 			import events.GreenscreenModuleEvent;
 			import events.KioskError;
 			import events.KioskEvent;
@@ -27,6 +28,7 @@
 			import model.ML;
 			import model.MonitorConnection;
 			
+			import skins.vodafoneButton;
 			import skins.vodafoneFormItem;
 			
 			import views.components.ErrorAlert;
@@ -35,9 +37,9 @@
 			import views.components.ProgressPopUp;
 			import views.components.pleaseWait;
 			import views.components.tandcWindow;
-			
-			
+						
 			public var baseURL:String ="";
+			[Bindable]
 			public var localURL:String ="";
 			public var facebookAppID:String ="";
 			public var urn:int = 0;
@@ -156,7 +158,7 @@
 			
 			protected function onresize(e:Event=null):void
 			{
-				trace("*** RESIZE");
+			//	trace("*** RESIZE");
 				try
 				{
 					this.reScaleMainContent();
@@ -201,9 +203,9 @@
 					
 				urn = int(pref.prefsXML..urnLength);
 				scoreFormat = pref.prefsXML..scoreFormat;
-				Console.log("baseURL: "+baseURL, this);
-				Console.log("localURL: "+localURL, this);
-				Console.log("appplicationtype is now: "+ApplicationType, this);
+				//Console.log("baseURL: "+baseURL, this);
+				//Console.log("localURL: "+localURL, this);
+				//Console.log("appplicationtype is now: "+ApplicationType, this);
 				monitor =  new MonitorConnection(baseURL+"ping.php");			
 				
 				NativeApplication.nativeApplication.idleThreshold = 600;
@@ -288,7 +290,7 @@
 
 				
 				pref.saveApplicationVariables( e.value );
-				trace(pref.prefsXML);
+			//	trace(pref.prefsXML);
 				baseURL =  "http://"+pref.prefsXML..serverIP+"/";
 				localURL= "http://"+pref.prefsXML..localIP+"/";
 				eventLocation=pref.prefsXML..eventlocation;
@@ -296,8 +298,8 @@
 				ApplicationType = pref.prefsXML..applicationtype.toString().toUpperCase();
 				urn = int(pref.prefsXML..urnLength);
 				scoreFormat = pref.prefsXML..scoreFormat;
-				trace("scoreformat is now: "+scoreFormat);
-				trace("appplicationtype is now: "+ApplicationType);
+			//	trace("scoreformat is now: "+scoreFormat);
+			//	trace("appplicationtype is now: "+ApplicationType);
 				this.dispatchEvent( new ViewEvent( ViewEvent.LOCATION_RESTART ));
 			}
 			
@@ -305,7 +307,7 @@
 			{
 				try
 				{
-					trace("*** CLEARING POPUPS");
+				//	trace("*** CLEARING POPUPS");
 					if (greenscreenmoduleWindow!=null)
 					{
 							PopUpManager.removePopUp(greenscreenmoduleWindow);
@@ -362,7 +364,6 @@
 			}
 			protected function notifyProgress( e:KioskProgressEvent = null):void
 			{
-				
 				clearPopups();
 				
 				progressWindow = new ProgressPopUp();
@@ -382,13 +383,10 @@
 				greenscreenmoduleWindow.photoPath = e.photopath;
 				PopUpManager.addPopUp(greenscreenmoduleWindow, this, false) ;
 				PopUpManager.centerPopUp(greenscreenmoduleWindow);
-
 			}
 			
 			protected function notifyProgressUpdate( e:KioskProgressEvent = null):void
 			{
-				
-				
 				if (progressWindow==null)
 				{
 					notifyProgress(e);
@@ -399,9 +397,10 @@
 				}
 				
 			}
+			
 			protected function openTermsAndCondtions( e:KioskEvent = null):void
 			{
-				trace("openTermsAndCondtions");
+			//	trace("openTermsAndCondtions");
 				
 				clearPopups();
 				tcWindow = new tandcWindow();
@@ -413,7 +412,7 @@
 			
 			protected function gotoView( stackStr:String="", obj:Object=null ) :void
 			{
-				Console.log("Main :: gotoView :: " + stackStr, this);
+				//Console.log("Main :: gotoView :: " + stackStr, this);
 				var indexSeq:Array = ["RegisterView", "SelectUserType", "FaceBookAuth01", "UserForm", "SelectTeam","CameraCapture", "ScoreCapture", "TaskCompleteCapture", "GreenScreen","GreenScreenCelebrate", "SelectApplication", "Thankyou", "FaceBookLogoutOverride", "WelcomeBack"]
 				var lastScreen:DisplayObject;
 				var nextScreen:DisplayObject;
@@ -519,6 +518,7 @@
 					Stack.selectedIndex = nextIndex;
 				}
 			}
+			
 			protected function deleteWindowsCookies():void {
 				if (flash.system.Capabilities.os.indexOf("Windows")!=-1)
 				{
@@ -531,6 +531,7 @@
 					process.start(nativeProcessInfo);
 				}
 			}
+			
 			//NAVIGATION HANDLING BETWEEN VIEWS
 			protected function doNavigation(e:ViewEvent):void
 			{
@@ -637,7 +638,6 @@
 						break;
 					case ViewEvent.LOCATION_GAME:
 						
-						
 						trace("ENTERING THE GAME "+ApplicationType);
 						if (ApplicationType == APPLICATION_TYPE_PHOTO)
 						{
@@ -695,6 +695,7 @@
 				trace("Error: "+e.message);
 				showError(e.message, e.title, e.exitFunction);
 			}
+			
 			protected function toggleConnectIcon(e:Event):void
 			{
 				if ( connStatus.visible )
@@ -712,20 +713,20 @@
 				defaultView();
 				trace("Idle too long - resetting");
 			}
+			
 			protected function notifyNoInternet(e:Event):void
 			{
-				
 				//defaultState();
 				defaultView();
 				monitor.removeEventListener( MonitorConnection.EVENT_INTERNET_NOT_AVAILABLE, notifyNoInternet);
 				monitor.addEventListener( MonitorConnection.EVENT_INTERNET_AVAILABLE, notifyInternet);
 				showError("SORRY - NO INTERNET CONNECTION", "CONNECTION ERROR");
 			}
+			
 			protected function notifyInternet(e:Event):void
 			{
 				monitor.addEventListener( MonitorConnection.EVENT_INTERNET_NOT_AVAILABLE, notifyNoInternet);
-				monitor.removeEventListener( MonitorConnection.EVENT_INTERNET_AVAILABLE, notifyInternet);
-				
+				monitor.removeEventListener( MonitorConnection.EVENT_INTERNET_AVAILABLE, notifyInternet);			
 				
 				if (alertbox!=null)
 				{
@@ -763,7 +764,6 @@
 			{
 				trace("default view")
 				this.dispatchEvent( new ViewEvent( ViewEvent.LOCATION_RESTART ));
-				
 			}
 			
 			protected function thankyouView(e:Event = null):void
@@ -967,6 +967,7 @@
 				this.loggedIn = (e.type=="login");
 				
 			}
+
 			
 		]]>
 	</fx:Script>
@@ -1005,7 +1006,8 @@
 			<s:HGroup width="100%" horizontalAlign="right" paddingRight="0" verticalAlign="middle" height="150">
 				<s:Button skinClass="skins.BasicButton" styleName="nav" icon="@Embed('assets/images/core/nm-no-connection.gif')" id="connStatus" label="{ML.t('NO CONNECTION')}" color="0xFFFFFF" visible="false" />
 				<s:Button skinClass="skins.BasicButton" styleName="nav" icon="@Embed('assets/images/core/home_logo.png')" click="{defaultView()}"/>
-				<!--<s:Button label="welcome!" click="{gotoView('WelcomeBack')}"/>-->
+				<s:Button label="camera" click="{gotoView('CameraCapture')}"/>
+				<!--s:Button label="unique" click="{RegisterView.uniqueID}"/-->
 				<s:Button skinClass="skins.BasicButton" styleName="nav" label="{ML.t('Quit')}" click="exitApplication(event)" id="quitButton" color="0xFFFFFF" visible="{loggedIn}" includeInLayout="{loggedIn}" />
 				<s:Button skinClass="skins.BasicButton" styleName="nav" icon="@Embed('assets/images/core/padlock.png')" click="config(event)" color="0xFFFFFF" />
 			</s:HGroup>		
@@ -1036,7 +1038,7 @@
 					<views:SelectTeam id="SelectTeam" />
 				</mx:VBox>
 				<mx:VBox hideEffect="{hideFX}"  showEffect="{showFX}">
-					<views:CameraCapture id="CameraCapture" />
+					<mainscreen:CameraMainScreenWindow id="CameraCapture" />
 				</mx:VBox>
 				<mx:VBox hideEffect="{hideFX}"  showEffect="{showFX}">
 					<views:ScoreCapture id="ScoreCapture" />
@@ -1068,5 +1070,4 @@
 		
 	</s:Group>
 	</s:VGroup>
-
 </s:WindowedApplication>

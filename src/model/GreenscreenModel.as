@@ -29,7 +29,6 @@ package model
 		
 		public function GreenscreenModel(urn:String="DEFAULT_URN", team:String="arsenal", watchFolder:String="", photoshop:String="")
 		{
-			Console.log("GreenscreenModel",this);
 			this.urn = urn;
 			this.team = team;
 			this.photoshop = photoshop;	
@@ -61,7 +60,7 @@ package model
 			
 			if (!urnConfigFile.exists)
 			{
-				Console.log("File not found", this);
+				//Console.log("File not found", this);
 				return false;
 			}
 			var stream:FileStream = new FileStream();
@@ -69,7 +68,7 @@ package model
 			
 			var fileString:String = stream.readUTFBytes(stream.bytesAvailable);
 			
-			Console.log("fileString:"+fileString, this);
+			//Console.log("fileString:"+fileString, this);
 			
 			var lines:Array = fileString.split(String.fromCharCode(13));
 			
@@ -109,7 +108,7 @@ package model
 				
 				//var destinationFile:File=File.applicationDirectory.resolvePath(watchFolder+"\\tmp\\ZZZZZZZZ.jpg");
 				destinationFile=File.applicationDirectory.resolvePath(watchFolder+"tmp\\"+this.urn+".jpg");
-				Console.log("Copy from "+photo.nativePath+" to "+destinationFile.nativePath, this);
+				//Console.log("Copy from "+photo.nativePath+" to "+destinationFile.nativePath, this);
 				photo.copyTo(destinationFile,true); //copy photo
 				this.photo = photo;
 				var nativeProcessInfo:NativeProcessStartupInfo=new NativeProcessStartupInfo();
@@ -120,7 +119,7 @@ package model
 				nativeProcessInfo.arguments=new <String>[""+watchFolder+"settings\\wrapup.jsx"];
 				//nativeProcessInfo.executable=destinationFile;
 				//nativeProcessInfo.arguments=new <String>[watchFolder+"settings\\wrapup.jsx"];
-				Console.log(nativeProcessInfo.executable.nativePath+" "+nativeProcessInfo.arguments[0], this);
+				//Console.log(nativeProcessInfo.executable.nativePath+" "+nativeProcessInfo.arguments[0], this);
 				var process:NativeProcess=new NativeProcess();
 				process.start(nativeProcessInfo);
 				NativeApplication.nativeApplication.activate();
@@ -145,7 +144,7 @@ package model
 		
 		protected function onPhotoReady(e:WatchEvent):void
 		{
-			Console.log("Photo is ready!!!", this);
+			//Console.log("Photo is ready!!!", this);
 			finalWatch.stopWatch();
 			var finalFile:File=File.applicationDirectory.resolvePath(watchFolder+"output\\"+this.urn+".jpg");
 			var destFile:File = File.applicationDirectory.resolvePath(watchFolder+"destination\\"+this.urn+".jpg");
