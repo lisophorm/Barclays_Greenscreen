@@ -122,6 +122,7 @@ package model
 			t.addEventListener(TimerEvent.TIMER, this.startIdleSocket);
 			t.start();
 		}
+		
 		protected function startIdleSocket( e:TimerEvent ):void
 		{
 			
@@ -131,8 +132,12 @@ package model
 			t = null;				
 			this.idleSocket();
 		}
-		
 	
+		public function debugHandleCode(data:Object):void
+		{
+			handleCode(data);
+		}
+		
 		protected function handleCode( data:Object=null ):void
 		{
 			if (data!=null)

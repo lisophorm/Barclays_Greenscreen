@@ -53,9 +53,6 @@
 			
 			public function created(event:FlexEvent=null):void
 			{
-			//	Console.log("*** CREATE ***", this);
-				
-			
 				init();
 				this.removeEventListener( Event.INIT, init);
 				this.addEventListener( Event.INIT, init);
@@ -67,80 +64,17 @@
 			{
 				this.currentState = "";
 				currentURN = null;
-			//	Console.log("*** INITIATING DEVICE ***", this);
 				frontMessage.text = "PLEASE WAIT - INITIALISING SCANNER";
-				//userNotFoundModule.includeInLayout = userNotFoundModule.visible= false;
-				//userFingerScanStepModule.includeInLayout = userFingerScanStepModule.visible = false;
-				//trace("creation complete");
 				StageDisplayState.FULL_SCREEN_INTERACTIVE;
 				CleanWebView.wipeOut();
 				startListen();
-				
-				//	if (!systemManager.stage.hasEventListener(KeyboardEvent.KEY_DOWN))
-				/*
-				try
-				{
-					barcodeInput.text = barcode = "";
-					barcodeWriter.text ="";
-					barcodeInput.enabled = true;
-					barcodeWriter.visible = true;
-					getBarcodeFocus();
-				} catch (er:Error)
-				{
-					this.parentApplication.dispatchEvent( new KioskError( KioskError.ERROR, er.message, "Warning!"))
-				}
-				*/
 				this.executeBindings(true);
-			}
-			protected function simulate(e:Event):void
-			{
-				switch (this.currentState)
-				{
-					case "DEFAULT":
-						//this.currentState = "REGISTER_BEGIN";
-						this.readyToScan();
-						//onBeginRegister()
-						break;
-					
-					case "READY_TO_SCAN":
-						onBeginRegister();
-						break;					
-					
-					case "REGISTER_BEGIN":
-						register_step_1();
-						break;
-					case "STEP1":
-						this.currentState = "STEP2";
-						break;
-					case "STEP2":
-						this.currentState = "STEP3";
-						break;
-					case "STEP3":
-						this.currentState = "REGISTER_COMPLETE";
-						break;
-					case "REGISTER_COMPLETE":
-						this.currentState = "SCANNING_RESTART";
-						break;	
-					case "SCANNING_RESTART":
-						userNotFound();
-						break;	
-					case "USER_NOT_FOUND":
-						userFound();
-						break;	
-					case "USER_FOUND":
-						this.currentState = "REGISTRATION_ERROR";
-						break;	
-						
-				}
 			}
 			//Prepare device for scanning
 			protected function startListen(event:Event=null):void
 			{
-				//stopListen();
-			//	trace("* Listen ON")
 				if (device==null)
 				{
-				//	Console.log("Start Device", this)
 					//systemManager.stage.addEventListener(KeyboardEvent.KEY_DOWN, checkKey);
 					device = new Registration(); 
 					device.addEventListener( RegistrationEvent.SCAN_READY, this.readyToScan);
@@ -182,7 +116,6 @@
 			
 			protected function register_step_1( e:RegistrationEvent=null ):void
 			{
-				//Console.log("CHANGING STATE -> STEP1", this);
 				this.currentState = "STEP1";
 			}
 			
@@ -203,9 +136,9 @@
 				trace("RegistrationScan :: register_complete");
 				this.currentState = "REGISTER_COMPLETE";
 			}
+			
 			protected function readyToScan( e:RegistrationEvent=null ):void
 			{
-				//frontMessage.text = "PLEASE SCAN YOUR FINGER";
 				currentState="READY_TO_SCAN";
 			}
 			
@@ -228,7 +161,6 @@
 			protected function userFound( e:RegistrationEvent = null ):void
 			{
 				currentState="USER_FOUND";
-				//Console.log("userFound URN="+e.URN, this);
 				//if this is a registration type - then alreadyregistered otherwise move use
 				this.onAlreadyRegistered( e.URN, this.parentApplication.ApplicationType );
 			}
@@ -236,9 +168,7 @@
 			protected function userNotFound( e:RegistrationEvent=null ):void
 			{			
 				currentState="USER_NOT_FOUND";
-				//Console.log("userNotFound ", this);
 				//register with device first
-				//userNotFoundModule.includeInLayout = userNotFoundModule.visible= true;
 				frontMessage.text = "USER NOT FOUND";
 			}
 			
@@ -251,13 +181,11 @@
 			
 			protected function exit(e:Event=null):void
 			{
-			//	Console.log("*** EXIT Registration ***", this);
-				//this.removeEventListener( Event.INIT, init);
 				stopListen();
 			}
+			
 			private function stopListen(event:Event=null):void
 			{
-				//trace("* Listen OFF")
 				if (device!=null)
 					device.stopSocket();
 			}
@@ -443,11 +371,6 @@
 				this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, "Network error, please check connectivity and try again: " + event.fault.faultString, "NETWORK ERROR", restart));
 
 			}
-			
-			protected function cazzoFunc(event:Event):void 
-			{
-				trace("cazzo");
-			}
 		
 			protected function onBeginRegister(event:MouseEvent=null):void
 			{
@@ -459,6 +382,7 @@
 				currentURN = uniqueID.toString();
 				device.registerUser( currentURN );
 			}
+			
 			protected function onStateChange( e:StateChangeEvent ):void
 			{
 				//Console.log(e.oldState+"->"+e.newState,this);
@@ -469,14 +393,13 @@
 				
 			protected function addedToStageHander(event:Event):void
 			{
-				trace("RegistrationScan :: addedToStageHandler :: " + stage.stageWidth);
 			//	registerOnceLabel.width = stage.stageWidth;
 			}
 			
 			protected function debugEventHandler(event : DebugEvent):void
 			{
 				var date : Date = new Date();
-				debugPanel.text += "socket event :: " + event.socketCode + " :: " + date.minutes + ":" + date.seconds +  "\n";
+				debugPanel.debugOutput.text += "socket event :: " + event.socketCode + " :: " + date.minutes + ":" + date.seconds +  "\n";
 			}
 			
 		]]>
@@ -594,5 +517,5 @@
 		</s:VGroup>
 		<!--s:Button click="simulate(event)" label="Simulate" /-->
 	</s:VGroup>
-	<components:DebugPanel width="300" height="200" id="debugPanel" visible="false"/>
+	<components:DebugPanel width="300" height="200" left="0" top="0" id="debugPanel"/>
 </s:Group>
