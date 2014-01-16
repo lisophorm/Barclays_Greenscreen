@@ -13,5 +13,10 @@ package events
 			socketCode = code;
 			super(type, bubbles, cancelable);
 		}
+		
+		override public function clone():Event
+		{
+			return new DebugEvent(type, socketCode, bubbles, cancelable);
+		}
 	}
 }

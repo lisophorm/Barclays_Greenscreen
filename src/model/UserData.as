@@ -8,7 +8,11 @@ package model
 		
 		public var firstName : String;
 		public var lastName : String;
-		public var urn : int;
+		public var urn : String = "00000000";
+		public var teamID : int;
 		
+		public var premierLeagueOptin : Boolean = false;
+		public var clubOptin : Boolean = false;
+		public var barclaysOptin : Boolean = false;
 	}
 }

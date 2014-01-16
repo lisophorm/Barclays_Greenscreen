@@ -7,7 +7,6 @@
 	<fx:Script>
 		<![CDATA[
 			import com.alfo.utils.VirtualKeyboard;
-			import com.utils.Console;
 			
 			import mx.events.FlexEvent;
 			import mx.rpc.events.FaultEvent;
@@ -19,7 +18,7 @@
 			import events.UserEvent;
 			import events.ViewEvent;
 			
-			import model.ML;
+			import model.Settings;
 			
 			[Bindable]
 			protected var validatorArr:Array;
@@ -32,6 +31,7 @@
 			public var optin_marketing:Boolean;
 			public var optin_terms:Boolean;
 			private var virtualKeyboard:VirtualKeyboard;
+			private var settings:Settings;
 			
 			public function created(event:FlexEvent=null):void
 			{
@@ -39,8 +39,8 @@
 			}
 			public function init(event:Event=null):void
 			{
-				//Console.log("*** INIT USERFORM ***", this);
 				clearData();
+				settings = Settings.instance;
 				if (this.parentApplication.data!=null)
 				{
 					this.userFirstName.setFocus();
@@ -48,7 +48,6 @@
 					this.currentURN = data.urn;
 					optin_marketing = data.optin_marketing;
 					optin_terms = data.optin_terms;
-					//Console.log("CURRENT URN: "+this.currentURN, this);
 
 				} else
 				{				
@@ -58,24 +57,19 @@
 				validatorArr.push(validateName);
 				validatorArr.push(validateSurname);
 				validatorArr.push(validateEmail);
-				validatorArr.push(validateMobile);
 				saveData.url = (this.parentApplication).localURL+'register.php';
-				
-				//virtualKeyboard = new VirtualKeyboard();
-				//virtualKeyboard.slideUp("C:\\Program Files (x86)\\Chessware\\Touch-It");
 			}
+			
 			protected function clearData():void
 			{
 				userFirstName.text = ""; 
 				userLastName.text = ""; 
-				userMobile.text = "";
 				userEmail.text = ""; 
 								
 			}
 			protected function exit(event:Event=null):void
 			{
 				trace("*** INIT USERFORM ***");
-
 			}
 
 			protected function submit(event:MouseEvent):void 
@@ -85,18 +79,20 @@
 				if (isValidForm) 
 				{
 					//send data
-					saveData.send({urn: this.currentURN, 
+					saveData.send({urn: settings.userData.urn, 
 
 						firstname:userFirstName.text, 
 						lastname: userLastName.text, 
-						mobile:userMobile.text,
 						email: userEmail.text, 
-						optInTerms: optin_terms ? 1 : 0, 
-						optInMarketing: optin_marketing ? 1 : 0 });
+						optInTerms: termsCheck.selected ? 1 : 0, 
+						optInPremier: premierLeagueCheck.selected ? 1 : 0,
+						optInClub:premierLeagueCheck.selected ? 1 : 0,
+						optInBarclays:barclaysCheck.selected ? 1 : 0
+					}
+					);
 				//	save();
 				} 
 			}
-			
 			
 			protected function clearForm():void
 			{
@@ -106,29 +102,41 @@
 				userFirstName.errorString="";
 				userLastName.text="";
 				userLastName.errorString="";
-				userMobile.text = "";
-				userMobile.errorString = "";
-				
+				termsCheck.selected = false;
+				premierLeagueCheck.selected = false;
+				clubCheck.selected = false;
+				barclaysCheck.selected = false;
 			}
 			
 			protected function save(e:ResultEvent=null):void
 			{
 				// -> Do we need to send an isRegistered? We should divide Facebook and Direct registration perhaps
-				if (e.result.result=="OK")
+				if(e.result)
 				{
-					
+					if (e.result.result=="OK")
+					{
+						this.parentApplication.dispatchEvent( new UserEvent(UserEvent.REGISTERED, "classic"));
+						this.parentApplication.dispatchEvent( new ViewEvent( ViewEvent.LOCATION_REGISTRATION_COMPLETE ) );
+					} else
+					{
+						this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, e.result.message.toString(), "COMMUNICATION ERROR"));
+					}
+				}else
+				{
 					this.parentApplication.dispatchEvent( new UserEvent(UserEvent.REGISTERED, "classic"));
-					this.parentApplication.dispatchEvent( new ViewEvent( ViewEvent.LOCATION_SELECT_TEAM ) );
-				} else
-				{
-					this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, e.result.message.toString(), "COMMUNICATION ERROR"));
-
+					this.parentApplication.dispatchEvent( new ViewEvent( ViewEvent.LOCATION_REGISTRATION_COMPLETE ) );
+					//this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, "THE SERVER SENT AN EMPTY RESPONSE", "COMMUNICATION ERROR"));
 				}
 			}
+			
 			protected function error(e:FaultEvent):void
 			{
 				this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, e.fault.message.toString(), "COMMUNICATION ERROR"));
-
+			}
+			
+			protected function tandcd_clickHandler(event:MouseEvent):void
+			{
+				this.parentApplication.dispatchEvent(new KioskEvent(KioskEvent.TERMS_NOTIFY));
 			}
 			
 		]]>
@@ -150,10 +158,6 @@
 						   source="{userEmail}"
 						   property="text">
 		</mx:EmailValidator>
-		<mx:PhoneNumberValidator id="validateMobile" minDigits="6"
-						   source="{userMobile}"
-						   property="text">
-		</mx:PhoneNumberValidator>
 
 		<s:HTTPService id="saveData" resultFormat="flashvars" method="POST" url="{(this.parentApplication).localURL+'register.php'}" result="save(event)" fault="error(event)" />
 	</fx:Declarations>
@@ -176,9 +180,22 @@
 			<s:TextInput id="userEmail" width="500" height="54" skinClass="skins.BarclaysTextInput" />
 		</s:FormItem>
 		
-		<s:FormItem label="Mobile Number:"  skinClass="skins.BarclaysFormItem">
-			<s:TextInput id="userMobile" width="500" height="54" skinClass="skins.BarclaysTextInput" />
-		</s:FormItem>
+		<s:HGroup width="417">
+			<s:CheckBox id="termsCheck" width="145" styleName="tcaccept" label="ACCEPT " skinClass="skins.BarclaysCheckBox" />
+			<s:Label color="0x00AEEF" styleName="tclink" paddingTop="4" buttonMode="true" text="TERMS AND CONDITIONS" click="tandcd_clickHandler(event)" />
+		</s:HGroup>
+		
+		<s:Spacer height="20"/>
+		
+		<s:CheckBox id="premierLeagueCheck" width="145" styleName="tcaccept" label="I WOULD LIKE TO RECEIVE INFORMATION FROM THE PREMIER LEAGUE " skinClass="skins.BarclaysCheckBox" />
+
+		<s:Spacer height="20"/>
+		
+		<s:CheckBox id="clubCheck" width="145" styleName="tcaccept" label="I WOULD LIKE TO RECEIVE INFORMATION FROM YOUR CLUB " skinClass="skins.BarclaysCheckBox" />
+		
+		<s:Spacer height="20"/>
+		
+		<s:CheckBox id="barclaysCheck" width="145" styleName="tcaccept" label="I WOULD LIKE TO RECEIVE INFORMATION FROM BARCLAYS " skinClass="skins.BarclaysCheckBox" />
 	
 	<s:HGroup width="100%" horizontalAlign="center">
 		

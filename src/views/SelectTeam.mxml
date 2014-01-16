@@ -21,6 +21,8 @@
 			import events.KioskProgressEvent;
 			import events.ViewEvent;
 			
+			import model.Settings;
+			
 			
 			
 			public var data:Object;
@@ -37,6 +39,7 @@
 			private var noGlowIs:GlowFilter = new GlowFilter(0xffffff,0,0,0,0);
 			
 			protected var currentURN:String;
+			private var settings:Settings;
 			
 			
 			public function created(event:FlexEvent=null):void
@@ -59,11 +62,10 @@
 				teamFile = File.applicationDirectory.resolvePath('assets/xml/teams.xml')
 				readXML();
 				
-				
+				settings = Settings.instance;
 			}
 			private function readXML():void 
 			{
-				
 				// If it exists read it 
 				if (teamFile.exists) {
 					//Console.log("team file exists", this);
@@ -200,8 +202,10 @@
 				publishSelectTeam.url = this.parentApplication.localURL+'userteam.php';
 				//Console.log("publishing to "+publishSelectTeam.url, this);
 				var passVars:Object=new Object();
-				passVars.urn=currentURN;
+				passVars.urn = settings.userData.urn;
+				//passVars.urn=currentURN;
 				passVars.team_id= teamID;
+				settings.userData.teamID = teamID;
 				publishSelectTeam.send(passVars);
 				//this.parentApplication.dispatchEvent( new KioskProgressEvent( KioskProgressEvent.UPDATE_COMPLETE ));
 				
@@ -225,7 +229,7 @@
 			}
 			protected function complete():void
 			{
-				this.parentApplication.dispatchEvent( new ViewEvent( ViewEvent.LOCATION_SELECT_USER_TYPE ) );
+				this.parentApplication.dispatchEvent( new ViewEvent( ViewEvent.LOCATION_STANDARD_REGISTRATION ) );
 			}
 			
 			//Roll Over ... Add Glow

@@ -4,6 +4,11 @@
 		creationComplete="created()" 
 		addedToStage="addedToStageHander(event)"
 		remove="exit(event)" xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:components="views.components.*">
+	
+	<fx:Metadata>
+		[Event(name="debug", type="events.DebugEvent")]
+	</fx:Metadata>
+	
 	<fx:Script>
 		<![CDATA[
 			import com.alfo.utils.CleanWebView;
@@ -32,6 +37,8 @@
 			import events.ViewEvent;
 			
 			import model.Registration;
+			import model.Settings;
+			import model.UserData;
 			
 			private var currentURN:String;
 			
@@ -49,7 +56,8 @@
 			public var data:Object;
 			protected var service:HTTPService;
 			
-			protected var device:Registration;
+			public var device:Registration;
+			private var settings:Settings;
 			
 			public function created(event:FlexEvent=null):void
 			{
@@ -69,6 +77,7 @@
 				CleanWebView.wipeOut();
 				startListen();
 				this.executeBindings(true);
+				settings = Settings.instance;				
 			}
 			//Prepare device for scanning
 			protected function startListen(event:Event=null):void
@@ -147,7 +156,8 @@
 				trace("RegistrationScan :: userRegistered :: " + e.URN);
 				//Console.log("userRegistered "+e.URN, this);
 				frontMessage.visible = true;
-				welcomeScreen.visible 
+				if(welcomeScreen)
+					welcomeScreen.visible = true;
 				this.onNewUser( currentURN  );
 			}
 			
@@ -374,13 +384,17 @@
 		
 			protected function onBeginRegister(event:MouseEvent=null):void
 			{
-				//Console.log("onBeginRegister", this);
 				this.currentState = "REGISTER_BEGIN";
 				
-				//userFingerScanStepModule.includeInLayout = userFingerScanStepModule.visible = true;
-				//userNotFoundModule.includeInLayout = userNotFoundModule.visible = false;
-				currentURN = uniqueID.toString();
-				device.registerUser( currentURN );
+				// create the user here
+				
+				var user : UserData = new UserData();
+				user.urn = uniqueID.toString();
+				
+				//currentURN = uniqueID.toString();
+				device.registerUser( user.urn );
+				
+				trace("RegistrationScan :: onBeginRegister :: " + user.urn);
 			}
 			
 			protected function onStateChange( e:StateChangeEvent ):void
@@ -398,8 +412,7 @@
 			
 			protected function debugEventHandler(event : DebugEvent):void
 			{
-				var date : Date = new Date();
-				debugPanel.debugOutput.text += "socket event :: " + event.socketCode + " :: " + date.minutes + ":" + date.seconds +  "\n";
+				dispatchEvent(event);
 			}
 			
 		]]>
@@ -515,7 +528,5 @@
 			</s:HGroup>
 			
 		</s:VGroup>
-		<!--s:Button click="simulate(event)" label="Simulate" /-->
 	</s:VGroup>
-	<components:DebugPanel width="300" height="200" left="0" top="0" id="debugPanel"/>
 </s:Group>

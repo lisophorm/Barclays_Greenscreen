@@ -178,7 +178,7 @@
 			*/
 			protected function init(e:Event = null):void
 			{
-				trace(File.applicationDirectory.nativePath);
+			//	trace(File.applicationDirectory.nativePath);
 				
 				// navigation bar must be on top
 				if (this.getElementIndex( navigationbar )< this.getElementIndex( contentholder) )
@@ -239,6 +239,8 @@
 				navigationTimer = new Timer(200, 0);
 				navigationTimer.addEventListener( TimerEvent.TIMER, checkNavigationHover );
 				navigationTimer.start();
+				
+				debugPanel.registrationModule = RegisterView.device;
 			}
 			
 			protected var navigationTimer:Timer;
@@ -929,7 +931,11 @@
 				this.loggedIn = (e.type=="login");
 				
 			}
-
+			
+			protected function debugEventHandler(event : DebugEvent):void
+			{
+				debugPanel.debugOutput.text += "socket code : " + event.socketCode +  "\n";
+			}
 			
 		]]>
 	</fx:Script>
@@ -985,7 +991,7 @@
 		
 			<mx:ViewStack id="Stack" height="100%" width="100%"  creationPolicy="all">
 				<mx:VBox hideEffect="{hideFX}"  showEffect="{showFX}">
-					<views:RegistrationScan id="RegisterView" />
+					<views:RegistrationScan id="RegisterView" debug="debugEventHandler(event)" />
 				</mx:VBox>
 				<mx:VBox hideEffect="{hideFX}"  height="100%" width="100%"  showEffect="{showFX}">
 					<views:SelectUserType id="SelectUserType" />
@@ -1032,4 +1038,5 @@
 		
 	</s:Group>
 	</s:VGroup>
+	<components:DebugPanel left="0" top="0" id="debugPanel"/>
 </s:WindowedApplication>
