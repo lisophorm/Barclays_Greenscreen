@@ -208,15 +208,15 @@
 				settings.userData.teamID = teamID;
 				publishSelectTeam.send(passVars);
 				//this.parentApplication.dispatchEvent( new KioskProgressEvent( KioskProgressEvent.UPDATE_COMPLETE ));
-				
 			}
+			
 			protected function publish_success(event:ResultEvent):void
 			{
 				//this.parentApplication.dispatchEvent( new KioskProgressEvent( KioskProgressEvent.UPDATE_COMPLETE ));
 				//Console.log("publish_success: "+event.result.result, this);
 				if(event.result.result!="SUCCESS") 
 				{
-					this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, event.result.message, "ERROR", init));
+					this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, unescape(event.result.message), "ERROR", init));
 				} else 
 				{
 					complete();

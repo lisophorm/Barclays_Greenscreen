@@ -26,6 +26,7 @@ package model
 		protected var destinationFile:File;
 		protected var photo:File		
 		protected var photoshop:String;
+		private var settings:Settings;
 		
 		public function GreenscreenModel(urn:String="DEFAULT_URN", team:String="arsenal", watchFolder:String="", photoshop:String="")
 		{
@@ -34,6 +35,8 @@ package model
 			this.photoshop = photoshop;	
 			this.watchFolder = watchFolder;
 			createListeners();
+			
+			settings = Settings.instance;
 
 		}
 		public function createListeners():void
@@ -50,12 +53,11 @@ package model
 				this.dispatchEvent( new GreenscreenEvent( GreenscreenEvent.ERROR, {title: "Settings Error", message: "Please change settings" }));
 			
 					}
-
 		}
 		protected function writeConfig():Boolean
 		{
 			var urnConfigFile:File = File.applicationDirectory.resolvePath(watchFolder+"\\settings\\urn.jsx");
-			var data:Object = { "URN": this.urn, "club_logo" : this.team+".png" }; 
+			var data:Object = { "URN": settings.userData.urn, "club_logo" : this.team+".png" }; 
 			// need to read and replace in file
 			
 			if (!urnConfigFile.exists)

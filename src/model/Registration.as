@@ -89,10 +89,12 @@ package model
 			}
 			hasStarted = false;
 		}
+		
 		public function registerUser( uid:String ):void
 		{
 			this.sendMessage( 'register '+uid );
 		}
+		
 		protected function idleSocket():void
 		{
 			var idMsg:Message = identifyMessage;
@@ -107,6 +109,7 @@ package model
 			m.data = 'identify';// {'command': 'MESSAGE', 'data': 'identify'};
 			return m;
 		}
+		
 		public function sendMessage(msg:String):void
 		{
 			var message:Message=new Message();

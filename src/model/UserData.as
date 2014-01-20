@@ -8,6 +8,7 @@ package model
 		
 		public var firstName : String;
 		public var lastName : String;
+		public var emailAddress : String;
 		public var urn : String = "00000000";
 		public var teamID : int;
 		

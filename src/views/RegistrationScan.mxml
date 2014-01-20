@@ -93,7 +93,6 @@
 					device.addEventListener( RegistrationEvent.USER_FOUND, this.userFound);
 					device.addEventListener( RegistrationEvent.USER_NOT_FOUND, this.userNotFound);
 					
-					
 					//scanning steps 1-3
 					device.addEventListener( RegistrationEvent.SCAN_STEP_1, this.register_step_1);
 					device.addEventListener( RegistrationEvent.SCAN_STEP_2, this.register_step_2);
@@ -106,8 +105,8 @@
 				}
 				
 				device.startSocket();
-				
 			}
+			
 			protected function scan_reinitiate( e:RegistrationEvent ):void
 			{
 				this.init();
@@ -172,6 +171,11 @@
 			{
 				currentState="USER_FOUND";
 				//if this is a registration type - then alreadyregistered otherwise move use
+				
+				var userData:UserData = new UserData();
+				userData.urn = e.URN;
+				settings.userData = userData;
+				
 				this.onAlreadyRegistered( e.URN, this.parentApplication.ApplicationType );
 			}
 			
@@ -389,9 +393,9 @@
 				// create the user here
 				
 				var user : UserData = new UserData();
-				user.urn = uniqueID.toString();
+				user.urn = "A"+uniqueID.toString()+"Z";
+				settings.userData = user;
 				
-				//currentURN = uniqueID.toString();
 				device.registerUser( user.urn );
 				
 				trace("RegistrationScan :: onBeginRegister :: " + user.urn);
@@ -417,24 +421,7 @@
 			
 		]]>
 	</fx:Script>
-	<fx:Declarations>
-		<!-- Place non-visual elements (e.g., services, value objects) here -->
 
-		<!-- s:HTTPService id="getUserData" resultFormat="flashvars" method="POST" url="{this.parentApplication.localURL+'getuser.php'}" result="userdata_resultHandler(event)" fault="userdata_faultHandler(event)"/-->
-			
-		
-		<!--s:HTTPService id="checkURN" resultFormat="flashvars" method="POST" url="http://www.ignitesocial.co.uk/ignite/checkuser.php" result="httpservice1_resultHandler(event)" fault="httpservice1_faultHandler(event)" /-->
-		<!--s:transitions>
-			<s:Transition id="toAnyFromAny" fromState="STEP1" toState="STEP2">
-				<s:Sequence id="t2" targets="{[p2]}">
-					<s:SetAction property="includeInLayout"/>
-					<s:SetAction property="visible"/>
-					<s:Wipe direction="right" duration="350"/>
-				</s:Sequence>
-			</s:Transition>
-		</s:transitions-->
-
-	</fx:Declarations>
 	<s:states>
 		<s:State name="DEFAULT" />
 		<s:State name="REGISTER_BEGIN" />

@@ -29,6 +29,18 @@ package model
 				_instance = new Settings(new SingletonEnforcer());
 			return _instance;
 		}
+		
+		private var _cameraSettings : Array;
+		
+		public function get cameraSettings():Array 
+		{
+			return _cameraSettings;
+		}
+		
+		public function set cameraSettings(value : Array) : void
+		{
+			_cameraSettings = value;
+		}
 	}
 }
 class SingletonEnforcer {}

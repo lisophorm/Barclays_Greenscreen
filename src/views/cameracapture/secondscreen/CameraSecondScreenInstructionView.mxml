@@ -5,13 +5,29 @@
 	
 	<fx:Script>
 		<![CDATA[
+			import com.alfo.utils.GreenScreenPrefs;
+			
+			import model.Settings;
+			
+			private var settings:Settings;
+			
+			private var greenScreenPrefs:GreenScreenPrefs = new GreenScreenPrefs();
+			
 			public function setTeam(teamID:String):void
 			{
+				settings = Settings.instance;
+				
 				var cupFilename : String = teamID + "_cup.png";
-				var file : File = File.documentsDirectory.resolvePath("userdata/greenscreen/cups/" + cupFilename);
+				var file : File = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+"\\clubs\\cups\\" + cupFilename);
 				var url : String = file.url;
 				cupImage.source = url;
+				
+				cupImage.x = settings.cameraSettings[9];
+				cupImage.y =  settings.cameraSettings[10];
+				cupImage.width =  settings.cameraSettings[11];
+				cupImage.height =  settings.cameraSettings[12];
 			}
+			
 		]]>
 	</fx:Script>
 	
@@ -25,6 +41,6 @@
 				<s:SolidColor color="0xFFFFFF"/>
 			</s:fill>
 		</s:Rect>
-		<s:Image id="cupImage" horizontalCenter="0" top="30" height="150"/>
+		<s:Image id="cupImage"/>
 	</s:Group>
 </s:Group>

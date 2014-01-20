@@ -43,7 +43,7 @@
 				settings = Settings.instance;
 				if (this.parentApplication.data!=null)
 				{
-					this.userFirstName.setFocus();
+					//this.userFirstName.setFocus();
 					data = this.parentApplication.data;
 					this.currentURN = data.urn;
 					optin_marketing = data.optin_marketing;
@@ -88,8 +88,7 @@
 						optInPremier: premierLeagueCheck.selected ? 1 : 0,
 						optInClub:premierLeagueCheck.selected ? 1 : 0,
 						optInBarclays:barclaysCheck.selected ? 1 : 0
-					}
-					);
+					});
 				//	save();
 				} 
 			}

@@ -18,15 +18,18 @@
 			import events.CameraEvent;
 			import events.ViewEvent;
 			
+			import model.Settings;
+			
 			import views.cameracapture.secondscreen.CameraSecondScreenWindow;
 			
-			private var data:Object;
+			private var loader:URLLoader;
 			
 			private var teamID:String = "arsenal";
 			
 			private var greenScreenPrefs:GreenScreenPrefs = new GreenScreenPrefs();
 			private var finalWatch:PictureWatcher;
 			private var folderWatch:PictureWatcher;
+			private var settings:Settings;
 			
 			[Bindable]
 			private var cameraWindow:CameraSecondScreenWindow;
@@ -40,8 +43,20 @@
 			{
 				currentState = "instruction";
 				
-				data = this.parentApplication.data;
+				settings = Settings.instance;
 				
+				var file : File = File.desktopDirectory.resolvePath("calibrator/settings/appSettings.txt");
+				
+				loader = new URLLoader();
+				loader.addEventListener(Event.COMPLETE, settingsLoadCompleteHandler);
+				loader.load(new URLRequest(file.url));
+				
+			}
+			
+			public function settingsLoadCompleteHandler(event : Event):void
+			{
+				settings.cameraSettings = String(loader.data).split("|");
+
 				var secondscreen:Number=0;
 				for(var i:Number=0;i<Screen.screens.length;i++) 
 				{
@@ -54,7 +69,7 @@
 				cameraWindow.move(Screen.screens[secondscreen].visibleBounds.left,Screen.screens[secondscreen].visibleBounds.top);
 				cameraWindow.width=Screen.screens[secondscreen].visibleBounds.width;
 				cameraWindow.height=Screen.screens[secondscreen].visibleBounds.height;
-				cameraWindow.addEventListener(CameraEvent.COMPLETE, photoCaptureCompleteHandler);
+				//cameraWindow.addEventListener(CameraEvent.COMPLETE, photoCaptureCompleteHandler);
 				cameraWindow.currentState = "instruction";
 				cameraWindow.setTeam(teamID);
 			}
@@ -69,7 +84,7 @@
 			
 			protected function instructionContinueHandler(event:CameraCaptureEvent):void
 			{
-				//photoCaptureStartHandler();
+				photoCaptureStartHandler();
 				currentState='countdown';
 			}
 			
@@ -91,14 +106,6 @@
 				}
 			}
 			
-			public function photoCaptureCompleteHandler(event:CameraEvent):void
-			{
-				var file : File = File.documentsDirectory.resolvePath("userdata/greenscreen/complete/complete.jpg");
-				currentState = "result";
-				cameraWindow.setResultImage(file.url);
-				mainScreenResult.imageURL = file.url;
-			}
-			
 			public function removedHandler(event : Event):void
 			{
 				if(cameraWindow)
@@ -110,6 +117,7 @@
 			
 			protected function retakeHandler(event : CameraCaptureEvent):void
 			{
+				photoCaptureStartHandler();
 				currentState="countdown";
 			}
 			
@@ -123,7 +131,7 @@
 				folderWatch.stopWatch();
 				finalWatch.startWatch();
 				var photo:File=File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+"\\captures\\capture.jpg");
-				photo.copyTo(File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+"\\tmp\\lastpicture.jpg"),true);
+				photo.copyTo(File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+"\\tmp\\ZZZZZZZZ.jpg"),true);
 				
 				var file:File=File.applicationDirectory.resolvePath(greenScreenPrefs.photoShopPath);
 				
@@ -140,6 +148,12 @@
 			protected function displayFinalPhoto(evt:WatchEvent):void 
 			{
 				finalWatch.stopWatch();
+				var file : File = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+"\\output\\ZZZZZZZZ.jpg");
+				currentState = "result";
+				cameraWindow.setResultImage("");
+				mainScreenResult.imageURL = "";
+				cameraWindow.setResultImage(file.url);
+				mainScreenResult.imageURL = file.url;
 			}
 			
 			protected function emptyCaptures():void 

@@ -13,31 +13,36 @@
 			
 			import events.ViewEvent;
 			
-			[Bindable]
-			public var urn : String = "URN";
+			import model.Settings;
 			
 			protected var loader : URLLoader;
 			protected var parameters:URLVariables;
 			protected var request:URLRequest;
+			private var settings:Settings;
 			
 			protected function onCreationComplete(event : FlexEvent):void
 			{
 				addEventListener(Event.INIT, onInitialise);
 
-				parameters = new URLVariables();
-
-				request = new URLRequest();
-				request.url = "http://www.bpllive.com/ping.php";
-				
-				loader = new URLLoader();
-				loader.addEventListener(Event.COMPLETE, onLoadComplete);
-				loader.addEventListener(IOErrorEvent.IO_ERROR, onLoadError);
+				settings = Settings.instance;
 			}
 			
 			public function onInitialise(event : Event):void
 			{
+				parameters = new URLVariables();
+				
+				request = new URLRequest();
+				request.url =  this.parentApplication.localURL+'getuser.php';		
+				request.method = URLRequestMethod.POST;
+				
+				trace("WelcomeBackView :: onCreationComplete :: " + this.parentApplication.localURL+'getuser.php');
+				
+				loader = new URLLoader();
+				loader.addEventListener(Event.COMPLETE, onLoadComplete);
+				loader.addEventListener(IOErrorEvent.IO_ERROR, onLoadError);
+				
 				TweenMax.delayedCall(3, hide);
-				parameters.urn = urn;
+				parameters.urn = settings.userData.urn;
 				request.data = parameters;
 				loader.load(request);
 				welcomeBackUser.alpha = 0;
@@ -46,8 +51,18 @@
 			protected function onLoadComplete(event : Event):void
 			{
 				trace("WelcomeBackView :: onLoadComplete :: " + loader.data);
-				welcomeBackUser.text = loader.data;
-				TweenMax.to(welcomeBackUser, .3, {alpha : 1});
+				
+				var result : Object = JSON.parse(loader.data);
+				
+				if(result["result"] == "OK")
+				{
+					settings.userData.firstName = result["firstname"];
+					settings.userData.lastName = result["lastname"];
+					settings.userData.teamID = int(result["team_id"]);
+					
+					welcomeBackUser.text = result["firstname"] + " " + result["lastname"];
+					TweenMax.to(welcomeBackUser, .3, {alpha : 1});
+				}
 			}
 			
 			protected function onLoadError(event : IOErrorEvent):void
