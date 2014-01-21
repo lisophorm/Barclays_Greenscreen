@@ -98,13 +98,13 @@
 				{					
 					// watches for the canon camera photos
 					folderWatch=new PictureWatcher();
-					folderWatch.setWatchFolder(greenScreenPrefs.basePath+"\\captures");
+					folderWatch.setWatchFolder(greenScreenPrefs.basePath + File.separator + "captures");
 					folderWatch.addEventListener(WatchEvent.ON_ADD_PHOTO,compositImage);
 					folderWatch.startWatch();
 					
 					// photoShop output Folder
 					finalWatch=new PictureWatcher();
-					finalWatch.setWatchFolder(greenScreenPrefs.basePath+"\\output");
+					finalWatch.setWatchFolder(greenScreenPrefs.basePath + File.separator + "output");
 					finalWatch.addEventListener(WatchEvent.ON_ADD_PHOTO,displayFinalPhoto);
 				}
 			}
@@ -149,14 +149,14 @@
 			{
 				folderWatch.stopWatch();
 				finalWatch.startWatch();
-				var photo:File=File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+"\\captures\\capture.jpg");
-				photo.copyTo(File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+"\\tmp\\ZZZZZZZZ.jpg"),true);
+				var photo:File=File.applicationDirectory.resolvePath(greenScreenPrefs.basePath + File.separator + "captures" + File.separator + "capture.jpg");
+				photo.copyTo(File.applicationDirectory.resolvePath(greenScreenPrefs.basePath + File.separator + "tmp" + File.separator + settings.userData.urn + ".jpg"),true);
 				
 				var file:File=File.applicationDirectory.resolvePath(greenScreenPrefs.photoShopPath);
 				
 				var nativeProcessInfo:NativeProcessStartupInfo=new NativeProcessStartupInfo();
 				nativeProcessInfo.executable=file;
-				nativeProcessInfo.arguments=new <String>[greenScreenPrefs.basePath+"\\settings\\wrapup.jsx"];
+				nativeProcessInfo.arguments=new <String>[greenScreenPrefs.basePath + File.separator + "settings" + File.separator + "wrapup.jsx"];
 				
 				var process:NativeProcess=new NativeProcess();
 				process.start(nativeProcessInfo);
@@ -165,7 +165,7 @@
 			protected function displayFinalPhoto(evt:WatchEvent):void 
 			{
 				finalWatch.stopWatch();
-				var file : File = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+"\\output\\ZZZZZZZZ.jpg");
+				var file : File = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath + File.separator + "output" + File.separator + settings.userData.urn + ".jpg");
 				currentState = "result";
 				cameraWindow.setResultImage("");
 				mainScreenResult.imageURL = "";
@@ -177,15 +177,15 @@
 			{
 				if (greenScreenPrefs.basePath!=null)
 				{
-					var dir : File = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+"\\captures");
+					var dir : File = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath + File.separator + "captures");
 					dir.deleteDirectory(true);
 					dir.createDirectory();
 					
-					dir = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+"\\tmp");
+					dir = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath + File.separator + "tmp");
 					dir.deleteDirectory(true);
 					dir.createDirectory();
 					
-					dir = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+"\\output");
+					dir = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath + File.separator + "output");
 					dir.deleteDirectory(true);
 					dir.createDirectory();
 				}
@@ -199,7 +199,7 @@
 			// called when exiting from the component
 			protected function tidy(e:Event = null):void
 			{				
-				var dello:File=File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+"\\tmp\\lastpicture.jpg");
+				var dello:File=File.applicationDirectory.resolvePath(greenScreenPrefs.basePath + File.separator + "tmp" + File.separator + "lastpicture.jpg");
 				if(dello.exists) {
 					dello.deleteFile();
 				}

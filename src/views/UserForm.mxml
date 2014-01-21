@@ -179,7 +179,7 @@
 			<s:TextInput id="userEmail" width="500" height="54" skinClass="skins.BarclaysTextInput" />
 		</s:FormItem>
 		
-		<s:Spacer height="20"/>
+		<s:Spacer height="30"/>
 		
 		<s:HGroup width="417">
 			<s:CheckBox id="termsCheck" width="145" styleName="tcaccept" label="ACCEPT " skinClass="skins.BarclaysCheckBox" />
@@ -198,7 +198,7 @@
 		
 		<s:CheckBox id="barclaysCheck" width="145" styleName="tcaccept" label="I WOULD LIKE TO RECEIVE INFORMATION FROM BARCLAYS " skinClass="skins.BarclaysCheckBox" />
 	
-		<s:Spacer height="20"/>
+		<s:Spacer height="30"/>
 		
 	<s:HGroup width="100%" horizontalAlign="center">
 		
