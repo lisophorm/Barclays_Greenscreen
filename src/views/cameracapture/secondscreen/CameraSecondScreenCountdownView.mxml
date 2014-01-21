@@ -19,12 +19,14 @@
 			import mx.events.ResizeEvent;
 			
 			import model.Settings;
+			import model.TeamModel;
 			private var settings:Settings;
 			
 			[Bindable]
 			public var countdownValue:int;
 			
 			private var greenScreenPrefs:GreenScreenPrefs = new GreenScreenPrefs();
+			private var teamModel:TeamModel;
 			
 			public function addedToStageHandler(event:Event):void
 			{
@@ -33,6 +35,13 @@
 				cameraDevice.init();
 				
 				cameraMask_resizeHandler();
+				
+				teamModel = TeamModel.instance;
+				
+				var cupFilename : String = teamModel.teamList[settings.userData.teamID].cupImage;
+				var file : File = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+"\\clubs\\cups\\" + cupFilename);
+				var url : String = file.url;
+				cupImage.source = url;
 			}
 
 			public function removedFromStageHandler(event:Event):void
@@ -42,10 +51,7 @@
 			
 			public function setTeam(teamID:String):void
 			{
-				var cupFilename : String = teamID + "_cup.png";
-				var file : File = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+"\\clubs\\cups\\" + cupFilename);
-				var url : String = file.url;
-				cupImage.source = url;
+
 			}
 			
 			protected function cameraMask_resizeHandler(event:ResizeEvent=null):void
