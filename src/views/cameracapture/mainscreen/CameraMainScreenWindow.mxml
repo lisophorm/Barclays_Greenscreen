@@ -19,17 +19,18 @@
 			import events.ViewEvent;
 			
 			import model.Settings;
+			import model.TeamModel;
+			import model.UserData;
 			
 			import views.cameracapture.secondscreen.CameraSecondScreenWindow;
 			
 			private var loader:URLLoader;
 			
-			private var teamID:String = "arsenal";
-			
 			private var greenScreenPrefs:GreenScreenPrefs = new GreenScreenPrefs();
 			private var finalWatch:PictureWatcher;
 			private var folderWatch:PictureWatcher;
 			private var settings:Settings;
+			private var teamModel:TeamModel;
 			
 			[Bindable]
 			private var cameraWindow:CameraSecondScreenWindow;
@@ -43,6 +44,8 @@
 			{
 				currentState = "instruction";
 				
+				teamModel = TeamModel.instance;
+				
 				settings = Settings.instance;
 				
 				var file : File = File.desktopDirectory.resolvePath("calibrator/settings/appSettings.txt");
@@ -51,6 +54,8 @@
 				loader.addEventListener(Event.COMPLETE, settingsLoadCompleteHandler);
 				loader.load(new URLRequest(file.url));
 				
+				settings.userData.teamID = 5; // this is debug only
+				writeURN();
 			}
 			
 			public function settingsLoadCompleteHandler(event : Event):void
@@ -69,9 +74,7 @@
 				cameraWindow.move(Screen.screens[secondscreen].visibleBounds.left,Screen.screens[secondscreen].visibleBounds.top);
 				cameraWindow.width=Screen.screens[secondscreen].visibleBounds.width;
 				cameraWindow.height=Screen.screens[secondscreen].visibleBounds.height;
-				//cameraWindow.addEventListener(CameraEvent.COMPLETE, photoCaptureCompleteHandler);
 				cameraWindow.currentState = "instruction";
-				cameraWindow.setTeam(teamID);
 			}
 			
 			protected function updateCountdown(event:CameraCaptureEvent):void
@@ -126,6 +129,22 @@
 				this.parentApplication.dispatchEvent( new ViewEvent( ViewEvent.LOCATION_RESTART ));
 			}
 			
+			protected function writeURN():void
+			{
+				var urnConfigFile:File = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+File.separator+
+					"settings" + File.separator + "urn.jsx");
+				
+				var backgroundImageName : String = teamModel.teamList[settings.userData.teamID].backgroundImage;
+				var cupImage : String = teamModel.teamList[settings.userData.teamID].cupImage;
+				var data:String = "var URN = \"" + settings.userData.urn + "\"\nvar club_trophy = \"" + cupImage + "\"\nvar bkgImg = \"" + backgroundImageName + "\""; 
+				var stream:FileStream = new FileStream();
+//				
+				stream.close()
+				stream.open(urnConfigFile, FileMode.WRITE);
+				stream.writeUTFBytes(data);
+				stream.close();
+			}
+			
 			protected function compositImage(event : WatchEvent):void
 			{
 				folderWatch.stopWatch();
@@ -134,8 +153,6 @@
 				photo.copyTo(File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+"\\tmp\\ZZZZZZZZ.jpg"),true);
 				
 				var file:File=File.applicationDirectory.resolvePath(greenScreenPrefs.photoShopPath);
-				
-				trace("CameraMainScreen :: compositImage :: " + file.url);
 				
 				var nativeProcessInfo:NativeProcessStartupInfo=new NativeProcessStartupInfo();
 				nativeProcessInfo.executable=file;

@@ -1,24 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
-		 xmlns:mx="library://ns.adobe.com/flex/mx" width="100%" height="100%">
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="100%" height="100%"
+		 creationComplete="initialise(event)">
 	
 	<fx:Script>
 		<![CDATA[
 			import com.alfo.utils.GreenScreenPrefs;
 			
 			import model.Settings;
+			import model.TeamModel;
+			
+			import mx.events.FlexEvent;
 			
 			private var settings:Settings;
 			
 			private var greenScreenPrefs:GreenScreenPrefs = new GreenScreenPrefs();
+			private var teamModel:TeamModel;
 			
-			public function setTeam(teamID:String):void
+			public function initialise(event : FlexEvent):void
 			{
 				settings = Settings.instance;
+				teamModel = TeamModel.instance;
 				
-				var cupFilename : String = teamID + "_cup.png";
-				var file : File = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+"\\clubs\\cups\\" + cupFilename);
+				var cupFilename : String = teamModel.teamList[settings.userData.teamID].cupImage;
+				
+				var file : File = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+File.separator+"clubs"+File.separator+"cups" + File.separator + cupFilename);
 				var url : String = file.url;
 				cupImage.source = url;
 				

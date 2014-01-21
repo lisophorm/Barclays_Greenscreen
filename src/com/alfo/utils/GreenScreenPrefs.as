@@ -31,7 +31,7 @@ package com.alfo.utils
 		
 		public function get basePath():String {
 			trace("settings path@"+prefs.data.photoPath);
-			return File.desktopDirectory.nativePath+"\\calibrator";
+			return File.desktopDirectory.nativePath+File.separator+"calibrator";
 		}
 		public function set basePath(thePath:String):void {
 			prefs.data.basePath=thePath;

@@ -88,10 +88,7 @@
 			protected function game(e:Event=null):void
 			{
 				this.parentApplication.dispatchEvent( new ViewEvent( ViewEvent.LOCATION_GAME ));
-				
 			}
-			
-			
 			
 			private function processXMLData():void 
 			{
@@ -153,8 +150,6 @@
 						item.addEventListener(MouseEvent.CLICK, mySelect);
 						item.addEventListener(MouseEvent.ROLL_OVER, myRollOver);
 						item.addEventListener(MouseEvent.ROLL_OUT, myRollOut);
-						
-						
 					}
 				}
 			}

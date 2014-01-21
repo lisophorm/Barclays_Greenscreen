@@ -9,11 +9,6 @@
 			import com.greensock.TweenMax;
 			import com.utils.Console;
 			
-			import mx.events.FlexEvent;
-			import mx.managers.PopUpManager;
-			
-			import spark.filters.DropShadowFilter;
-			
 			import events.ApplicationEvent;
 			import events.DebugEvent;
 			import events.GreenscreenModuleEvent;
@@ -27,9 +22,15 @@
 			import model.Config;
 			import model.ML;
 			import model.MonitorConnection;
+			import model.TeamModel;
+			
+			import mx.events.FlexEvent;
+			import mx.managers.PopUpManager;
 			
 			import skins.vodafoneButton;
 			import skins.vodafoneFormItem;
+			
+			import spark.filters.DropShadowFilter;
 			
 			import views.components.ErrorAlert;
 			import views.components.GreenScreenPopUp;
@@ -240,12 +241,16 @@
 				navigationTimer.addEventListener( TimerEvent.TIMER, checkNavigationHover );
 				navigationTimer.start();
 				
+				teamModel = TeamModel.instance;
+				teamModel.loadTeams();
+				
 				debugPanel.registrationModule = RegisterView.device;
 			}
 			
 			protected var navigationTimer:Timer;
 			protected var navigationTimerCount:int=0;
 			protected var navigationVisible:Boolean = false;
+			private var teamModel:TeamModel;
 			
 			protected function checkNavigationHover( e:Event = null ):void
 			{
@@ -973,7 +978,7 @@
 			<s:HGroup width="100%" horizontalAlign="right" paddingRight="0" verticalAlign="middle" height="150">
 				<s:Button skinClass="skins.BasicButton" styleName="nav" icon="@Embed('assets/images/core/nm-no-connection.gif')" id="connStatus" label="{ML.t('NO CONNECTION')}" color="0xFFFFFF" visible="false" />
 				<s:Button skinClass="skins.BasicButton" styleName="nav" icon="@Embed('assets/images/core/home_logo.png')" click="{defaultView()}"/>
-				<!--<s:Button label="camera" click="{gotoView('CameraCapture')}"/>-->
+				<s:Button label="camera" click="{gotoView('CameraCapture')}"/>
 				<!--s:Button label="unique" click="{RegisterView.uniqueID}"/-->
 				<s:Button skinClass="skins.BasicButton" styleName="nav" label="{ML.t('Quit')}" click="exitApplication(event)" id="quitButton" color="0xFFFFFF" visible="{loggedIn}" includeInLayout="{loggedIn}" />
 				<s:Button skinClass="skins.BasicButton" styleName="nav" icon="@Embed('assets/images/core/padlock.png')" click="config(event)" color="0xFFFFFF" />
@@ -1037,5 +1042,5 @@
 		
 	</s:Group>
 	</s:VGroup>
-	<components:DebugPanel left="0" top="0" id="debugPanel" visible="false"/>
+	<components:DebugPanel left="0" top="0" id="debugPanel" visible="true"/>
 </s:WindowedApplication>

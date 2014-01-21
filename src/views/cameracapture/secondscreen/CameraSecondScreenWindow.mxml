@@ -18,16 +18,8 @@
 			import events.CameraCaptureEvent;
 			import events.CameraEvent;
 			
-			protected var _teamID : String;
-			
 			[Bindable]
 			protected var _resultImage : String;			
-			
-			public function setTeam(teamID : String):void
-			{
-				secondScreenInstruction.setTeam(teamID);
-				_teamID = teamID;
-			}
 			
 			public function setResultImage(imageFile : String):void
 			{
@@ -56,7 +48,7 @@
 	
 	<s:states>
 		<s:State name="instruction" />
-		<s:State name="countdown" enterState="{secondScreenCountdown.setTeam(_teamID)}"/>
+		<s:State name="countdown"/>
 		<s:State name="wait" />
 		<s:State name="result"/>
 		<s:State name="thankyou" />

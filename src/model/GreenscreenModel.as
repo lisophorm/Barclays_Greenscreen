@@ -79,7 +79,6 @@ package model
 				//Console.log(i+"."+lines[i],this);
 				for (var m:String in data)
 				{
-					
 					if (lines[i].split("=")[0].split(" ")[1]==m) //format: var key = "value"
 					{
 						//Console.log(lines[i].split("=")[0]+" = \""+data[m]+"\"",this);
