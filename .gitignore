@@ -24,6 +24,7 @@ release_desktop/
 /bin-debug/
 /bin/Release/
 Main.swf
+.actionScriptProperties
 
 # External tool builders
 .externalToolBuilders/
