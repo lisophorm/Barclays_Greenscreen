@@ -53,14 +53,6 @@
 				var ratioH:Number=cameraMask.width/800;
 				var ratioV:Number=cameraMask.height/600;
 				
-				
-				trace("ratioh"+ratioH);
-				trace("ratiov"+ratioV);
-				trace(settings.cameraSettings[9]);
-				trace(settings.cameraSettings[10]);
-				trace(settings.cameraSettings[11]);
-				trace(settings.cameraSettings[12]);
-				
 				if(settings) {
 					cupImage.x = (settings.cameraSettings[9]-(settings.cameraSettings[11]/2))*ratioH;
 					cupImage.y =  (settings.cameraSettings[10]-(settings.cameraSettings[12]/2))*ratioV;
@@ -86,6 +78,11 @@
 			</s:Rect>
 		</s:Group>
 		<s:Image id="cupImage" />
+		<s:Rect width="100%" height="100%">
+			<s:fill>
+				<s:SolidColor color="0xFFFFFF"/>
+			</s:fill>
+		</s:Rect>
 	</s:Group>
 	<s:Spacer height="30"/>
 	<s:Label id="countdownValueSecond" text="{countdownValue.toString()}"/>

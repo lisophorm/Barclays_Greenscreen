@@ -38,6 +38,8 @@ package model
 		protected var mat:Matrix;
 		protected var URN:String = "";
 		private var greenScreenPrefs:GreenScreenPrefs;
+		private var outputWidth : int = 1600;
+		private var outputHeight : int = 1200;
 		
 		public function CameraDevice(_width:int=600, _height:int=450, URN:String = "aurn")
 		{
@@ -135,7 +137,7 @@ package model
 			this.removeEventListener( Event.ENTER_FRAME, updatePhoto );
 			if (video!=null)
 			{
-				var finalCapture:BitmapData = new BitmapData(video.width, video.height);
+				var finalCapture:BitmapData = new BitmapData(outputWidth, outputHeight);
 				finalCapture.draw( video );
 				video.visible = false;
 				video.attachCamera(null);
