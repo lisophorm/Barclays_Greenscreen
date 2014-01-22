@@ -70,7 +70,7 @@
 		<s:VerticalLayout horizontalAlign="center"/>
 	</s:layout>
 	<s:Spacer height="60"/>
-	<s:Group>
+	<s:Group verticalCenter="0">
 		<model:CameraDevice id="cameraDevice" mask="{cameraMask}"/>
 		<s:Group width="600" height="450" id="cameraMask" resize="cameraMask_resizeHandler(event)">
 			<s:Rect width="100%" height="100%">

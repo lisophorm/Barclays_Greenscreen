@@ -25,13 +25,15 @@
 	<s:Group>
 		<s:VGroup horizontalAlign="center" width="100%">
 			<s:Spacer height="50"/>
-			<s:Image width="1200" height="900" source="{imageURL}"/>
-			<s:Spacer height="80"/>
-			<s:HGroup gap="60">
-				<s:Button label="RETAKE PHOTO" skinClass="skins.barclaysButton" 
-						  click="{dispatchEvent(new CameraCaptureEvent(CameraCaptureEvent.RETAKE))}"/>
-				<s:Button label="FINISH" skinClass="skins.barclaysButton" click="{dispatchEvent(new CameraCaptureEvent(CameraCaptureEvent.NEXT_SCREEN))}"/>
-			</s:HGroup>
+			<s:Group height="90%">
+				<s:Image width="1200" height="900" source="{imageURL}"/>
+				<s:Spacer height="80"/>
+				<s:HGroup gap="60">
+					<s:Button label="RETAKE PHOTO" skinClass="skins.barclaysButton" 
+							  click="{dispatchEvent(new CameraCaptureEvent(CameraCaptureEvent.RETAKE))}"/>
+					<s:Button label="FINISH" skinClass="skins.barclaysButton" click="{dispatchEvent(new CameraCaptureEvent(CameraCaptureEvent.NEXT_SCREEN))}"/>
+				</s:HGroup>
+			</s:Group>
 		</s:VGroup>
 	</s:Group>
 	
