@@ -12,6 +12,7 @@
 			import model.TeamModel;
 			
 			import mx.events.FlexEvent;
+			import mx.events.ResizeEvent;
 			
 			private var settings:Settings;
 			
@@ -29,10 +30,20 @@
 				var url : String = file.url;
 				cupImage.source = url;
 				
-				cupImage.x = settings.cameraSettings[9];
-				cupImage.y =  settings.cameraSettings[10];
-				cupImage.width =  settings.cameraSettings[11];
-				cupImage.height =  settings.cameraSettings[12];
+				cameraMask_resizeHandler();
+			}
+			
+			protected function cameraMask_resizeHandler(event:ResizeEvent=null):void
+			{
+				var ratioH:Number=cameraPlaceholder.width/800;
+				var ratioV:Number=cameraPlaceholder.height/600;
+				
+				if(settings) {
+					cupImage.x = (settings.cameraSettings[9]-(settings.cameraSettings[11]/2))*ratioH;
+					cupImage.y =  (settings.cameraSettings[10]-(settings.cameraSettings[12]/2))*ratioV;
+					cupImage.width =  settings.cameraSettings[11]*ratioH;
+					cupImage.height =  settings.cameraSettings[12]*ratioV;
+				}
 			}
 			
 		]]>
@@ -43,7 +54,7 @@
 	</s:layout>
 	<s:Spacer height="60"/>
 	<s:Group>
-		<s:Rect width="600" height="450">
+		<s:Rect width="600" height="450" id="cameraPlaceholder">
 			<s:fill>
 				<s:SolidColor color="0xFFFFFF"/>
 			</s:fill>
