@@ -8,17 +8,17 @@
 		<![CDATA[
 			import com.alfo.utils.VirtualKeyboard;
 			
-			import mx.events.FlexEvent;
-			import mx.rpc.events.FaultEvent;
-			import mx.rpc.events.ResultEvent;
-			import mx.validators.Validator;
-			
 			import events.KioskError;
 			import events.KioskEvent;
 			import events.UserEvent;
 			import events.ViewEvent;
 			
 			import model.Settings;
+			
+			import mx.events.FlexEvent;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			import mx.validators.Validator;
 			
 			[Bindable]
 			protected var validatorArr:Array;
@@ -138,6 +138,17 @@
 				this.parentApplication.dispatchEvent(new KioskEvent(KioskEvent.TERMS_NOTIFY));
 			}
 			
+			protected function keyHandler(event : KeyboardEvent):void
+			{
+				if(event.keyCode == 13)
+				{
+					if(stage)
+					{
+						stage.focus = null;
+					}
+				}
+			}
+			
 		]]>
 	</fx:Script>
 	<fx:Declarations>
@@ -168,15 +179,15 @@
 		<s:FormHeading id="frontMessage" label="PLEASE ENTER YOUR DETAILS" />
 		<s:Spacer height="30" />
 		<s:FormItem label="First Name:" skinClass="skins.BarclaysFormItem" >				
-			<s:TextInput id="userFirstName" width="500" height="54" skinClass="skins.BarclaysTextInput" />
+			<s:TextInput id="userFirstName" width="500" height="54" skinClass="skins.BarclaysTextInput" keyDown="keyHandler(event)"/>
 		</s:FormItem>
 		
 		<s:FormItem label="Last Name:" skinClass="skins.BarclaysFormItem">
-			<s:TextInput id="userLastName" width="500" height="54" skinClass="skins.BarclaysTextInput" />
+			<s:TextInput id="userLastName" width="500" height="54" skinClass="skins.BarclaysTextInput" keyDown="keyHandler(event)"/>
 		</s:FormItem>
 		
 		<s:FormItem label="Email address:" skinClass="skins.BarclaysFormItem">
-			<s:TextInput id="userEmail" width="500" height="54" skinClass="skins.BarclaysTextInput" />
+			<s:TextInput id="userEmail" width="500" height="54" skinClass="skins.BarclaysTextInput" keyDown="keyHandler(event)"/>
 		</s:FormItem>
 		
 		<s:Spacer height="30"/>
