@@ -11,6 +11,8 @@
 	
 	<fx:Script>
 		<![CDATA[
+			import com.greensock.TweenMax;
+			
 			import events.CameraCaptureEvent;
 			private var countdownTimer:Timer;
 			
@@ -39,7 +41,8 @@
 					countdownTimer.stop();
 					countdownTimer.removeEventListener(TimerEvent.TIMER, timerHandler);
 					countdownTimer = null;
-					dispatchEvent(new CameraCaptureEvent(CameraCaptureEvent.NEXT_SCREEN));
+					TweenMax.delayedCall(1, function():void{dispatchEvent(new CameraCaptureEvent(CameraCaptureEvent.NEXT_SCREEN));});
+					//dispatchEvent(new CameraCaptureEvent(CameraCaptureEvent.NEXT_SCREEN));
 				}
 			}
 		]]>

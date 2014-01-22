@@ -61,7 +61,6 @@
 			{
 				trace("serverIP:"+ server.text.toString()+"facebookAppID:"+ facebookAPI_ID.text.toString()+"urnLength:"+ urnLength.text.toString()+"applicationtype:"+ radioGroup.selectedValue.toString()+"scoreFormat:"+scoreFormat.text.toString());
 				
-				
 			//	trace("ApplicationType :: submit :: " + cameraNames.length);
 				this.parentApplication.dispatchEvent( new ApplicationEvent( ApplicationEvent.SAVE_TYPE, { serverIP: server.text.toString(),
 					localIP:localserver.text.toString(),

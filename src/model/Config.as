@@ -71,6 +71,7 @@ package model
 			serverIP		= prefsXML.serverIP;
 			urnLength		= prefsXML.urnLength;
 			applicationType = prefsXML.applicationtype;
+			Settings.cameraID = prefsXML.cameraID;
 			
 			trace("Preferences: (serverIP: '"+ serverIP + "' , urnLength: '"+urnLength+"' , applicationType: '"+applicationType+"')");
 		}
@@ -91,7 +92,7 @@ package model
 				prefsXML.eventlocation = values.eventlocation;
 				prefsXML.internetTimeout = values.internetTimeout;
 				prefsXML.tabletID=values.tabletID;
-				
+				prefsXML.cameraID = Settings.cameraID;
 				
 				writeXMLData();
 				

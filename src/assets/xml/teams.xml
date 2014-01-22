@@ -2,12 +2,12 @@
 <game>
 	<team id="1" name="Arsenal" logo="Arsenal.png" backgroundImage="BGround_Arsenal.jpg" cupImage="arsenal_cup.png"/>
 	<team id="2" name="Aston Villa" logo="Aston-Villa.png" backgroundImage="BGround_Aston_Villa.jpg" cupImage="aston_villa_cup.png"/>
-	<team id="3" name="Cardiff" logo="Cardiff-City.png" backgroundImage="BGround_Aston_Villa.jpg" cupImage="aston_villa_cup.png"/>
+	<team id="3" name="Cardiff" logo="Cardiff-City.png" backgroundImage="BGround_CardiffCity.jpg" cupImage="CardiffCity_cup.png"/>
 	<team id="4" name="Chelsea" logo="Chelsea.png" backgroundImage="BGround_Chelsea.jpg" cupImage="chelsea_cup.png"/>
-	<team id="5" name="Crystal Palace" logo="Crystal-Palace.png" backgroundImage="BGround_Chelsea.jpg" cupImage="chelsea_cup.png"/>
+	<team id="5" name="Crystal Palace" logo="Crystal-Palace.png" backgroundImage="BGround_CrystalPalace.jpg" cupImage="CrystalPalace_cup.png"/>
 	<team id="6" name="Everton" logo="Everton.png" backgroundImage="BGround_Everton.jpg" cupImage="everton_cup.png"/>
 	<team id="7" name="Fulham" logo="Fulham.png" backgroundImage="BGround_Fullham.jpg" cupImage="fulham_cup.png"/>
-	<team id="8" name="Hull City" logo="Hull-City.png" backgroundImage="BGround_Chelsea.jpg" cupImage="chelsea_cup.png"/>
+	<team id="8" name="Hull City" logo="Hull-City.png" backgroundImage="BGround_HullCity.jpg" cupImage="HullCity_cup.png"/>
 	<team id="9" name="Liverpool" logo="Liverpool.png" backgroundImage="BGround_Liverpool.jpg" cupImage="liverpool_cup.png"/>
 	<team id="10" name="Manchester City" logo="Man-City.png" backgroundImage="BGround_Man_City.jpg" cupImage="man_city_cup.png"/>
 	<team id="11" name="Manchester United" logo="Man-Utd.png" backgroundImage="BGround_Man_Utd.jpg" cupImage="man_utd_cup.png"/>

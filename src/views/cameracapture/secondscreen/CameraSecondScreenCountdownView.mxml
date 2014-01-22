@@ -16,15 +16,17 @@
 			
 			import flash.utils.setInterval;
 			
-			import mx.events.ResizeEvent;
-			
 			import model.Settings;
+			import model.TeamModel;
+			
+			import mx.events.ResizeEvent;
 			private var settings:Settings;
 			
 			[Bindable]
 			public var countdownValue:int;
 			
 			private var greenScreenPrefs:GreenScreenPrefs = new GreenScreenPrefs();
+			private var teamModel:TeamModel;
 			
 			public function addedToStageHandler(event:Event):void
 			{
@@ -33,19 +35,19 @@
 				cameraDevice.init();
 				
 				cameraMask_resizeHandler();
+				
+				teamModel = TeamModel.instance;
+				
+				var cupFilename : String = teamModel.teamList[settings.userData.teamID].cupImage;
+				var file : File = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath + File.separator + 
+									"clubs" + File.separator + "cups" + File.separator + cupFilename);
+				var url : String = file.url;
+				cupImage.source = url;
 			}
 
 			public function removedFromStageHandler(event:Event):void
 			{
 				cameraDevice.destroy();
-			}
-			
-			public function setTeam(teamID:String):void
-			{
-				var cupFilename : String = teamID + "_cup.png";
-				var file : File = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+"\\clubs\\cups\\" + cupFilename);
-				var url : String = file.url;
-				cupImage.source = url;
 			}
 			
 			protected function cameraMask_resizeHandler(event:ResizeEvent=null):void
@@ -78,9 +80,9 @@
 			</s:Rect>
 		</s:Group>
 		<s:Image id="cupImage" />
-		<s:Rect width="100%" height="100%">
+		<s:Rect width="100%" height="100%" id="cameraFlash">
 			<s:fill>
-				<s:SolidColor color="0xFFFFFF"/>
+				<s:SolidColor color="0xFFFFFF" alpha="0"/>
 			</s:fill>
 		</s:Rect>
 	</s:Group>

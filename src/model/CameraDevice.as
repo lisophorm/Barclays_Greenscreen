@@ -180,7 +180,7 @@ package model
 
 			var now:Date = new Date();
 			var randomName:String  = "IMG" + now.fullYear + now.month +now.day +now.hours + now.minutes + now.seconds + ".jpg";
-			var destFile : File = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+"\\captures\\capture.jpg") ;
+			var destFile : File = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+File.separator + "captures" + File.separator + "capture.jpg") ;
 
 			var stream:FileStream = new FileStream();
 			stream = new FileStream();

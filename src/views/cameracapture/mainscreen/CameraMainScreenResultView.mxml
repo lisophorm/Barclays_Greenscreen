@@ -24,7 +24,8 @@
 	<s:Spacer height="200"/>
 	<s:Group>
 		<s:VGroup horizontalAlign="center" width="100%">
-			<s:Image width="800" height="600" source="{imageURL}"/>
+			<s:Spacer height="50"/>
+			<s:Image width="1200" height="900" source="{imageURL}"/>
 			<s:Spacer height="80"/>
 			<s:HGroup gap="60">
 				<s:Button label="RETAKE PHOTO" skinClass="skins.barclaysButton" 
