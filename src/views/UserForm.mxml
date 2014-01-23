@@ -203,7 +203,7 @@
 
 		<s:Spacer height="20"/>
 		
-		<s:CheckBox id="clubCheck" width="145" styleName="tcaccept" label="I WOULD LIKE TO RECEIVE INFORMATION FROM YOUR CLUB " skinClass="skins.BarclaysCheckBox" />
+		<s:CheckBox id="clubCheck" width="145" styleName="tcaccept" label="I WOULD LIKE TO RECEIVE INFORMATION FROM MY CLUB " skinClass="skins.BarclaysCheckBox" />
 		
 		<s:Spacer height="20"/>
 		
