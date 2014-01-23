@@ -147,12 +147,13 @@ package model
 				camera = null;
 				video = null;
 				
-				overlay = new Sprite();
-				overlay.graphics.beginFill(0xFFFFFF,1);
-				overlay.graphics.drawRect(0,0, _width, _height);
-				overlay.graphics.endFill();
-				this.addChild( overlay );
-				TweenMax.to( overlay, 1.5, { alpha:0, onComplete: hideOverlay});
+//				overlay = new Sprite();
+//				overlay.graphics.beginFill(0xFFFFFF,1);
+//				overlay.graphics.drawRect(0,0, _width, _height);
+//				overlay.graphics.endFill();
+//				this.addChild( overlay );
+//				
+//				TweenMax.to( overlay, 1.5, { alpha:0, onComplete: hideOverlay});
 				
 				encoder.addEventListener(ProgressEvent.PROGRESS, onEncodingProgress);
 				encoder.addEventListener(Event.COMPLETE, onEncodeComplete);
