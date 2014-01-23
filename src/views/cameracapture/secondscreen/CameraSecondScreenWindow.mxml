@@ -6,11 +6,7 @@
 		  xmlns:components="views.components.*" 
 		  xmlns:secondscreen="views.cameracapture.secondscreen.*"
 		  width="1366" height="768" currentState="instruction" showStatusBar="false" systemChrome="none"
-		  transparent="false" >
-	
-	<fx:Metadata>
-		[Event(name="COMPLETE", type="events.CameraEvent")]
-	</fx:Metadata>
+		  transparent="false">
 	
 	<fx:Script>
 		<![CDATA[
@@ -38,15 +34,10 @@
 					{
 						secondScreenCountdown.cameraDevice.takePhoto();
 						var timeline : TimelineMax = new TimelineMax();
-						timeline.append(new TweenMax(secondScreenCountdown.cameraFlash, .3, {alpha:1}));
-						//timeline.append(new TweenMax(secondScreenCountdown.cameraFlash, 1, {alpha:0, delay:1}));
+						timeline.append(new TweenMax(secondScreenCountdown.cameraFlash, .3, {alpha:1, glowFilter:{color:0xFFFFFF, alpha:1, blurX:20, blurY:20}}));
+						timeline.append(new TweenMax(secondScreenCountdown.cameraFlash, 1.2, {alpha:0, delay:.3, glowFilter:{color:0xFFFFFF, alpha:0, blurX:0, blurY:0}}));
 					}
 				}
-			}
-			
-			public function completeHandler(event : CameraEvent):void
-			{
-				dispatchEvent(event);
 			}
 		]]>
 	</fx:Script>
@@ -62,7 +53,7 @@
 	<s:BitmapImage source="@Embed('assets/images/Background2.png')" width="100%" height="100%"/>
 	
 	<secondscreen:CameraSecondScreenInstructionView id="secondScreenInstruction" includeIn="instruction"/>
-	<secondscreen:CameraSecondScreenCountdownView id="secondScreenCountdown" includeIn="countdown" COMPLETE="completeHandler(event)"/>
+	<secondscreen:CameraSecondScreenCountdownView id="secondScreenCountdown" includeIn="countdown"/>
 	<secondscreen:CameraSecondScreenWaitView includeIn="wait"/>
 	<secondscreen:CameraSecondScreenResultView id="secondScreenResult" includeIn="result"/>
 	<secondscreen:CameraSecondScreenThankyouView includeIn="thankyou"/>
