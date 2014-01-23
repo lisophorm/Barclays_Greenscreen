@@ -14,6 +14,7 @@
 	
 	<fx:Script>
 		<![CDATA[
+			import com.greensock.TimelineMax;
 			import com.greensock.TweenMax;
 			
 			import events.CameraCaptureEvent;
@@ -36,7 +37,9 @@
 					if(event.countdownValue == 0)
 					{
 						secondScreenCountdown.cameraDevice.takePhoto();
-						TweenMax.to(secondScreenCountdown.cameraFlash, .3, {alpha:1, repeat:1, repeatDelay:.1, yoyo:true});
+						var timeline : TimelineMax = new TimelineMax();
+						timeline.append(new TweenMax(secondScreenCountdown.cameraFlash, .3, {alpha:1}));
+						//timeline.append(new TweenMax(secondScreenCountdown.cameraFlash, 1, {alpha:0, delay:1}));
 					}
 				}
 			}
