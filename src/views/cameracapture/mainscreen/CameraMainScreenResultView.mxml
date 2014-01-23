@@ -28,7 +28,7 @@
 			<s:VGroup height="90%">
 				<s:Image height="80%" source="{imageURL}"/>
 				<s:Spacer height="80"/>
-				<s:HGroup gap="60" verticalCenter="0">
+				<s:HGroup gap="60" verticalCenter="0" horizontalAlign="center">
 					<s:Button label="RETAKE PHOTO" skinClass="skins.barclaysButton" 
 							  click="{dispatchEvent(new CameraCaptureEvent(CameraCaptureEvent.RETAKE))}"/>
 					<s:Button label="FINISH" skinClass="skins.barclaysButton" click="{dispatchEvent(new CameraCaptureEvent(CameraCaptureEvent.NEXT_SCREEN))}"/>

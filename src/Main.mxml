@@ -244,7 +244,7 @@
 				teamModel = TeamModel.instance;
 				teamModel.loadTeams();
 				
-				gotoView('CameraCapture');
+				//gotoView('CameraCapture');
 				
 				debugPanel.registrationModule = RegisterView.device;
 			}
