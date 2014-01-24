@@ -9,16 +9,18 @@
 		<![CDATA[
 			import com.greensock.TweenMax;
 			
-			import mx.events.FlexEvent;
-			
 			import events.ViewEvent;
 			
 			import model.Settings;
+			
+			import mx.events.FlexEvent;
 			
 			protected var loader : URLLoader;
 			protected var parameters:URLVariables;
 			protected var request:URLRequest;
 			private var settings:Settings;
+			
+			public var nextScreen : String;
 			
 			protected function onCreationComplete(event : FlexEvent):void
 			{
@@ -34,8 +36,6 @@
 				request = new URLRequest();
 				request.url =  this.parentApplication.localURL+'getuser.php';		
 				request.method = URLRequestMethod.POST;
-				
-				trace("WelcomeBackView :: onCreationComplete :: " + this.parentApplication.localURL+'getuser.php');
 				
 				loader = new URLLoader();
 				loader.addEventListener(Event.COMPLETE, onLoadComplete);

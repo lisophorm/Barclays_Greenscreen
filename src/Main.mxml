@@ -563,10 +563,13 @@
 						{
 							if (this.ApplicationType == APPLICATION_TYPE_REGISTRATION)
 							{
-								showError("YOU HAVE ALREADY REGISTERED.", "USER REGISTERED");
-								RegisterView.init();
+//								showError("YOU HAVE ALREADY REGISTERED.", "USER REGISTERED");
+//								RegisterView.init();
+								WelcomeBack.nextScreen = ViewEvent.LOCATION_RESTART;
+								gotoView("WelcomeBack");
 							} else 
 							{
+								WelcomeBack.nextScreen = ViewEvent.LOCATION_GAME;
 								gotoView("WelcomeBack");
 							}
 						} else
