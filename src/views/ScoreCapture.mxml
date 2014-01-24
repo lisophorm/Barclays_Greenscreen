@@ -3,240 +3,112 @@
 		xmlns:s="library://ns.adobe.com/flex/spark" 
 		remove="exit(event)" creationComplete="created(event)"
 		xmlns:components="views.components.*" 
-		currentState="default" xmlns:components1="br.com.components.*"  >
+		xmlns:components1="br.com.components.*"  >
 	
 	<fx:Script>
 		<![CDATA[
-			import com.alfo.utils.EncryptWrapper;
-			import com.lia.crypto.AES;
-			
 			import events.KioskError;
 			import events.KioskProgressEvent;
 			import events.ViewEvent;
 			
-			import model.ML;
+			import model.Settings;
 			
 			import mx.events.FlexEvent;
-			import mx.managers.PopUpManager;
 			import mx.rpc.events.FaultEvent;
 			import mx.rpc.events.ResultEvent;
 			
 			import views.components.*;
 			
-			private var urlRequest:URLRequest
-			private var file:File;
-			
-			private var currentURN:String;
-			
-			private var progressPop:ProgressPopUp;
-			protected var fileTransfer:Boolean=false;
+			[Bindable]
+			public var powerMaskFormat:String = "999.9";
+
+			[Bindable]
+			public var accuracyMaskFormat:String = "99.9";
+
+			[Bindable]
+			public var controlMaskFormat:String = "99:99.9";
+
 			
 			[Bindable]
-			public var maskFormat:String = "99:99";
-			
-			[Bindable]
-			public var activityTitle:String ="Pit Stop Challenge";
-			
-			[Bindable]
-			public var userName:String="";
-			
-			[Bindable]
-			public var posts:int=0;
-			
-			[Bindable]
-			public var data:Object;
-			
-			protected var applicationType:int = 0;
+			private var settings:Settings;
 
 			public function created(event:FlexEvent=null):void
 			{
 				this.addEventListener( Event.INIT, init);
 			}
+
 			public function init(event:Event=null):void
 			{
-				trace("*** INIT SCORECAPTURE ***");
-
-				data = this.parentApplication.data
-
-				if (data!=null)
-				{
-					currentURN = data.urn;
-					maskFormat = data.scoreFormat;		
-					activityTitle = data.activityTitle;
-					trace("Activity title: "+ activityTitle );
-					applicationType = data.type;
-					this.currentState = data.facebook ? "facebook" : "default";
-
-					getUser.url = this.parentApplication.localURL+'getuser.php';
-					putScore.url = this.parentApplication.localURL+'publishscore.php';
-					//userScore.init();
-					
-					var passVars:Object=new Object;
-					passVars.urn=EncryptWrapper.Wrap(currentURN);
-					
-					// LOOK-UP USER INFO FOR THIS URN
-					getUser.send(passVars);
-					fileTransfer=false;
-				} else {
-					trace("URN MISSING");
-				}
-				publishScoreBTN.visible=true;
-				this.clearAndFocusOnScore();
-//				executeBindings(true);
+				settings = Settings.instance;
+				submitScore.url = this.parentApplication.localURL+'publishscore.php';
+				
+				powerValue.text = "___._";
+				accuracyValue.text = "__._";
+				controlValue.text = "__:__._";
 			}
+			
 			protected function exit(e:Event=null):void
 			{
-				trace("*** EXIT SCORECAPTURE ***");
-				//this.removeEventListener(Event.ENTER_FRAME, keepfocus);
-
-			}
-			protected function getUser_resultHandler(event:ResultEvent):void
-			{
-				userName =EncryptWrapper.Wrap(getUser.lastResult.name);
-				posts = int(EncryptWrapper.Wrap(getUser.lastResult.posts));
-				if (this.currentState=="facebook")
-					facebookposts_check.selected = this.canPost;
-				trace("** USER INFO RETRIVED:\nUser's lastname:"+user.text+"\nPosts:"+posts);
 			}
 			
-			protected function httpservice_faultHandler(event:FaultEvent):void
+			protected function submitHandler(event : MouseEvent, gameID : int, score : String) : void
+			{
+				var variables : Object = {};
+				variables.urn = settings.userData.urn;
+				variables.gameid = gameID;
+				variables.score = score;
+				submitScore.send(variables);
+				this.parentApplication.dispatchEvent( new KioskProgressEvent(KioskProgressEvent.NOTIFY, "SUBMITTING SCORE" ));
+			}
+			
+			protected function httpServiceFaultHandler(event:FaultEvent):void
 			{
 				this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, event.fault.faultString, "NETWORK ERROR"));
-				
 			}
 			
-			// SCORE HANDLING
-			protected function publishScoreBTN_clickHandler(event:MouseEvent):void
+			protected function publishScoreResultHandler(event:ResultEvent):void
 			{
-				if(userScore.text!="") {
-					var passVars:Object=new Object();
-					
-					passVars.urn=EncryptWrapper.Wrap(currentURN);
-					passVars.score=EncryptWrapper.Wrap(userScore.text);
-					if (this.currentState=="facebook")
-						passVars.facebook_optin= this.facebookposts_check.selected ? 1 : 0;
-					else
-						passVars.facebook_optin= 0;
-					passVars.type = this.applicationType;
-					
-					putScore.send(passVars);
-					
-					this.parentApplication.dispatchEvent( new KioskProgressEvent(KioskProgressEvent.NOTIFY, "Publishing Score" ) );
-					userScore.fullText="";
-
-				} else
+				if(submitScore.lastResult.result == "OK")
 				{
-					this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, "PLEASE ENTER SCORE", "MISSING SCORE"));
-	
-				}
-			}
-			
-			protected function publishscore_resultHandler(event:ResultEvent):void
-			{
-				this.parentApplication.dispatchEvent( new KioskProgressEvent(KioskProgressEvent.UPDATE_COMPLETE ) );
-				
-				if(putScore.lastResult.result!="SUCCESS") 
+					this.parentApplication.dispatchEvent( new ViewEvent( ViewEvent.LOCATION_GAME_COMPLETE ) );
+				}else
 				{
-					
-					this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, putScore.lastResult.message, "ERROR"));
-				} else {
-					userScore.visible=true;
-					publishScoreBTN.visible=false;
-					checkForEnd();
+					this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, submitScore.lastResult.message, "ERROR"));
 				}
-			}
-			
-			protected function checkForEnd():void
-			{
-				trace("CHECK FOR END - SCOREGAME");
-				this.removeEventListener(Event.ENTER_FRAME, keepfocus);
-				this.parentApplication.dispatchEvent( new ViewEvent( ViewEvent.LOCATION_GAME_COMPLETE ) );
-			}
-			
-			
-			public function restart(e:Event):void
-			{
-				this.parentApplication.dispatchEvent( new ViewEvent( ViewEvent.LOCATION_RESTART ) );
-			}
-			
-			
-			protected function cancelBTN_clickHandler(event:MouseEvent):void
-			{
-				this.parentApplication.dispatchEvent( new ViewEvent( ViewEvent.LOCATION_RESTART ));
-			}
-			protected function get canPost():Boolean
-			{
-				
-				return (int(posts)<5);
-			}
-			protected function clearAndFocusOnScore():void
-			{
-				trace("SCORE GAME SET FOCUS ON TEXTINPUT");
-				userScore.fullText="";
-				
-				//this.addEventListener(Event.ENTER_FRAME, keepfocus);
-				
-				//					userScore.selectAll();
-
-			}
-			protected function keepfocus( e:Event ):void
-			{
-				userScore.setFocus();
 			}
 		]]>
 	</fx:Script>
 	<fx:Declarations>
-		<!-- Place non-visual elements (e.g., services, value objects) here -->
-		<s:HTTPService id="getUser" resultFormat="flashvars" method="POST" url="{this.parentApplication.localURL+'getuser.php'}"  result="getUser_resultHandler(event)" fault="httpservice_faultHandler(event)" />
-		<s:HTTPService id="putScore" resultFormat="flashvars" method="POST" url="{this.parentApplication.localURL+'publishscore.php'}"  result="publishscore_resultHandler(event)" fault="httpservice_faultHandler(event)" />
-		
+		<s:HTTPService id="submitScore" resultFormat="flashvars" method="POST" 
+					   url="{settings.localURL+'publishscore.php'}"  result="publishScoreResultHandler(event)" 
+					   fault="httpServiceFaultHandler(event)"/>
 	</fx:Declarations>
 	
-	<!-- states -->
-	<s:states>
-		<s:State name="default" />
-		<s:State name="facebook" />
-	</s:states>
-	
-	
-	<s:VGroup  styleName="Game"  horizontalAlign="center" verticalAlign="middle" width="100%" height="592">
-		<s:Label text="{activityTitle}" id="heading" styleName="heading"/>
-		<s:Spacer width="10" height="30"/>
-		
-		<s:VGroup>
-			<s:Label id="statusText" />
-			<s:HGroup horizontalAlign="left">
-				<s:Label width="400" text="Name"/>
-				<s:Spacer width="20" />
-				<s:Label text="{userName}" id="user" styleName="userInfo" />
-				
-			</s:HGroup>
-			<s:Spacer height="5" />
-			<s:HGroup horizontalAlign="left" includeIn="facebook">
-				<s:Label width="400" text="Published Facebook Posts:"/>
-				<s:Spacer width="20" />
-				<s:Label text="{posts}" id="facebookposts_label" styleName="userInfo"  />
-				
-			</s:HGroup>
-			<s:Spacer height="5" />
-			<s:HGroup horizontalAlign="left">
-				<s:Label width="400" text="Enter score"/>
-				<s:Spacer width="20" />
-				<s:BorderContainer width="100" height="62" borderVisible="false">
-					<components1:MaskedTextInput id="userScore" x="20" y="10" height="62"  mascara="{maskFormat}" whiteSpace="_" width="164" />
-				</s:BorderContainer>
-			</s:HGroup>
-			
-			<s:Spacer width="10" height="20" includeIn="facebook"/>
-			<s:HGroup includeIn="facebook">
-				<s:CheckBox id="facebookposts_check"  label="Post fo Facebook?"  />
-			</s:HGroup>
-			<s:Spacer width="10" height="100"/>
-			<s:HGroup width="100%" horizontalAlign="center">
-				<s:Button id="publishScoreBTN" horizontalCenter="0" label="Save Score" click="publishScoreBTN_clickHandler(event)" skinClass="skins.vodafoneButton"/>
-			</s:HGroup>
-		</s:VGroup>
-		
+	<s:VGroup width="500">
+				<s:Label text="{settings.userData.firstName + ' ' + settings.userData.lastName}" styleName="registrationTwo" width="100%" textAlign="center"/>
+				<s:Form width="500">
+					<s:layout>
+						<s:FormLayout gap="20" paddingLeft="40"/>
+					</s:layout>        
+					<s:FormItem label="POWER (KMPH)">
+						<s:HGroup gap="30">
+							<components1:MaskedTextInput id="powerValue" width="200" mascara="{powerMaskFormat}" restrict="0-9"/>
+							<s:Button id="submitPowerButton" label="SUBMIT" click="submitHandler(event, 0, powerValue.text)"/>
+						</s:HGroup>
+					</s:FormItem>
+					<s:FormItem label="ACCURACY (POINTS)">
+						<s:HGroup gap="30">
+							<components1:MaskedTextInput id="accuracyValue" width="200" mascara="{accuracyMaskFormat}" restrict="0-9"/>
+							<s:Button id="submitAccuracyButton" label="SUBMIT" click="submitHandler(event, 1, accuracyValue.text)"/>
+						</s:HGroup>
+					</s:FormItem>
+					<s:FormItem label="CONTROL (TIME)">
+						<s:HGroup gap="30">
+							<components1:MaskedTextInput id="controlValue" width="200" mascara="{controlMaskFormat}" restrict="0-9"/>
+							<s:Button id="submitControlButton" label="SUBMIT" click="submitHandler(event, 2, controlValue.text)"/>
+						</s:HGroup>
+					</s:FormItem>
+				</s:Form>
 	</s:VGroup>
 	
 </s:Group>

@@ -22,6 +22,7 @@
 			import model.Config;
 			import model.ML;
 			import model.MonitorConnection;
+			import model.Settings;
 			import model.TeamModel;
 			
 			import mx.events.FlexEvent;
@@ -188,6 +189,8 @@
 			{
 			//	trace(File.applicationDirectory.nativePath);
 				
+				settings = Settings.instance;
+				
 				// navigation bar must be on top
 				if (this.getElementIndex( navigationbar )< this.getElementIndex( contentholder) )
 				{
@@ -205,6 +208,7 @@
 				
 				baseURL =  "http://"+pref.prefsXML..serverIP+"/";
 				localURL= "http://"+pref.prefsXML..localIP+"/";
+				settings.localURL = localURL;
 				password ="ignite123";
 				facebookAppID = pref.prefsXML..facebookAppID;
 				ApplicationType = pref.prefsXML..applicationtype.toString().toUpperCase();
@@ -260,6 +264,7 @@
 			protected var navigationTimerCount:int=0;
 			protected var navigationVisible:Boolean = false;
 			private var teamModel:TeamModel;
+			private var settings:Settings;
 			
 			protected function checkNavigationHover( e:Event = null ):void
 			{
@@ -315,6 +320,8 @@
 			//	trace("scoreformat is now: "+scoreFormat);
 			//	trace("appplicationtype is now: "+ApplicationType);
 				this.dispatchEvent( new ViewEvent( ViewEvent.LOCATION_RESTART ));
+				
+				trace("Main :: notifyApplicationTypeUpdate :: " + ApplicationType);
 			}
 			
 			protected function clearPopups(e:Event=null):void
@@ -353,7 +360,6 @@
 				{
 					trace("*** Error clearing popup - probably when user presses close:\n"+error.message)
 				}
-				
 			}
 			
 			protected function notifyWaiting( e:KioskWaitEvent = null ):void
@@ -1014,7 +1020,7 @@
 				<s:Button skinClass="skins.BasicButton" styleName="nav" icon="@Embed('assets/images/core/nm-no-connection.gif')" id="connStatus" label="{ML.t('NO CONNECTION')}" color="0xFFFFFF" visible="false" />
 				<s:Button skinClass="skins.BasicButton" styleName="nav" icon="@Embed('assets/images/core/home_logo.png')" click="{defaultView()}"/>
 				<!--s:Button label="camera" click="{gotoView('CameraCapture')}"/-->
-				<!--s:Button label="form" click="{gotoView('UserForm')}"/-->
+				<!--s:Button label="score" click="{gotoView('ScoreCapture')}"/-->
 				<s:Button skinClass="skins.BasicButton" styleName="nav" label="{ML.t('Quit')}" click="exitApplication(event)" id="quitButton" color="0xFFFFFF" visible="{loggedIn}" includeInLayout="{loggedIn}" />
 				<s:Button skinClass="skins.BasicButton" styleName="nav" icon="@Embed('assets/images/core/padlock.png')" click="config(event)" color="0xFFFFFF" />
 			</s:HGroup>		

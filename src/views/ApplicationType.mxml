@@ -40,7 +40,7 @@
 					//Console.log("data:"+data.xml.applicationtype, this );
 					this.server.text = data.xml.serverIP;
 					this.localserver.text = data.xml.localIP;
-					this.facebookAPI_ID.text = data.xml.facebookAppID;
+//					this.facebookAPI_ID.text = data.xml.facebookAppID;
 					this.urnLength.text = data.xml.urnLength;
 					this.scoreFormat.text = data.xml.scoreFormat;
 					this.photoshop.text = data.xml.photoshop;
@@ -59,12 +59,9 @@
 			
 			protected function submit(e:MouseEvent):void
 			{
-				trace("serverIP:"+ server.text.toString()+"facebookAppID:"+ facebookAPI_ID.text.toString()+"urnLength:"+ urnLength.text.toString()+"applicationtype:"+ radioGroup.selectedValue.toString()+"scoreFormat:"+scoreFormat.text.toString());
-				
-			//	trace("ApplicationType :: submit :: " + cameraNames.length);
 				this.parentApplication.dispatchEvent( new ApplicationEvent( ApplicationEvent.SAVE_TYPE, { serverIP: server.text.toString(),
 					localIP:localserver.text.toString(),
-					facebookAppID: facebookAPI_ID.text.toString(), 
+//					facebookAppID: facebookAPI_ID.text.toString(), 
 					urnLength: urnLength.text.toString(), 
 					applicationtype: radioGroup.selectedValue.toString(),
 					scoreFormat: scoreFormat.text.toString(),
@@ -129,7 +126,6 @@
 						<s:FormItem width="365" label="Calibrator location (watchfolder):" fontFamily="Arial">
 							<s:TextInput id="calibrator" width="650" height="30" color="0x000000" fontFamily="Arial"/>
 						</s:FormItem>
-						
 					
 						<s:HGroup>
 
@@ -142,9 +138,10 @@
 							
 						</s:HGroup>
 			
+						<!--
 						<s:FormItem width="365" label="Facebook appID:" >
 							<s:TextInput id="facebookAPI_ID" width="650" color="0x000000" height="30" fontFamily="Arial"/>
-						</s:FormItem>
+						</s:FormItem> -->
 			
 						<s:FormItem width="365" label="Application:">
 							<s:VGroup width="628">
@@ -152,9 +149,9 @@
 									<s:RadioButton width="500" label="Registration Only" value="registration" group="{radioGroup}" skinClass="skins.vodafoneRadioButton" />
 									<s:RadioButton width="500" label="Photocapture" value="photocapture" group="{radioGroup}" skinClass="skins.vodafoneRadioButton" />
 									<s:RadioButton width="500" label="Simulator" value="simulator" group="{radioGroup}" skinClass="skins.vodafoneRadioButton" />
-									<s:RadioButton width="500" label="Green screen - Sit In" value="greenscreen" group="{radioGroup}" skinClass="skins.vodafoneRadioButton" />
+									<!--<s:RadioButton width="500" label="Green screen - Sit In" value="greenscreen" group="{radioGroup}" skinClass="skins.vodafoneRadioButton" />
 									<s:RadioButton width="500" label="Green screen - Celebrate" value="greenscreen_celebrate" group="{radioGroup}" skinClass="skins.vodafoneRadioButton" />
-									<s:RadioButton width="500" label="Helmet" value="helmet" group="{radioGroup}" skinClass="skins.vodafoneRadioButton" />
+									<s:RadioButton width="500" label="Helmet" value="helmet" group="{radioGroup}" skinClass="skins.vodafoneRadioButton" />-->
 							</s:VGroup>
 						
 						</s:FormItem>
