@@ -72,7 +72,7 @@
 			
 			protected function hide():void
 			{
-				parentApplication.dispatchEvent( new ViewEvent( ViewEvent.LOCATION_GAME ));
+				parentApplication.dispatchEvent( new ViewEvent( nextScreen ));
 			}
 		]]>
 		
