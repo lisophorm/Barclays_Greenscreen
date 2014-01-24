@@ -16,5 +16,6 @@ package model
 		public var premierLeagueOptin : Boolean = false;
 		public var clubOptin : Boolean = false;
 		public var barclaysOptin : Boolean = false;
+		public var imageID : String;
 	}
 }

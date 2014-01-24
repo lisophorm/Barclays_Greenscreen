@@ -53,9 +53,6 @@
 				loader = new URLLoader();
 				loader.addEventListener(Event.COMPLETE, settingsLoadCompleteHandler);
 				loader.load(new URLRequest(file.url));
-				
-				settings.userData.teamID = 5; // this is debug only
-				writeURN();
 			}
 			
 			public function settingsLoadCompleteHandler(event : Event):void
@@ -93,6 +90,7 @@
 			
 			protected function photoCaptureStartHandler():void
 			{
+				writeURN();
 				emptyCaptures();
 				if (greenScreenPrefs.basePath!=null && greenScreenPrefs.photoShopPath!=null)
 				{					
@@ -134,9 +132,11 @@
 				var urnConfigFile:File = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+File.separator+
 					"settings" + File.separator + "urn.jsx");
 				
+				var uniqueCode : String = Math.random().toString().substr(2,5);
+				settings.userData.imageID = settings.userData.urn + "_" + uniqueCode;
 				var backgroundImageName : String = teamModel.teamList[settings.userData.teamID].backgroundImage;
 				var cupImage : String = teamModel.teamList[settings.userData.teamID].cupImage;
-				var data:String = "var URN = \"" + settings.userData.urn + "\"\nvar club_trophy = \"" + cupImage + "\"\nvar bkgImg = \"" + backgroundImageName + "\""; 
+				var data:String = "var URN = \"" + settings.userData.imageID + "\"\nvar club_trophy = \"" + cupImage + "\"\nvar bkgImg = \"" + backgroundImageName + "\""; 
 				var stream:FileStream = new FileStream();
 //				
 				stream.close()
@@ -150,7 +150,7 @@
 				folderWatch.stopWatch();
 				finalWatch.startWatch();
 				var photo:File=File.applicationDirectory.resolvePath(greenScreenPrefs.basePath + File.separator + "captures" + File.separator + "capture.jpg");
-				photo.copyTo(File.applicationDirectory.resolvePath(greenScreenPrefs.basePath + File.separator + "tmp" + File.separator + settings.userData.urn + ".jpg"),true);
+				photo.copyTo(File.applicationDirectory.resolvePath(greenScreenPrefs.basePath + File.separator + "tmp" + File.separator + settings.userData.imageID + ".jpg"),true);
 				
 				var file:File=File.applicationDirectory.resolvePath(greenScreenPrefs.photoShopPath);
 				
@@ -165,7 +165,7 @@
 			protected function displayFinalPhoto(evt:WatchEvent):void 
 			{
 				finalWatch.stopWatch();
-				var file : File = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath + File.separator + "output" + File.separator + settings.userData.urn + ".jpg");
+				var file : File = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath + File.separator + "output" + File.separator + settings.userData.imageID + ".jpg");
 				currentState = "result";
 				cameraWindow.setResultImage("");
 				mainScreenResult.imageURL = "";

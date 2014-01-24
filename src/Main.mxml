@@ -103,12 +103,19 @@
 			
 			private var skins_vodafoneFormItem_obj:skins.vodafoneFormItem;
 			
+			
+			protected var debugKeySequence : Array = [71,85,66,69,68];
+			protected var runningKeySequence : Array = [];
+			
+			
 			protected function fullscreen(e:Event=null):void
 			{
 				stage.displayState =  StageDisplayState.FULL_SCREEN_INTERACTIVE;
 				
 				stage.scaleMode = StageScaleMode.NO_SCALE;
 				this.reScaleMainContent();
+				
+				stage.addEventListener(KeyboardEvent.KEY_DOWN, typingHandler); 
 			}
 			
 			protected function reScaleMainContent():void
@@ -244,6 +251,8 @@
 				teamModel = TeamModel.instance;
 				teamModel.loadTeams();
 				
+//				contentholder.addEventListener(KeyboardEvent.KEY_DOWN, typingHandler);fddsffdsa
+	
 				debugPanel.registrationModule = RegisterView.device;
 			}
 			
@@ -936,6 +945,32 @@
 			protected function debugEventHandler(event : DebugEvent):void
 			{
 				debugPanel.debugOutput.text += "socket code : " + event.socketCode +  "\n";
+			}
+			
+			protected function typingHandler(event:KeyboardEvent):void
+			{
+				runningKeySequence.unshift(event.keyCode);
+				if(runningKeySequence.length > 10)
+				{
+					runningKeySequence.pop();
+				}
+				
+				var i : int;
+				var n : int = debugKeySequence.length;
+				var sequencesMatch : Boolean = true;
+				
+				for(i=0; i<n; i++)
+				{
+					if(runningKeySequence[i] != debugKeySequence[i])
+					{
+						sequencesMatch = false;
+						break;
+					}
+				}
+				if(sequencesMatch)
+				{
+					debugPanel.visible = true;
+				}
 			}
 			
 		]]>

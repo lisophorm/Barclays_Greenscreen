@@ -41,7 +41,7 @@
 					countdownTimer.stop();
 					countdownTimer.removeEventListener(TimerEvent.TIMER, timerHandler);
 					countdownTimer = null;
-				//	TweenMax.delayedCall(2, function():void{dispatchEvent(new CameraCaptureEvent(CameraCaptureEvent.NEXT_SCREEN));});
+					TweenMax.delayedCall(2, function():void{dispatchEvent(new CameraCaptureEvent(CameraCaptureEvent.NEXT_SCREEN));});
 				}
 			}
 		]]>

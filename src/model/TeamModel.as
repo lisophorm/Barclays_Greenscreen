@@ -53,7 +53,6 @@ package model
 					teamDTO.backgroundImage = x.@backgroundImage;
 					teamDTO.cupImage = x.@cupImage;
 					_teamList.push(teamDTO);
-					trace("TeamModel :: loadTeams :: " + x.@name + " :: " + x.@cupImage + " :: " + x.@backgroundImage);
 				}
 			}
 		}
