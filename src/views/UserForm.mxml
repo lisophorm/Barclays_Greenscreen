@@ -65,6 +65,11 @@
 				userFirstName.text = ""; 
 				userLastName.text = ""; 
 				userEmail.text = ""; 
+				
+				termsCheck.selected = false;
+				premierLeagueCheck.selected = false;
+				clubCheck.selected = false;
+				barclaysCheck.selected = false;
 								
 			}
 			protected function exit(event:Event=null):void
