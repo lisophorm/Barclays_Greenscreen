@@ -25,7 +25,11 @@
 			}
 		]]>
 	</fx:Script>
-
-	<s:Label id="cameraFullMessageMain" text="THANK{'\n'}YOU" textAlign="center"
-			 horizontalCenter="0" verticalCenter="0"/>
+	
+	<s:layout>
+		<s:VerticalLayout horizontalAlign="center" verticalAlign="middle"/>
+	</s:layout>
+	<s:Label id="cameraFullMessageMain" text="THANK{'\n'}YOU" textAlign="center"/>
+	<s:Spacer height="30" />
+	<s:Label text="YOUR PHOTO WILL BE EMAILED TO YOU" id="frontMessage"/>
 </s:Group>
