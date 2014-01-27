@@ -15,5 +15,5 @@
 		<s:VerticalLayout horizontalAlign="center"/>
 	</s:layout>
 	<s:Spacer height="60"/>
-	<s:Image width="600" height="450" source="{imageURL}"/>
+	<s:Image width="800" height="600" source="{imageURL}"/>
 </s:Group>
