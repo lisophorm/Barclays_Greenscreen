@@ -42,6 +42,8 @@
 				var file : File = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath + File.separator + 
 									"clubs" + File.separator + "cups" + File.separator + cupFilename);
 				var url : String = file.url;
+				trace("CameraSecondScreen :: addedToStageHandler :: " + url);
+				
 				cupImage.source = url;
 			}
 
