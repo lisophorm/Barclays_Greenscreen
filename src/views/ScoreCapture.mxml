@@ -108,7 +108,7 @@
 							<s:Button id="submitAccuracyButton" label="SUBMIT" click="submitHandler(event, 1, accuracyValue.text)"/>
 						</s:HGroup>
 					</s:FormItem>
-					<s:FormItem label="CONTROL (TIME)">
+					<s:FormItem label="CONTROL (SECS)">
 						<s:HGroup gap="30">
 							<s:TextInput id="controlValue" width="200" restrict="0-9/:/." />
 							<!--components1:MaskedTextInput id="controlValue" width="200" mascara="{controlMaskFormat}" restrict="0-9"/-->

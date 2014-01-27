@@ -209,7 +209,7 @@
 				baseURL =  "http://"+pref.prefsXML..serverIP+"/";
 				localURL= "http://"+pref.prefsXML..localIP+"/";
 				settings.localURL = localURL;
-				password ="ignite123";
+				password ="123";
 				facebookAppID = pref.prefsXML..facebookAppID;
 				ApplicationType = pref.prefsXML..applicationtype.toString().toUpperCase();
 					
