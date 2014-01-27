@@ -13,12 +13,10 @@
 			import events.CameraCaptureEvent;
 		]]>
 	</fx:Script>
-	
+	  
 	<s:layout>
-		<s:VerticalLayout horizontalAlign="center"/>
+		<s:VerticalLayout horizontalAlign="center" verticalAlign="middle"/>
 	</s:layout>
-	
-	<s:Spacer height="300"/>
 	<s:Label id="cameraInstruction" textAlign="center"
 			 text="YOU ARE NOW READY TO HAVE YOUR PHOTO TAKEN.{'\n'}ONCE YOU PRESS CONTINUE YOU HAVE 10 SECONDS TO GET IN POSITION."/>
 	<s:Spacer height="20"/>

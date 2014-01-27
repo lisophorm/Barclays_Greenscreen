@@ -50,10 +50,10 @@
 	</fx:Script>
 	
 	<s:layout>
-		<s:VerticalLayout horizontalAlign="center"/>
+		<s:VerticalLayout horizontalAlign="center" verticalAlign="middle"/>
 	</s:layout>
 	<s:Spacer height="60"/>
-	<s:Group>
+	<s:Group width="800" height="600">
 		<s:Rect width="800" height="600" id="cameraPlaceholder">
 			<s:fill>
 				<s:SolidColor color="0xFFFFFF"/>

@@ -48,9 +48,8 @@
 	</fx:Script>
 	
 	<s:layout>
-		<s:VerticalLayout horizontalAlign="center"/>
+		<s:VerticalLayout horizontalAlign="center" verticalAlign="middle"/>
 	</s:layout>
-	<s:Spacer height="300"/>
 	<s:Label id="countdownInstruction" text="LOOK AT THE CAMERA" color="0xFFFFFF"/>
 	<s:Spacer height="40"/>
 	<s:Label id="countdownValueMain" text="{countdownValue.toString()}"/>

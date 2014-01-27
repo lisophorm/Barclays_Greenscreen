@@ -23,7 +23,7 @@
 	
 	<s:Spacer height="200"/>
 	<s:Group>
-		<s:VGroup horizontalAlign="center" width="100%">
+		<s:VGroup horizontalAlign="center" width="100%" verticalAlign="middle">
 			<s:Spacer height="50"/>
 			<s:VGroup height="90%">
 				<s:Image height="80%" source="{imageURL}"/>
