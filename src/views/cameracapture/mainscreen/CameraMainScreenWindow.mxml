@@ -119,6 +119,8 @@
 			
 			protected function retakeHandler(event : CameraCaptureEvent):void
 			{
+				var oldPhoto:File=File.applicationDirectory.resolvePath(greenScreenPrefs.basePath + File.separator + "output" + File.separator + settings.userData.imageID + ".jpg");
+				oldPhoto.deleteFile();
 				photoCaptureStartHandler();
 				currentState="countdown";
 			}
