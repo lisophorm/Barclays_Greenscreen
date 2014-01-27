@@ -185,9 +185,9 @@
 					dir.deleteDirectory(true);
 					dir.createDirectory();
 					
-					dir = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath + File.separator + "output");
-					dir.deleteDirectory(true);
-					dir.createDirectory();
+//					dir = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath + File.separator + "output");
+//					dir.deleteDirectory(true);
+//					dir.createDirectory();
 				}
 			}
 			
