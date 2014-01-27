@@ -7,17 +7,15 @@
 	
 	<fx:Script>
 		<![CDATA[
+			import mx.events.FlexEvent;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			
 			import events.KioskError;
 			import events.KioskProgressEvent;
 			import events.ViewEvent;
 			
 			import model.Settings;
-			
-			import mx.events.FlexEvent;
-			import mx.rpc.events.FaultEvent;
-			import mx.rpc.events.ResultEvent;
-			
-			import views.components.*;
 			
 			[Bindable]
 			public var powerMaskFormat:String = "999.9";
@@ -42,9 +40,9 @@
 				settings = Settings.instance;
 				submitScore.url = this.parentApplication.localURL+'publishscore.php';
 				
-				powerValue.text = "___._";
-				accuracyValue.text = "__._";
-				controlValue.text = "__:__._";
+				//powerValue.text = "___._";
+				//accuracyValue.text = "__._";
+				//controlValue.text = "__:__._";
 			}
 			
 			protected function exit(e:Event=null):void
@@ -54,11 +52,15 @@
 			protected function submitHandler(event : MouseEvent, gameID : int, score : String) : void
 			{
 				var variables : Object = {};
-				variables.urn = settings.userData.urn;
-				variables.gameid = gameID;
-				variables.score = score;
-				submitScore.send(variables);
-				this.parentApplication.dispatchEvent( new KioskProgressEvent(KioskProgressEvent.NOTIFY, "SUBMITTING SCORE" ));
+				if(score.length>0) {
+					variables.urn = settings.userData.urn;
+					variables.gameid = gameID;
+					variables.score = score;
+					submitScore.send(variables);
+					this.parentApplication.dispatchEvent( new KioskProgressEvent(KioskProgressEvent.NOTIFY, "SUBMITTING SCORE" ));
+				} else {
+					this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, "Please input a score first", "ERROR"));
+				}
 			}
 			
 			protected function httpServiceFaultHandler(event:FaultEvent):void
@@ -92,19 +94,22 @@
 					</s:layout>        
 					<s:FormItem label="POWER (KMPH)">
 						<s:HGroup gap="30">
-							<components1:MaskedTextInput id="powerValue" width="200" mascara="{powerMaskFormat}" restrict="0-9"/>
+							<s:TextInput id="powerValue" width="200" restrict="0-9/."  />
+							<!--components1:MaskedTextInput id="powerValue" width="200" mascara="{powerMaskFormat}" restrict="0-9"/-->
 							<s:Button id="submitPowerButton" label="SUBMIT" click="submitHandler(event, 0, powerValue.text)"/>
 						</s:HGroup>
 					</s:FormItem>
 					<s:FormItem label="ACCURACY (POINTS)">
 						<s:HGroup gap="30">
-							<components1:MaskedTextInput id="accuracyValue" width="200" mascara="{accuracyMaskFormat}" restrict="0-9"/>
+							<s:TextInput id="accuracyValue" width="200" restrict="0-9/."  />
+							<!--components1:MaskedTextInput id="accuracyValue" width="200" mascara="{accuracyMaskFormat}" restrict="0-9"/-->
 							<s:Button id="submitAccuracyButton" label="SUBMIT" click="submitHandler(event, 1, accuracyValue.text)"/>
 						</s:HGroup>
 					</s:FormItem>
 					<s:FormItem label="CONTROL (TIME)">
 						<s:HGroup gap="30">
-							<components1:MaskedTextInput id="controlValue" width="200" mascara="{controlMaskFormat}" restrict="0-9"/>
+							<s:TextInput id="controlValue" width="200" restrict="0-9/:/." />
+							<!--components1:MaskedTextInput id="controlValue" width="200" mascara="{controlMaskFormat}" restrict="0-9"/-->
 							<s:Button id="submitControlButton" label="SUBMIT" click="submitHandler(event, 2, controlValue.text)"/>
 						</s:HGroup>
 					</s:FormItem>
