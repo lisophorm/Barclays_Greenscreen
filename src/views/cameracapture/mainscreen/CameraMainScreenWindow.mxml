@@ -137,7 +137,7 @@
 				settings.userData.imageID = settings.userData.urn + "_" + uniqueCode;
 				var backgroundImageName : String = teamModel.teamList[settings.userData.teamID].backgroundImage;
 				var cupImage : String = teamModel.teamList[settings.userData.teamID].cupImage;
-				var data:String = "var URN = \"" + settings.userData.imageID + "\"\nvar club_trophy = \"" + cupImage + "\"\nvar bkgImg = \"" + backgroundImageName + "\""; 
+				var data:String = "var URN=\"" + settings.userData.imageID + "\"\nvar club_trophy=\"" + cupImage + "\"\nvar bkgImg=\"" + backgroundImageName + "\""; 
 				var stream:FileStream = new FileStream();
 //				
 				stream.close()
