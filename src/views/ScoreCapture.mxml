@@ -39,7 +39,9 @@
 			{
 				settings = Settings.instance;
 				submitScore.url = this.parentApplication.localURL+'publishscore.php';
-				
+				powerValue.text = "";
+				accuracyValue.text = "";
+				controlValue.text = "";
 				//powerValue.text = "___._";
 				//accuracyValue.text = "__._";
 				//controlValue.text = "__:__._";
