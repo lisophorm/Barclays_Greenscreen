@@ -13,6 +13,7 @@
 			import com.alfo.utils.GreenScreenPrefs;
 			import com.alfo.utils.PictureWatcher;
 			import com.alfo.utils.WatchEvent;
+			import com.greensock.TweenMax;
 			
 			import events.CameraCaptureEvent;
 			import events.CameraEvent;
@@ -163,6 +164,11 @@
 			}
 			
 			protected function displayFinalPhoto(evt:WatchEvent):void 
+			{
+				TweenMax.delayedCall(1, displayFinalPhotoDelayed);
+			}
+			
+			protected function displayFinalPhotoDelayed():void
 			{
 				finalWatch.stopWatch();
 				var file : File = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath + File.separator + "output" + File.separator + settings.userData.imageID + ".jpg");
