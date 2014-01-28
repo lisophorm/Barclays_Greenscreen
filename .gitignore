@@ -25,6 +25,7 @@ release_desktop/
 /bin/Release/
 Main.swf
 .actionScriptProperties
+src/fingerprintscanner/
 
 # External tool builders
 .externalToolBuilders/
