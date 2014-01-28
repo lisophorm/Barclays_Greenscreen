@@ -1036,7 +1036,7 @@
 		
 			<mx:ViewStack id="Stack" height="100%" width="100%"  creationPolicy="all">
 				<mx:VBox hideEffect="{hideFX}"  showEffect="{showFX}">
-					<fingerprintscanner:RegistrationScan id="RegisterView" debug="debugEventHandler(event)" />
+					<views:RegistrationScan id="RegisterView" debug="debugEventHandler(event)" />
 				</mx:VBox>
 				<mx:VBox hideEffect="{hideFX}"  height="100%" width="100%"  showEffect="{showFX}">
 					<views:SelectUserType id="SelectUserType" />
