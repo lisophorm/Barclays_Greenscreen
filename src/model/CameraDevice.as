@@ -38,8 +38,8 @@ package model
 		protected var mat:Matrix;
 		protected var URN:String = "";
 		private var greenScreenPrefs:GreenScreenPrefs;
-		private var outputWidth : int = 1600;
-		private var outputHeight : int = 1200;
+		private var outputWidth : int = 2400;
+		private var outputHeight : int = 1800;
 		
 		public function CameraDevice(_width:int=800, _height:int=600, URN:String = "aurn")
 		{
