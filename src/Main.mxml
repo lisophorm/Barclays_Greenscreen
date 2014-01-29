@@ -9,12 +9,16 @@
 			import com.greensock.TweenMax;
 			import com.utils.Console;
 			
+			import flash.desktop.Updater;
+			
+			import mx.controls.Alert;
 			import mx.events.FlexEvent;
 			import mx.managers.PopUpManager;
 			
 			import spark.filters.DropShadowFilter;
 			
 			import air.update.ApplicationUpdaterUI;
+			import air.update.events.UpdateEvent;
 			
 			import events.ApplicationEvent;
 			import events.DebugEvent;
@@ -32,7 +36,6 @@
 			import model.Settings;
 			import model.TeamModel;
 			
-			import skins.vodafoneButton;
 			import skins.vodafoneFormItem;
 			
 			import views.components.ErrorAlert;
@@ -98,6 +101,8 @@
 			protected var progressWindow:ProgressPopUp;
 			protected var greenscreenmoduleWindow:GreenScreenPopUp;
 			protected var popupWait:pleaseWait;
+			
+			private var updateScript:Updater=new Updater();
 			
 			private var appUpdater:ApplicationUpdaterUI = new ApplicationUpdaterUI();
 			
@@ -192,6 +197,10 @@
 			protected function init(e:Event = null):void
 			{
 			//	trace(File.applicationDirectory.nativePath);
+				
+				if (Updater.isSupported) {
+					checkUpdate();
+				}
 				
 				settings = Settings.instance;
 				
@@ -984,6 +993,36 @@
 				{
 					debugPanel.visible = true;
 				}
+			}
+			
+			private function checkUpdate():void {
+				// we set the URL for the update.xml file
+				
+				
+				
+				appUpdater.updateURL = "http://www.bpllive.com/updategreenscreen/update.xml";
+				//we set the event handlers for INITIALIZED and ERROR
+				appUpdater.addEventListener(UpdateEvent.INITIALIZED, onUpdate);
+				appUpdater.addEventListener(ErrorEvent.ERROR, onError);
+				//we can hide the dialog asking for permission for checking for a new update;
+				//if you want to see it just leave the default value (or set true).
+				appUpdater.isCheckForUpdateVisible = true;
+				//if isFileUpdateVisible is set to true, File Update, File No Update, 
+				//and File Error dialog boxes will be displayed
+				appUpdater.isFileUpdateVisible = false;
+				//if isInstallUpdateVisible is set to true, the dialog box for installing the update is visible
+				appUpdater.isInstallUpdateVisible = true;
+				//we initialize the updater
+				appUpdater.initialize();
+			}
+			
+			private function onError(event:ErrorEvent):void {
+				Alert.show(event.toString());
+			}
+			
+			private function onUpdate(event:UpdateEvent):void {
+				//start the process of checking for a new update and to install
+				appUpdater.checkNow();
 			}
 			
 		]]>
