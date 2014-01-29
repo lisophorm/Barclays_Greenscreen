@@ -81,7 +81,7 @@
 				}
 			}
 			
-			protected function accuracyValue_keyUpHandler(event:KeyboardEvent):void
+			protected function maskInput(event:KeyboardEvent,maskFormat:String):void
 			{
 				var text:TextInput=event.currentTarget as TextInput;
 				text.text="aaa";
@@ -143,21 +143,21 @@
 					</s:layout>        
 					<s:FormItem label="POWER (KMPH)">
 						<s:HGroup gap="30">
-							<s:TextInput id="powerValue" width="200" restrict="0-9/."  />
+							<s:TextInput id="powerValue" width="200" restrict="0-9/." keyUp="maskInput(event,powerMaskFormat)"  />
 							<!--components1:MaskedTextInput id="powerValue" width="200" mascara="{powerMaskFormat}" restrict="0-9"/-->
 							<s:Button id="submitPowerButton" label="SUBMIT" click="submitHandler(event, 0, powerValue.text)"/>
 						</s:HGroup>
 					</s:FormItem>
 					<s:FormItem label="ACCURACY (POINTS)">
 						<s:HGroup gap="30">
-							<s:TextInput id="accuracyValue" width="200" restrict="0-9/." keyUp="accuracyValue_keyUpHandler(event)"  />
+							<s:TextInput id="accuracyValue" width="200" restrict="0-9/." keyUp="maskInput(event,accuracyMaskFormat)"  />
 							<!--components1:MaskedTextInput id="accuracyValue" width="200" mascara="{accuracyMaskFormat}" restrict="0-9"/-->
 							<s:Button id="submitAccuracyButton" label="SUBMIT" click="submitHandler(event, 1, accuracyValue.text)"/>
 						</s:HGroup>
 					</s:FormItem>
 					<s:FormItem label="CONTROL (SECS)">
 						<s:HGroup gap="30">
-							<s:TextInput id="controlValue" width="200" restrict="0-9/:/." />
+							<s:TextInput id="controlValue" width="200" restrict="0-9/:/." keyUp="maskInput(event,controlMaskFormat)"  />
 							<!--components1:MaskedTextInput id="controlValue" width="200" mascara="{controlMaskFormat}" restrict="0-9"/-->
 							<s:Button id="submitControlButton" label="SUBMIT" click="submitHandler(event, 2, controlValue.text)"/>
 						</s:HGroup>
