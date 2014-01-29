@@ -9,6 +9,13 @@
 			import com.greensock.TweenMax;
 			import com.utils.Console;
 			
+			import mx.events.FlexEvent;
+			import mx.managers.PopUpManager;
+			
+			import spark.filters.DropShadowFilter;
+			
+			import air.update.ApplicationUpdaterUI;
+			
 			import events.ApplicationEvent;
 			import events.DebugEvent;
 			import events.GreenscreenModuleEvent;
@@ -25,13 +32,8 @@
 			import model.Settings;
 			import model.TeamModel;
 			
-			import mx.events.FlexEvent;
-			import mx.managers.PopUpManager;
-			
 			import skins.vodafoneButton;
 			import skins.vodafoneFormItem;
-			
-			import spark.filters.DropShadowFilter;
 			
 			import views.components.ErrorAlert;
 			import views.components.GreenScreenPopUp;
@@ -96,6 +98,8 @@
 			protected var progressWindow:ProgressPopUp;
 			protected var greenscreenmoduleWindow:GreenScreenPopUp;
 			protected var popupWait:pleaseWait;
+			
+			private var appUpdater:ApplicationUpdaterUI = new ApplicationUpdaterUI();
 			
 			public var data:Object = null;
 			
