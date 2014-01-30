@@ -5,9 +5,8 @@ package model
 		public function UserData()
 		{
 		}
-		[Bindable]
+		
 		public var firstName : String;
-		[Bindable]
 		public var lastName : String;
 		public var emailAddress : String;
 		public var urn : String = "00000000";

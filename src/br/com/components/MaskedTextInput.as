@@ -211,7 +211,7 @@ package br.com.components
 			posicaoAtual = selectionAnchorPosition;
 			var p1:int = posicaoAtual;
 			selectRange(p1,p1);
-			trace("KEYDOWN"+event.keyCode)
+			trace("KEYDOWN")
 			if(event.keyCode != Keyboard.BACKSPACE && event.keyCode != Keyboard.DELETE && !event.ctrlKey){
 				if(event.keyCode != KEYRIGHT && event.keyCode != KEYLEFT && event.charCode > 0){
 					posicaoAnt = p1+1;
