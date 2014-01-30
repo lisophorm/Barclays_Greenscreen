@@ -73,9 +73,10 @@
 			
 		]]>
 	</fx:Script>
+	<!--url="{settings.localURL+'publishscore.php'}"-->
 	<fx:Declarations>
 		<s:HTTPService id="submitScore" resultFormat="flashvars" method="POST" 
-					   url="{settings.localURL+'publishscore.php'}"  result="publishScoreResultHandler(event)" 
+					     result="publishScoreResultHandler(event)" 
 					   fault="httpServiceFaultHandler(event)"/>
 	</fx:Declarations>
 	
