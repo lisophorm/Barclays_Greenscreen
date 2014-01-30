@@ -208,7 +208,7 @@
 				
 				baseURL =  "http://"+pref.prefsXML..serverIP+"/";
 				localURL= "http://"+pref.prefsXML..localIP+"/";
-			//	settings.localURL = localURL;
+				settings.localURL = localURL;
 				password ="123";
 				facebookAppID = pref.prefsXML..facebookAppID;
 				ApplicationType = pref.prefsXML..applicationtype.toString().toUpperCase();
