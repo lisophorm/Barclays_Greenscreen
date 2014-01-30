@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:mx="library://ns.adobe.com/flex/mx">
+	<s:layout>
+		<s:VerticalLayout/>
+	</s:layout>
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			
+			import spark.events.TextOperationEvent;
+			
+			private var rawNumber : String;
+			private var digitCount : int;
+			private var numericMask : String;
+			private var baseCharacter : String;
+			private var numericPattern : RegExp = /[0-9]/;
+
+			private var separators : Vector.<MaskSeparator>;
+			
+			public function initialise(numericMask_ : String, baseCharacter_ : String) : void
+			{
+				numericMask = numericMask_;
+				baseCharacter = baseCharacter_;
+				separators = new <MaskSeparator>[];
+				
+				digitCount = 0;
+				
+				var n : int = numericMask.length;
+				for(var i : int = 0; i < n; i ++)
+				{
+					var character : String = numericMask.charAt(i);
+					if(character == baseCharacter)
+					{
+						digitCount ++;
+					}else
+					{
+						var separator : MaskSeparator = new MaskSeparator();
+						separator.character = character;
+						separator.index = i;
+						separators.push(separator);
+					}
+				}
+				reset();
+			}
+			
+			public function reset():void
+			{
+				rawNumber = "";
+				processNumber();
+			}
+			
+			protected function numberInputTextInputHandler(event:TextEvent):void
+			{
+				var inputCharacter : String = event.text;
+				if(numericPattern.test(inputCharacter) && rawNumber.length < digitCount)
+				{
+					rawNumber += inputCharacter;
+					processNumber();
+				}
+			}
+			
+			protected function processNumber() : void
+			{
+				var filledNumber : String = rawNumber;
+				while(filledNumber.length < digitCount)
+				{
+					filledNumber += baseCharacter;
+				}
+				
+				for each(var s : MaskSeparator in separators)
+				{
+					var firstComponent : String = filledNumber.substr(0, s.index);
+					var secondComponent : String = filledNumber.substr(s.index);
+					filledNumber = firstComponent + s.character + secondComponent;
+				}
+				numberInput.text = filledNumber;
+				positionCaret();
+			}
+			
+			protected function textChangingHandler(event : TextOperationEvent) : void
+			{
+				event.preventDefault();
+			}
+			
+			protected function numberInputKeyDownHandler(event:KeyboardEvent):void
+			{	
+				// this method is only used for deletion
+				if(event.keyCode == 8)
+				{
+					rawNumber = rawNumber.substr(0, rawNumber.length - 1);
+					processNumber();
+				}
+			}
+			
+			protected function numberInputSelectionChangeHandler(event:FlexEvent):void
+			{
+				positionCaret();
+			}
+			
+			protected function positionCaret():void
+			{
+				var position : int = rawNumber.length;
+				var n : int = separators.length;
+				
+				for(var i:int = 0; i < n; i ++)
+				{
+					if(separators[i].index < position)
+					{
+						position ++;
+					}else
+					{
+						break;
+					}
+				}
+				numberInput.selectRange(position, position);
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:TextInput id="numberInput" width="{width}"
+				 selectionChange="numberInputSelectionChangeHandler(event)" changing="textChangingHandler(event)" 
+				 textInput="numberInputTextInputHandler(event)" keyDown="numberInputKeyDownHandler(event)"/>
+</s:Group>
+
