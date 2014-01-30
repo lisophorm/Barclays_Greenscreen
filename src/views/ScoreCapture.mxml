@@ -3,7 +3,7 @@
 		xmlns:s="library://ns.adobe.com/flex/spark" 
 		remove="exit(event)" creationComplete="created(event)"
 		xmlns:components="views.components.*" 
-		xmlns:components1="br.com.components.*"  >
+		xmlns:components1="br.com.components.*" xmlns:maskedinput="views.components.maskedinput.*"  >
 	
 	<fx:Script>
 		<![CDATA[
@@ -45,6 +45,8 @@
 				//powerValue.text = "___._";
 				//accuracyValue.text = "__._";
 				//controlValue.text = "__:__._";
+				
+				isyField.initialise("___:___.__?___", "_");
 			}
 			
 			protected function exit(e:Event=null):void
@@ -163,6 +165,7 @@
 						</s:HGroup>
 					</s:FormItem>
 				</s:Form>
+				<maskedinput:MaskedTextInputField id="isyField"/>
 	</s:VGroup>
 	
 </s:Group>

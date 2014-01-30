@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:mx="library://ns.adobe.com/flex/mx" 
+			   minWidth="955" minHeight="600">
+	<s:layout>
+		<s:VerticalLayout/>
+	</s:layout>
+	
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.events.ValidationResultEvent;
+			
+			import spark.events.TextOperationEvent;
+			
+			private var integerLength : int;
+			private var rawNumber : String = "";
+			private var numericMask : String;
+			private var baseCharacter : String;
+			private var digitCount : int;
+			
+			private var numericPattern : RegExp = /[0-9]/;
+			private var dotAndSeparatorPattern : RegExp = /[:\.]/g;
+
+			private var separators : Vector.<MaskSeparator>;
+			
+			public function initialise(numericMask_ : String, baseCharacter_ : String) : void
+			{
+				numericMask = numericMask_;
+				baseCharacter = baseCharacter_;
+				
+				digitCount = 0;
+				separators = new <MaskSeparator>[];
+				
+				var n : int = numericMask.length;
+				for(var i : int = 0; i < n; i ++)
+				{
+					var character : String = numericMask.charAt(i);
+					if(character == baseCharacter)
+					{
+						digitCount ++;
+					}else
+					{
+						var separator : MaskSeparator = new MaskSeparator();
+						separator.character = character;
+						separator.index = i;
+						separators.push(separator);
+					}
+				}
+				
+				/*
+				// split the decimal places off first
+				var decimalArray : Array = numericMask.split(".");
+				integerLength = String(decimalArray[0]).length;
+				numberFormatter.fractionalDigits = String(decimalArray[1]).length;
+				numberInput.text = numericMask;
+				
+				var groupingArray : Array = numericMask.split(":");
+				// replace the last element with only the integer portion
+				var finalElement : String = groupingArray[groupingArray.length - 1];
+				groupingArray[groupingArray.length - 1] = finalElement.split(".")[0];
+				var groupingPattern : String = "";
+				var n : int = groupingArray.length;
+				for(var i : int = 0; i < n; i ++)
+				{
+					if(i > 0)
+						groupingPattern = ";" + groupingPattern
+					groupingPattern = String(String(groupingArray[i]).length) + groupingPattern;
+				}
+				numberFormatter.groupingPattern = groupingPattern;
+				
+				digitCount = numericMask.replace(dotAndSeparatorPattern, "").length;
+				*/
+			}
+			
+			protected function numberInputTextInputHandler(event:TextEvent):void
+			{
+				var inputCharacter : String = event.text;
+				// don't do anything if the character is not a number or the number is already the right length
+				if(numericPattern.test(inputCharacter) && rawNumber.length < digitCount)
+				{
+					rawNumber += inputCharacter;
+					processNumber();
+				}
+			}
+			
+			protected function processNumber() : void
+			{
+				var filledNumber : String = rawNumber;
+				while(filledNumber.length < digitCount)
+				{
+					filledNumber += baseCharacter;
+				}
+				
+				for each(var s : MaskSeparator in separators)
+				{
+					var firstComponent : String = filledNumber.substr(0, s.index);
+					var secondComponent : String = filledNumber.substr(s.index);
+					filledNumber = firstComponent + s.character + secondComponent;
+					
+					trace("MaskedTextInputField :: processNumber :: " + firstComponent + " :: " + secondComponent);
+				}
+				
+				// insert the dot if it is needed
+//				var dotPattern : RegExp = /[\.]/;
+//				var decimalNumber : String;
+//				if(numericMask.match(dotPattern))
+//				{
+//					var dotPosition : int = numericMask.indexOf(".");
+//					decimalNumber = filledNumber.substr(0,dotPosition-1) + "." + filledNumber.substr(dotPosition-1);
+//				}else
+//				{
+//					decimalNumber = filledNumber;
+//				}
+//				
+//				var formattedNumber : String = numberFormatter.format(decimalNumber);
+				numberInput.text = filledNumber;
+//				trace("processNumber :: raw=" + rawNumber + "; filled=" + filledNumber + "; decimal=" + decimalNumber + "; formatted=" + formattedNumber); 
+			}
+			
+			protected function textChangingHandler(event : TextOperationEvent) : void
+			{
+				event.preventDefault();
+			}
+			
+			protected function numberInputKeyDownHandler(event:KeyboardEvent):void
+			{	
+				// this is only used for deletion
+				if(event.keyCode == 8)
+				{
+					rawNumber = rawNumber.substr(0, rawNumber.length - 1);
+					if(rawNumber.length == 0)
+						numberInput.text = numericMask;
+					else
+						processNumber();
+				}
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<s:NumberFormatter id="numberFormatter" groupingSeparator=":" trailingZeros="true" leadingZero="true"/>
+	</fx:Declarations>
+	
+	<s:TextInput id="numberInput" changing="textChangingHandler(event)" textInput="numberInputTextInputHandler(event)" keyDown="numberInputKeyDownHandler(event)"/>
+</s:Group>
+
