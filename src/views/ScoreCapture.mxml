@@ -3,29 +3,19 @@
 		xmlns:s="library://ns.adobe.com/flex/spark" 
 		remove="exit(event)" creationComplete="created(event)"
 		xmlns:components="views.components.*" 
-		xmlns:components1="br.com.components.*" xmlns:maskedinput="views.components.maskedinput.*"  >
+		xmlns:maskedinput="views.components.maskedinput.*"  >
 	
 	<fx:Script>
 		<![CDATA[
-			import mx.events.FlexEvent;
-			import mx.rpc.events.FaultEvent;
-			import mx.rpc.events.ResultEvent;
-			
 			import events.KioskError;
 			import events.KioskProgressEvent;
 			import events.ViewEvent;
 			
 			import model.Settings;
 			
-			[Bindable]
-			public var powerMaskFormat:String = "999.9";
-
-			[Bindable]
-			public var accuracyMaskFormat:String = "99.9";
-
-			[Bindable]
-			public var controlMaskFormat:String = "99:99.9";
-
+			import mx.events.FlexEvent;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
 			
 			[Bindable]
 			private var settings:Settings;
@@ -33,20 +23,18 @@
 			public function created(event:FlexEvent=null):void
 			{
 				this.addEventListener( Event.INIT, init);
+				powerValue.initialise("___._", "_");
+				accuracyValue.initialise("__._", "_");
+				controlValue.initialise("__:__._", "_");
 			}
 
 			public function init(event:Event=null):void
 			{
 				settings = Settings.instance;
 				submitScore.url = this.parentApplication.localURL+'publishscore.php';
-				powerValue.text = "";
-				accuracyValue.text = "";
-				controlValue.text = "";
-				//powerValue.text = "___._";
-				//accuracyValue.text = "__._";
-				//controlValue.text = "__:__._";
-				
-				isyField.initialise("___:___.__?___", "_");
+				powerValue.reset();
+				accuracyValue.reset();
+				controlValue.reset();
 			}
 			
 			protected function exit(e:Event=null):void
@@ -83,52 +71,6 @@
 				}
 			}
 			
-			protected function maskInput(event:KeyboardEvent,maskFormat:String):void
-			{
-				var text:TextInput=event.currentTarget as TextInput;
-				text.text="aaa";
-			/*	try {
-					var text = document.getElementById(inputName);
-					var value = text.value;
-					
-					// If user pressed DEL or BACK SPACE, clean the value
-					try {
-						var e = (evt.which) ? evt.which : event.keyCode;
-						if ( e == 46 || e == 8 ) {
-							text.value = "";
-							return;
-						}
-					} catch (e1) {}
-					
-					var literalPattern=/[0\*]/;
-					var numberPattern=/[0-9]/;
-					var newValue = "";
-					
-					for (var vId = 0, mId = 0 ; mId < mask.length ; ) {
-						if (mId >= value.length)
-							break;
-						
-						// Number expected but got a different value, store only the valid portion
-						if (mask[mId] == '0' && value[vId].match(numberPattern) == null) {
-							break;
-						}
-						
-						// Found a literal
-						while (mask[mId].match(literalPattern) == null) {
-							if (value[vId] == mask[mId])
-								break;
-							
-							newValue += mask[mId++];
-						}
-						
-						newValue += value[vId++];
-						mId++;
-					}
-					
-					text.value = newValue;
-				} catch(e) {}		*/
-				}
-			
 		]]>
 	</fx:Script>
 	<fx:Declarations>
@@ -137,35 +79,31 @@
 					   fault="httpServiceFaultHandler(event)"/>
 	</fx:Declarations>
 	
-	<s:VGroup width="500">
+	<s:VGroup width="300">
 				<s:Label text="{settings.userData.firstName + ' ' + settings.userData.lastName}" styleName="registrationTwo" width="100%" textAlign="center"/>
-				<s:Form width="500">
+				<s:Form>
 					<s:layout>
 						<s:FormLayout gap="20" paddingLeft="40"/>
 					</s:layout>        
 					<s:FormItem label="POWER (KMPH)">
 						<s:HGroup gap="30">
-							<s:TextInput id="powerValue" width="200" restrict="0-9/." keyUp="maskInput(event,powerMaskFormat)"  />
-							<!--components1:MaskedTextInput id="powerValue" width="200" mascara="{powerMaskFormat}" restrict="0-9"/-->
-							<s:Button id="submitPowerButton" label="SUBMIT" click="submitHandler(event, 0, powerValue.text)"/>
+							<maskedinput:MaskedTextInputField id="powerValue" width="150"/>
+							<s:Button id="submitPowerButton" label="SUBMIT" click="submitHandler(event, 0, powerValue.numberInput.text)"/>
 						</s:HGroup>
 					</s:FormItem>
 					<s:FormItem label="ACCURACY (POINTS)">
 						<s:HGroup gap="30">
-							<s:TextInput id="accuracyValue" width="200" restrict="0-9/." keyUp="maskInput(event,accuracyMaskFormat)"  />
-							<!--components1:MaskedTextInput id="accuracyValue" width="200" mascara="{accuracyMaskFormat}" restrict="0-9"/-->
-							<s:Button id="submitAccuracyButton" label="SUBMIT" click="submitHandler(event, 1, accuracyValue.text)"/>
+							<maskedinput:MaskedTextInputField id="accuracyValue" width="150"/>
+							<s:Button id="submitAccuracyButton" label="SUBMIT" click="submitHandler(event, 1, accuracyValue.numberInput.text)"/>
 						</s:HGroup>
 					</s:FormItem>
 					<s:FormItem label="CONTROL (SECS)">
 						<s:HGroup gap="30">
-							<s:TextInput id="controlValue" width="200" restrict="0-9/:/." keyUp="maskInput(event,controlMaskFormat)"  />
-							<!--components1:MaskedTextInput id="controlValue" width="200" mascara="{controlMaskFormat}" restrict="0-9"/-->
-							<s:Button id="submitControlButton" label="SUBMIT" click="submitHandler(event, 2, controlValue.text)"/>
+							<maskedinput:MaskedTextInputField id="controlValue" width="150"/>
+							<s:Button id="submitControlButton" label="SUBMIT" click="submitHandler(event, 2, controlValue.numberInput.text)"/>
 						</s:HGroup>
 					</s:FormItem>
 				</s:Form>
-				<maskedinput:MaskedTextInputField id="isyField"/>
 	</s:VGroup>
 	
 </s:Group>
