@@ -79,8 +79,10 @@
 					   fault="httpServiceFaultHandler(event)"/>
 	</fx:Declarations>
 	
-	<s:VGroup width="300">
-				<s:Label text="{settings.userData.firstName + ' ' + settings.userData.lastName}" styleName="registrationTwo" width="100%" textAlign="center"/>
+	<s:VGroup width="100%" horizontalAlign="center" verticalAlign="middle">
+		<s:Label text="{settings.userData.firstName + ' ' + settings.userData.lastName}" styleName="registrationTwo" width="100%" textAlign="center"/>
+
+		<s:VGroup>
 				<s:Form>
 					<s:layout>
 						<s:FormLayout gap="20" paddingLeft="40"/>
@@ -104,6 +106,7 @@
 						</s:HGroup>
 					</s:FormItem>
 				</s:Form>
+			</s:VGroup>
 	</s:VGroup>
 	
 </s:Group>

@@ -9,6 +9,15 @@
 			import com.greensock.TweenMax;
 			import com.utils.Console;
 			
+			import mx.controls.Alert;
+			import mx.events.FlexEvent;
+			import mx.managers.PopUpManager;
+			
+			import spark.filters.DropShadowFilter;
+			
+			import air.update.ApplicationUpdaterUI;
+			import air.update.events.UpdateEvent;
+			
 			import events.ApplicationEvent;
 			import events.DebugEvent;
 			import events.GreenscreenModuleEvent;
@@ -25,13 +34,8 @@
 			import model.Settings;
 			import model.TeamModel;
 			
-			import mx.events.FlexEvent;
-			import mx.managers.PopUpManager;
-			
 			import skins.vodafoneButton;
 			import skins.vodafoneFormItem;
-			
-			import spark.filters.DropShadowFilter;
 			
 			import views.components.ErrorAlert;
 			import views.components.GreenScreenPopUp;
@@ -107,6 +111,8 @@
 			
 			protected var debugKeySequence : Array = [71,85,66,69,68];
 			protected var runningKeySequence : Array = [];
+			
+			private var appUpdater:ApplicationUpdaterUI = new ApplicationUpdaterUI();
 			
 			
 			protected function fullscreen(e:Event=null):void
@@ -188,6 +194,13 @@
 			protected function init(e:Event = null):void
 			{
 			//	trace(File.applicationDirectory.nativePath);
+				
+				if(Updater.isSupported) {
+					trace("checking update")
+					checkUpdate();
+				} else {
+					trace("update not supported");
+				}
 				
 				settings = Settings.instance;
 				
@@ -981,6 +994,50 @@
 					debugPanel.visible = true;
 				}
 			}
+			
+			/**
+			 * This function is triggered when the application finished to load;
+			 * Here we initialize <code>appUpdater</code> and set some properties
+			 */ 
+			private function checkUpdate():void {
+				// we set the URL for the update.xml file
+				appUpdater.updateURL = "http://www.bpllive.com/updategreenscreen/update.xml";
+				//we set the event handlers for INITIALIZED and ERROR
+				appUpdater.addEventListener(UpdateEvent.INITIALIZED, onUpdate);
+				appUpdater.addEventListener(ErrorEvent.ERROR, onError);
+				//we can hide the dialog asking for permission for checking for a new update;
+				//if you want to see it just leave the default value (or set true).
+				appUpdater.isCheckForUpdateVisible = true;
+				//if isFileUpdateVisible is set to true, File Update, File No Update, 
+				//and File Error dialog boxes will be displayed
+				appUpdater.isFileUpdateVisible = true;
+				//if isInstallUpdateVisible is set to true, the dialog box for installing the update is visible
+				appUpdater.isInstallUpdateVisible = true;
+				//we initialize the updater
+				appUpdater.initialize();
+			}
+			
+			/**
+			 * Handler function triggered by the ApplicationUpdater.initialize;
+			 * The updater was initialized and it is ready to take commands 
+			 * (such as <code>checkNow()</code>
+			 * @param UpdateEvent 
+			 */ 
+			private function onUpdate(event:UpdateEvent):void {
+				//start the process of checking for a new update and to install
+				appUpdater.checkNow();
+			}
+			
+			/**
+			 * Handler function for error events triggered by the ApplicationUpdater.initialize
+			 * @param ErrorEvent 
+			 */ 
+			private function onError(event:ErrorEvent):void {
+				Alert.show(event.toString());
+			}
+			
+
+
 			
 		]]>
 	</fx:Script>
