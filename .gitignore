@@ -16,6 +16,7 @@ local.properties
 .settings/
 .loadpath
 bin-debug/
+bin-release-temp/
 release/
 release_desktop/
 **/bin-debug/
