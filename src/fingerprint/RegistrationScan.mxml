@@ -67,6 +67,7 @@
 				this.addEventListener(StateChangeEvent.CURRENT_STATE_CHANGE, onStateChange);
 			
 			}
+			
 			public function init(event:Event=null):void
 			{
 				this.currentState = "";
@@ -78,6 +79,7 @@
 				this.executeBindings(true);
 				settings = Settings.instance;				
 			}
+			
 			//Prepare device for scanning
 			protected function startListen(event:Event=null):void
 			{
@@ -140,7 +142,6 @@
 				// this one is called when the user has successfully scanned their finger
 				// ignore on the whole, all the good stuff happens in userRegistered, which seems to be usually called at 
 				// the same time
-				trace("RegistrationScan :: register_complete");
 				this.currentState = "REGISTER_COMPLETE";
 			}
 			
@@ -152,7 +153,6 @@
 			protected function userRegistered( e:RegistrationEvent = null ):void
 			{
 				trace("RegistrationScan :: userRegistered :: " + e.URN);
-				//Console.log("userRegistered "+e.URN, this);
 				frontMessage.visible = true;
 				if(welcomeScreen)
 					welcomeScreen.visible = true;
