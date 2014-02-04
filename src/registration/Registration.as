@@ -1,4 +1,4 @@
-package fingerprint
+package registration
 {
 	import flash.desktop.NativeProcess;
 	import flash.desktop.NativeProcessStartupInfo;

@@ -9,7 +9,18 @@ package model
 		public var firstName : String;
 		public var lastName : String;
 		public var emailAddress : String;
-		public var urn : String = "00000000";
+		private var _urn : String  = "00000000";
+		
+		public function set urn(value:String):void 
+		{
+			_urn = value;
+		}
+		
+		public function get urn():String 
+		{
+			return _urn;
+		}
+		
 		public var teamID : int;
 		public var greenscreenImageName : String;
 		

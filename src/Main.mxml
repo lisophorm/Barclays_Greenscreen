@@ -3,7 +3,7 @@
 					   xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:views="views.*"
 					   horizontalCenter="center" width="100%" height="100%"
 					   creationComplete="init(event)"  resize="onresize()" backgroundColor="0x000000"
-					   addedToStage="fullscreen()" alwaysInFront="true" showStatusBar="false" xmlns:mainscreen="views.cameracapture.mainscreen.*" xmlns:components="views.components.*" xmlns:fingerprintscanner="fingerprintscanner.*" xmlns:fingerprint="fingerprint.*">
+					   addedToStage="fullscreen()" alwaysInFront="true" showStatusBar="false" xmlns:mainscreen="views.cameracapture.mainscreen.*" xmlns:components="views.components.*" xmlns:fingerprintscanner="fingerprintscanner.*" xmlns:registration="registration.*">
 	<fx:Script>
 		<![CDATA[
 			import com.greensock.TweenMax;
@@ -1093,7 +1093,7 @@
 		
 			<mx:ViewStack id="Stack" height="100%" width="100%"  creationPolicy="all">
 				<mx:VBox hideEffect="{hideFX}"  showEffect="{showFX}">
-					<fingerprint:RegistrationScan id="RegisterView" debug="debugEventHandler(event)" />
+					<registration:RegistrationScan id="RegisterView" debug="debugEventHandler(event)" />
 				</mx:VBox>
 				<mx:VBox hideEffect="{hideFX}"  height="100%" width="100%"  showEffect="{showFX}">
 					<views:SelectUserType id="SelectUserType" />

@@ -15,12 +15,21 @@
 			import com.alfo.utils.EncryptWrapper;
 			import com.alfo.utils.StringUtils;
 			
+			import events.DebugEvent;
+			import events.KioskError;
+			import events.RegistrationEvent;
+			import events.UserEvent;
+			import events.ViewEvent;
+			
 			import flash.display.StageDisplayState;
 			import flash.events.Event;
 			import flash.events.FocusEvent;
 			import flash.events.KeyboardEvent;
 			import flash.events.MouseEvent;
 			import flash.events.SoftKeyboardEvent;
+			
+			import model.Settings;
+			import model.UserData;
 			
 			import mx.events.FlexEvent;
 			import mx.events.StateChangeEvent;
@@ -29,15 +38,6 @@
 			import mx.rpc.http.HTTPService;
 			
 			import spark.events.TextOperationEvent;
-			
-			import events.DebugEvent;
-			import events.KioskError;
-			import events.RegistrationEvent;
-			import events.UserEvent;
-			import events.ViewEvent;
-			
-			import model.Settings;
-			import model.UserData;
 			
 			private var currentURN:String;
 			
@@ -387,6 +387,7 @@
 		
 			protected function onBeginRegister(event:MouseEvent=null):void
 			{
+				
 				this.currentState = "REGISTER_BEGIN";
 				
 				// create the user here
@@ -397,6 +398,7 @@
 				
 				device.registerUser( user.urn );
 				
+				dispatchEvent(new DebugEvent(DebugEvent.DEBUG, 666));
 				trace("RegistrationScan :: onBeginRegister :: " + user.urn);
 			}
 			
@@ -472,7 +474,6 @@
 				<s:Button label="Scan Again" click="init(event)" skinClass="skins.barclaysButton" width="227"/>
 				<s:Spacer width="45" />
 				<s:Button label="Register" click="onBeginRegister(event)" skinClass="skins.barclaysButton" width="227"/>
-				
 			</s:HGroup>
 			
 			<s:HGroup id="userFingerScanStepModule" paddingTop="105" height="250" includeIn="REGISTER_BEGIN, STEP1, STEP2, STEP3, REGISTER_COMPLETE">

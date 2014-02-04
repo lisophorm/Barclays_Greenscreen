@@ -6,7 +6,7 @@
 	
 	<fx:Script>
 		<![CDATA[
-			import fingerprint.Registration;
+			import registration.Registration;
 			
 			public var registrationModule : Registration;
 			
