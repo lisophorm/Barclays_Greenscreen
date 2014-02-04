@@ -38,10 +38,13 @@ package model
 		protected var mat:Matrix;
 		protected var URN:String = "";
 		private var greenScreenPrefs:GreenScreenPrefs;
-		private var outputWidth : int = 1600;
-		private var outputHeight : int = 1200;
 		
-		public function CameraDevice(_width:int=600, _height:int=450, URN:String = "aurn")
+		private var outputScale : Number = 3;
+		
+//		private var outputWidth : int = 1600;
+//		private var outputHeight : int = 1200;
+		
+		public function CameraDevice(_width:int=800, _height:int=600, URN:String = "aurn")
 		{
 			this._width = _width;
 			this._height = _height;
@@ -58,9 +61,9 @@ package model
 				camera= Camera.getCamera(Settings.cameraID.toString());
 				camera.addEventListener(StatusEvent.STATUS, statusHandler); 
 
-				camera.setMode(_width*3, _height*3, 25); 
+				camera.setMode(_width * outputScale, _height * outputScale, 25); 
 				camera.setQuality(0,100);
-				video = new Video(_width*3, _height*3);
+				video = new Video(_width * outputScale, _height * outputScale);
 				video.smoothing = true;
 				video.attachCamera(camera); 
 				bitmapData = new BitmapData(_width, _height);
@@ -137,7 +140,7 @@ package model
 			this.removeEventListener( Event.ENTER_FRAME, updatePhoto );
 			if (video!=null)
 			{
-				var finalCapture:BitmapData = new BitmapData(outputWidth, outputHeight);
+				var finalCapture:BitmapData = new BitmapData(_width * outputScale, _height * outputScale);
 				finalCapture.draw( video );
 				video.visible = false;
 				video.attachCamera(null);

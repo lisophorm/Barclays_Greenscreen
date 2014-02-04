@@ -35,17 +35,14 @@ package fingerprint
 		
 		public function startSocket():void
 		{	
-			
 			if (server==null)
 			{
 				server = new AIRServer();
-				
 				
 				server.addEndPoint(new SocketEndPoint(1235, new WebSocketClientHandlerFactory()));
 				server.addEventListener(AIRServerEvent.CLIENT_ADDED, this.clientAddedHandler, false, 0, true);
 				server.addEventListener(AIRServerEvent.CLIENT_REMOVED, this.clientRemovedHandler, false, 0, true);
 				server.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, this.messageReceivedHandler, false, 0, true);
-				
 			}
 			//start the server
 			try {

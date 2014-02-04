@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx">
+	
+	<fx:Script>
+		<![CDATA[
+			import model.Settings;
+			
+			import mx.events.FlexEvent;
+			
+			private var camera:Camera;
+			private var settings:Settings;
+			private var video:Video;
+			
+			private var zoomLevel : Number = 1;
+			
+			[Bindable]
+			public var viewWidth : int;
+			
+			[Bindable] 
+			public var viewHeight : int;
+			
+			public function initialise(viewWidth_ : int, viewHeight_ : int):void
+			{
+				viewWidth = viewWidth_;
+				viewHeight = viewHeight_;
+
+				settings = Settings.instance;
+				
+				camera = Camera.getCamera(Settings.cameraID.toString());	
+				camera.setMode(viewWidth, viewHeight, 30);
+				
+				video = new Video(viewWidth, viewHeight);
+				video.attachCamera(camera);
+				sprite.addChild(video);
+			}
+
+			public function zoomView(value : Number):void
+			{
+				video.scaleX = video.scaleY = value;
+				camera.setMode(viewWidth * value, viewHeight * value, 30);
+			}
+			
+			public function captureImage(imageCapture : ImageCapture):void
+			{
+				var finalCapture:BitmapData = new BitmapData(settings.imageOutputWidth, settings.imageOutputHeight);
+				finalCapture.draw(video);
+				imageCapture.writeFileFromBitmapData(finalCapture);
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:SpriteVisualElement id="sprite"/>
+	
+</s:VGroup>

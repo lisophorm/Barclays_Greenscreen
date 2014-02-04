@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx">
+	
+	<fx:Script>
+		<![CDATA[
+			
+			protected var originalWidth : int;
+			protected var originalHeight : int;
+			private var trophyZero:Point;
+			private var mouseZero:Point;
+			
+			public function setTrophyImage(url : String):void
+			{
+				trophyImage.source = url;
+			}
+			
+			protected function handleMouseDownHandler(event:MouseEvent):void
+			{
+				if(stage)
+				{
+					stage.addEventListener(MouseEvent.MOUSE_MOVE, handleMouseMoveHandler);
+					stage.addEventListener(MouseEvent.MOUSE_UP, handleMouseUpHandler);
+				}
+			}
+			
+			protected function handleMouseUpHandler(event:MouseEvent):void
+			{
+				if(stage)
+				{
+					stage.removeEventListener(MouseEvent.MOUSE_MOVE, handleMouseMoveHandler);
+					stage.removeEventListener(MouseEvent.MOUSE_UP, handleMouseUpHandler);
+				}
+			}
+			
+			protected function handleMouseMoveHandler(event : MouseEvent) : void
+			{
+				var smaller : Number = Math.min(mouseX / originalWidth, mouseY / originalHeight);
+				
+				trophyImage.scaleX = trophyImage.scaleY = smaller;
+				handle.x = originalWidth * smaller;
+				handle.y = originalHeight * smaller;
+				
+				trace("TrophyView :: mouseMoveHandler :: " + trophyImage.measuredWidth);
+			}
+			
+			protected function imageMouseDownHandler(event : MouseEvent) : void
+			{
+				if(stage)
+				{
+					trophyZero = new Point(container.x, container.y);
+					mouseZero = new Point(mouseX, mouseY);
+					
+					stage.addEventListener(MouseEvent.MOUSE_MOVE, imageMouseMoveHandler);
+					stage.addEventListener(MouseEvent.MOUSE_UP, imageMouseUpHandler);
+				}
+			}
+			
+			protected function imageMouseUpHandler(event : MouseEvent) : void
+			{
+				if(stage)
+				{
+					stage.removeEventListener(MouseEvent.MOUSE_UP, imageMouseUpHandler);
+					stage.removeEventListener(MouseEvent.MOUSE_MOVE, imageMouseMoveHandler);
+				}
+			}
+			
+			protected function imageMouseMoveHandler(event : MouseEvent) : void
+			{
+				var translation : Point = new Point(mouseZero.x - mouseX, mouseZero.y - mouseY);
+				container.x = trophyZero.x - translation.x;
+				container.y = trophyZero.y - translation.y;
+			}
+			
+			protected function trophyImageCompleteHandler(event:Event):void
+			{
+				originalWidth = trophyImage.bitmapData.width;
+				originalHeight = trophyImage.bitmapData.height;
+				
+				handle.x = originalWidth;
+				handle.y = originalHeight;
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<s:Group id="container">
+		<s:Group id="handle" mouseDown="handleMouseDownHandler(event)">
+			<s:Ellipse width="20" height="20">
+				<s:fill>
+					<s:SolidColor color="0xFFFFFF"/>
+				</s:fill>
+				<s:stroke>
+					<s:SolidColorStroke color="0x000000"/>
+				</s:stroke>
+			</s:Ellipse>
+		</s:Group>
+		<s:Image id="trophyImage" mouseDown="imageMouseDownHandler(event)"
+				 complete="trophyImageCompleteHandler(event)"/>
+	</s:Group>
+</s:Group>

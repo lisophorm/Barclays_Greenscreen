@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="100%" height="100%"
+		 creationComplete="initialise(event)" xmlns:calibrator="views.components.calibrator.*">
+	
+	<fx:Script>
+		<![CDATA[
+			import com.alfo.utils.GreenScreenPrefs;
+			
+			import model.Settings;
+			import model.TeamModel;
+			
+			import mx.events.FlexEvent;
+			import mx.events.ResizeEvent;
+			
+			[Bindable]
+			private var settings:Settings;
+			
+			private var greenScreenPrefs:GreenScreenPrefs = new GreenScreenPrefs();
+			private var teamModel:TeamModel;
+			private var mouseZero:Point;
+			private var webcamViewZero:Point;
+			
+			public function initialise(event : FlexEvent):void
+			{
+				settings = Settings.instance;
+				teamModel = TeamModel.instance;
+				
+				var cupFilename : String = teamModel.teamList[0].cupImage;
+				
+				var file : File = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+File.separator+"clubs"+File.separator+"cups" + File.separator + cupFilename);
+				var url : String = file.url;
+				
+				trophyView.setTrophyImage(url);
+				
+				webcamContainer.addEventListener(MouseEvent.MOUSE_DOWN, webcamMouseDownHandler);
+				addEventListener(MouseEvent.MOUSE_UP, webcamMouseUpHandler);
+				
+				webcamView.initialise(settings.calibratorViewWidth, settings.calibratorViewHeight);
+				
+				slider.thumb.width = slider.thumb.height = 20;
+			}
+			
+			protected function webcamMouseDownHandler(event : MouseEvent) : void
+			{
+				webcamContainer.addEventListener(MouseEvent.MOUSE_MOVE, webcamMouseMoveHandler);
+				mouseZero = new Point(webcamContainer.mouseX, webcamContainer.mouseY);
+				webcamViewZero = new Point(webcamView.x, webcamView.y);
+			}
+			
+			protected function endDrag():void
+			{
+				webcamContainer.removeEventListener(MouseEvent.MOUSE_MOVE, webcamMouseMoveHandler);
+			}
+			
+			protected function webcamMouseUpHandler(event : MouseEvent) : void
+			{
+				endDrag();
+			}
+			
+			protected function webcamMouseMoveHandler(event : MouseEvent) : void
+			{	
+				var translation : Point = new Point(mouseZero.x - webcamContainer.mouseX, mouseZero.y - webcamContainer.mouseY);
+				var newPosition : Point = new Point(webcamViewZero.x - translation.x, webcamViewZero.y - translation.y);
+				
+				webcamView.x = webcamViewZero.x - translation.x;
+				webcamView.y = webcamViewZero.y - translation.y;
+			}
+			
+			protected function saveSettingsClickHandler(event : MouseEvent) : void
+			{
+	
+				var dataArray : Array = new Array();
+				dataArray[0] = webcamView.x;
+				dataArray[1] = webcamView.y;
+				dataArray[2] = slider.value;
+				dataArray[3] = trophyView.container.x;
+				dataArray[4] = trophyView.container.y;
+				dataArray[5] = trophyView.handle.x;
+				dataArray[6] = trophyView.handle.y;
+				
+				var data : String = dataArray.join(",");
+				
+				var file : File = File.desktopDirectory.resolvePath("settings.txt");
+				var stream : FileStream = new FileStream();
+				stream.open(file, FileMode.WRITE);
+				stream.writeUTFBytes(data);
+				stream.close();
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:layout>
+		<s:VerticalLayout horizontalAlign="center" verticalAlign="middle"/>
+	</s:layout>
+	<s:Spacer height="60"/>
+	<s:Group>
+		<s:Group width="{settings.calibratorViewWidth}" height="{settings.calibratorViewHeight}" id="webcamContainer">
+			<calibrator:WebcamView id="webcamView" mask="{webcamMask}"/>
+			<s:Group id="webcamMask" width="100%" height="100%">
+				<s:Rect width="100%" height="100%">
+					<s:fill>
+						<s:SolidColor color="0x900000"/>
+					</s:fill>
+				</s:Rect>
+			</s:Group>
+			<s:Rect width="100%" height="100%">
+				<s:stroke>
+					<s:SolidColorStroke color="0xFFFFFF" weight="1"/>
+				</s:stroke>
+			</s:Rect>
+		</s:Group>
+		<calibrator:TrophyView id="trophyView"/>
+	</s:Group>
+	<s:Spacer height="30"/>
+	<s:HSlider id="slider" width="{settings.cameraViewWidth}"
+			   snapInterval="0" minimum="1" maximum="4" change="{webcamView.zoomView(slider.value)}"/>
+	<s:Button click="saveSettingsClickHandler(event)" label="save"/>
+</s:Group>

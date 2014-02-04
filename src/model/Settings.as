@@ -32,6 +32,26 @@ package model
 			return _userData;
 		}
 		
+		[Bindable]
+		public var cameraViewWidth : int = 800;
+		
+		[Bindable]
+		public var cameraViewHeight : int = 600;
+		
+		
+		[Bindable]
+		public var calibratorViewWidth : int = 800;
+		
+		[Bindable]
+		public var calibratorViewHeight : int = 600;
+		
+		[Bindable]
+		public var imageOutputWidth : int = 2400;
+		
+		[Bindable]
+		public var imageOutputHeight : int = 1800;
+		
+		
 		private var _cameraSettings : Array;
 		
 		public function get cameraSettings():Array 

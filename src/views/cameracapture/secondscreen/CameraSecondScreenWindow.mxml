@@ -32,6 +32,7 @@
 					secondScreenCountdown.countdownValue = event.countdownValue;
 					if(event.countdownValue == 0)
 					{
+						//secondScreenCountdown.takePhoto();
 						secondScreenCountdown.cameraDevice.takePhoto();
 						var timeline : TimelineMax = new TimelineMax();
 						timeline.append(new TweenMax(secondScreenCountdown.cameraFlash, .3, {alpha:1, glowFilter:{color:0xFFFFFF, alpha:1, blurX:20, blurY:20}}));
