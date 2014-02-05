@@ -1,5 +1,7 @@
 package model
 {
+	import registration.UserData;
+
 	public class Settings
 	{
 		
