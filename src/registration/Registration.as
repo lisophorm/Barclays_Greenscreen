@@ -10,7 +10,6 @@ package registration
 	import flash.utils.Timer;
 	
 	import registration.debug.DebugEvent;
-	import events.RegistrationEvent;
 
 	public class Registration extends EventDispatcher
 	{

@@ -1,4 +1,4 @@
-package events
+package registration
 {
 	import flash.events.Event;
 	

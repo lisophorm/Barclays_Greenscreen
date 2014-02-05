@@ -46,10 +46,7 @@ package model
 		public var calibratorViewHeight : int = 600;
 		
 		[Bindable]
-		public var imageOutputWidth : int = 2400;
-		
-		[Bindable]
-		public var imageOutputHeight : int = 1800;
+		public var imageOutputMultiplier : int = 3;
 		
 		
 		private var _cameraSettings : Array;

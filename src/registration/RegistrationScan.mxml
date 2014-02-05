@@ -17,7 +17,6 @@
 			
 			import registration.debug.DebugEvent;
 			import events.KioskError;
-			import events.RegistrationEvent;
 			import events.UserEvent;
 			import events.ViewEvent;
 			

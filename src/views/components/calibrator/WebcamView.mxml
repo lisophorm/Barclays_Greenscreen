@@ -38,13 +38,14 @@
 
 			public function zoomView(value : Number):void
 			{
+				zoomLevel = value;
 				video.scaleX = video.scaleY = value;
 				camera.setMode(viewWidth * value, viewHeight * value, 30);
 			}
 			
 			public function captureImage(imageCapture : ImageCapture):void
 			{
-				var finalCapture:BitmapData = new BitmapData(settings.imageOutputWidth, settings.imageOutputHeight);
+				var finalCapture:BitmapData = new BitmapData(viewWidth * settings.imageOutputMultiplier, viewHeight * settings.imageOutputMultiplier);
 				finalCapture.draw(video);
 				imageCapture.writeFileFromBitmapData(finalCapture);
 			}
