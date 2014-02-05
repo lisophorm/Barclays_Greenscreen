@@ -6,7 +6,7 @@
 		remove="exit(event)" xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:components="views.components.*">
 	
 	<fx:Metadata>
-		[Event(name="debug", type="events.DebugEvent")]
+		[Event(name="debug", type="registration.debug.DebugEvent")]
 	</fx:Metadata>
 	
 	<fx:Script>
@@ -15,7 +15,7 @@
 			import com.alfo.utils.EncryptWrapper;
 			import com.alfo.utils.StringUtils;
 			
-			import events.DebugEvent;
+			import registration.debug.DebugEvent;
 			import events.KioskError;
 			import events.RegistrationEvent;
 			import events.UserEvent;

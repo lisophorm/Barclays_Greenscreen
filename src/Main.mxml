@@ -3,7 +3,7 @@
 					   xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:views="views.*"
 					   horizontalCenter="center" width="100%" height="100%"
 					   creationComplete="init(event)"  resize="onresize()" backgroundColor="0x000000"
-					   addedToStage="fullscreen()" alwaysInFront="true" showStatusBar="false" xmlns:mainscreen="views.cameracapture.mainscreen.*" xmlns:components="views.components.*" xmlns:fingerprintscanner="fingerprintscanner.*" xmlns:registration="registration.*">
+					   addedToStage="fullscreen()" alwaysInFront="true" showStatusBar="false" xmlns:mainscreen="views.cameracapture.mainscreen.*" xmlns:components="views.components.*" xmlns:fingerprintscanner="fingerprintscanner.*" xmlns:registration="registration.*" xmlns:debug="registration.debug.*">
 	<fx:Script>
 		<![CDATA[
 			import com.greensock.TweenMax;
@@ -19,7 +19,7 @@
 			import air.update.events.UpdateEvent;
 			
 			import events.ApplicationEvent;
-			import events.DebugEvent;
+			import registration.debug.DebugEvent;
 			import events.GreenscreenModuleEvent;
 			import events.KioskError;
 			import events.KioskEvent;
@@ -1102,10 +1102,10 @@
 					<views:FaceBookAuth01 id="FaceBookAuth01" />
 				</mx:VBox>
 				<mx:VBox hideEffect="{hideFX}"  showEffect="{showFX}">
-					<views:UserForm id="UserForm" />
+					<registration:UserForm id="UserForm" />
 				</mx:VBox>
 				<mx:VBox hideEffect="{hideFX}"  showEffect="{showFX}">
-					<views:SelectTeam id="SelectTeam" />
+					<registration:SelectTeam id="SelectTeam" />
 				</mx:VBox>
 				<mx:VBox hideEffect="{hideFX}"  showEffect="{showFX}">
 					<mainscreen:CameraMainScreenWindow id="CameraCapture" />
@@ -1140,5 +1140,5 @@
 		
 	</s:Group>
 	</s:VGroup>
-	<components:DebugPanel left="0" top="0" id="debugPanel" visible="false"/>
+	<debug:DebugPanel left="0" top="0" id="debugPanel" visible="false"/>
 </s:WindowedApplication>

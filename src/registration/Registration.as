@@ -9,7 +9,7 @@ package registration
 	import flash.system.Capabilities;
 	import flash.utils.Timer;
 	
-	import events.DebugEvent;
+	import registration.debug.DebugEvent;
 	import events.RegistrationEvent;
 
 	public class Registration extends EventDispatcher

@@ -23,8 +23,6 @@
 			
 			import model.Settings;
 			
-			
-			
 			public var data:Object;
 			protected var currentIndex:int
 			
@@ -33,6 +31,7 @@
 			
 			[Bindable]
 			public var teamDataList:XMLList;
+			
 			protected var teamFile:File;
 			protected var stream:FileStream;
 			private var myGlowIs:GlowFilter = new GlowFilter(0xffffff,1,12,12,2);
@@ -45,19 +44,15 @@
 			public function created(event:FlexEvent=null):void
 			{
 				this.addEventListener( Event.INIT, init);
-				//init();
 			}
+			
 			public function init(event:Event=null):void
 			{
-				//Console.log("*** INIT SELECTTEAM ***", this);
 				currentIndex = -1;
 				if (this.parentApplication.data!=null)
 				{
 					data = this.parentApplication.data;
 					currentURN = data.urn;
-					
-					//Console.log( data.urn, this );
-					
 				}
 				teamFile = File.applicationDirectory.resolvePath('assets/xml/teams.xml')
 				readXML();
@@ -75,7 +70,6 @@
 				}
 				else //Otherwise make a file and save it
 				{
-					//Console.log("no file", this);
 					this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, teamFile.url+" NOT FOUND", "COMMUNICATION ERROR", this.init));
 				}
 				
@@ -92,12 +86,9 @@
 			
 			private function processXMLData():void 
 			{
-				//Console.log("file size:"+stream.bytesAvailable, this);
-				
 				var xml:XML = XML(stream.readUTFBytes(stream.bytesAvailable));
 				stream.close();
 				teamDataList = (xml..team);
-				//Console.log(teamDataList, this);
 			}
 			
 			// this function was attempting to add a series of dummy elements to thin out the scrollbar by increasing the number of elements.
@@ -106,8 +97,6 @@
 			{
 				if (list.length()>0)
 				{
-					
-					//Console.log( list[0].toString(), this);
 					var itemNo:int = 40;
 					var node:XML = XML(list[0]).copy();
 					node.@logo = ""; 
@@ -135,7 +124,6 @@
 			
 			private function createListeners( e:Event= null ):void
 			{
-				//Console.log("createListeners "+CarouselGroup.numElements, this);
 				for(var j:uint = 0; j < CarouselGroup.numElements; j++)
 				{
 					var item:IVisualElement = CarouselGroup.getElementAt( j );
@@ -257,7 +245,7 @@
 			<s:Spacer height="80" />
 			<s:Label id="frontMessage" horizontalCenter="0"  text="PLEASE SELECT YOUR TEAM" />
 			<s:Spacer height="70" />
-			<s:DataGroup id="CarouselGroup" updateComplete="createListeners(event)" horizontalCenter="0"  width="1200" itemRenderer="views.renderer.logoItemRenderer">			
+			<s:DataGroup id="CarouselGroup" updateComplete="createListeners(event)" horizontalCenter="0"  width="1200" itemRenderer="registration.logoItemRenderer">			
 				<s:layout>
 					<s:TileLayout orientation="rows" clipAndEnableScrolling="true"
 								  requestedColumnCount="-1" requestedRowCount="-1"
