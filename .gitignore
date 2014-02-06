@@ -55,7 +55,6 @@ src/fingerprintscanner/
 
 # Build results
 
-[Dd]ebug/
 [Rr]elease/
 x64/
 build/

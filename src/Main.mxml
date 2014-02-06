@@ -108,7 +108,6 @@
 			
 			private var skins_vodafoneFormItem_obj:skins.vodafoneFormItem;
 			
-			
 			protected var debugKeySequence : Array = [71,85,66,69,68];
 			protected var runningKeySequence : Array = [];
 			
