@@ -1131,7 +1131,7 @@
 					<views:FaceBookLogoutOverride id="FaceBookLogoutOverride" />
 				</mx:VBox>
 				<mx:VBox hideEffect="{hideFX}"  showEffect="{showFX}">
-					<views:WelcomeBackView id="WelcomeBack" />
+					<registration:WelcomeBackView id="WelcomeBack" />
 				</mx:VBox>
 				
 			</mx:ViewStack>
