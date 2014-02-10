@@ -21,7 +21,7 @@ package registration
 		import be.aboutme.airserver.messages.Message;
 		import by.blooddy.crypto.serialization.JSON;
 		
-		import com.utils.Console;
+//		import com.utils.Console;
 		
 		private var server:AIRServer;
 		private var msg:String ="";
