@@ -577,6 +577,7 @@
 						break;
 					
 					case ViewEvent.LOCATION_SELECT_USER_TYPE:
+						trace("event ViewEvent.LOCATION_SELECT_USER_TYPE");
 						if (this.isRegistered)
 						{
 							if (this.ApplicationType == APPLICATION_TYPE_REGISTRATION)
@@ -876,6 +877,15 @@
 			protected function setIsRegistered(e:UserEvent):void
 			{
 				this.isRegistered =  (e.userType)
+					
+				if (this.ApplicationType == APPLICATION_TYPE_REGISTRATION)
+				{
+					WelcomeBack.nextScreen = ViewEvent.LOCATION_RESTART;
+
+				} else 
+				{
+					WelcomeBack.nextScreen = ViewEvent.LOCATION_GAME;
+				}
 				
 				trace("recorded isRegistered: "+this.isRegistered.toString());
 			}

@@ -22,6 +22,7 @@
 
 			public function created(event:FlexEvent=null):void
 			{
+				trace("scorecapture creationcomplete");
 				this.addEventListener( Event.INIT, init);
 				powerValue.initialise("___._", "_");
 				accuracyValue.initialise("__._", "_");
@@ -30,11 +31,13 @@
 
 			public function init(event:Event=null):void
 			{
+				trace("scorecapture init event");
 				settings = Settings.instance;
 				submitScore.url = this.parentApplication.localURL+'publishscore.php';
 				powerValue.reset();
 				accuracyValue.reset();
 				controlValue.reset();
+				theUserName.text=settings.userData.firstName+" "+settings.userData.lastName;
 			}
 			
 			protected function exit(e:Event=null):void
@@ -80,7 +83,7 @@
 	</fx:Declarations>
 	
 	<s:VGroup width="100%" horizontalAlign="center" verticalAlign="middle">
-		<s:Label text="{settings.userData.firstName + ' ' + settings.userData.lastName}" styleName="registrationTwo" width="100%" textAlign="center"/>
+		<s:Label text="" styleName="registrationTwo" id="theUserName" width="100%" textAlign="center"/>
 
 		<s:VGroup>
 				<s:Form>

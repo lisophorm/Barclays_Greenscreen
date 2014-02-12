@@ -20,6 +20,7 @@
 			protected var request:URLRequest;
 			private var settings:Settings;
 			
+			[Bindable]
 			public var nextScreen : String;
 			
 			protected function onCreationComplete(event : FlexEvent):void
@@ -72,7 +73,7 @@
 			
 			protected function hide():void
 			{
-				this.parentApplication.dispatchEvent( new ViewEvent( ViewEvent.LOCATION_SELECT_GAME_TEAM, {type: "GAME" } ));
+				this.parentApplication.dispatchEvent( new ViewEvent( nextScreen ));
 			}
 		]]>
 	</fx:Script>
