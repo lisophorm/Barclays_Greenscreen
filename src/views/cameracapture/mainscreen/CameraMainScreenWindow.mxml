@@ -17,10 +17,12 @@
 			
 			import events.CameraCaptureEvent;
 			import events.CameraEvent;
+			import events.KioskProgressEvent;
 			import events.ViewEvent;
 			
 			import model.Settings;
 			import model.TeamModel;
+			
 			import registration.UserData;
 			
 			import views.cameracapture.secondscreen.CameraSecondScreenWindow;
@@ -216,6 +218,12 @@
 				finalWatch.stopWatch();
 				emptyCaptures();
 			}
+			
+			protected function uploadPhoto():void {
+				trace("uploading photo...");
+				this.parentApplication.dispatchEvent( new KioskProgressEvent(KioskProgressEvent.NOTIFY, "Uploading file" ) );
+				//currentState='thankyou'
+			}
 		]]>
 	</fx:Script>
 	
@@ -231,6 +239,6 @@
 	<mainscreen:CameraMainScreenCountdownView nextScreen="{currentState='wait'}" 
 											  tick="{updateCountdown(event)}" includeIn="countdown"/>
 	<mainscreen:CameraMainScreenWaitView includeIn="wait"/>
-	<mainscreen:CameraMainScreenResultView id="mainScreenResult" includeIn="result" retake="retakeHandler(event)" nextScreen="{currentState='thankyou'}"/>
+	<mainscreen:CameraMainScreenResultView id="mainScreenResult" includeIn="result" retake="retakeHandler(event)" nextScreen="{uploadPhoto()}"/>
 	<mainscreen:CameraMainScreenThankyouView includeIn="thankyou" cameraComplete="cameraCompleteHandler(event)"/>
 </s:Group>

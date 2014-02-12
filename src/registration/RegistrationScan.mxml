@@ -180,7 +180,7 @@
 			{			
 				currentState="USER_NOT_FOUND";
 				//register with device first
-				frontMessage.text = "USER NOT FOUND";
+				frontMessage.text = "WE CAN'T FIND YOU ON OUR SYSTEM, PLEASE SCAN YOUR\r\nFINGER AGAIN IF YOU HAVE ALREADY REGISTERED\r\nOR PRESS THE BUTTON BELOW TO REGISTER";
 			}
 			
 			public function get uniqueID():Number
@@ -452,7 +452,7 @@
 		<s:Spacer height="130" height.DEFAULT="260" />
 		<s:VGroup horizontalAlign="center">
 			
-			<s:Label id="frontMessage" horizontalCenter="0"
+			<s:Label id="frontMessage" horizontalCenter="0" textAlign="center"
 					 text="PLEASE PLACE YOUR FINGER 3 TIMES"
 					 text.REGISTER_BEGIN = "REGISTRATION SCAN - PLEASE SCAN FINGER"
 					 text.SCANNING_RESTART = "READING ERROR - PLEASE TRY AGAIN!"
@@ -466,11 +466,13 @@
 			
 			<s:TextInput id="barcodeInput" includeInLayout="false" addedToStage="getBarcodeFocus()"  visible="false" text="" textAlign="left"/>
 
-			<s:HGroup id="userNotFoundModule" paddingTop="105" includeIn="USER_NOT_FOUND">
-				<s:Button label="Scan Again" click="init(event)" skinClass="skins.barclaysButton" width="227"/>
-				<s:Spacer width="45" />
-				<s:Button label="Register" click="onBeginRegister(event)" skinClass="skins.barclaysButton" width="227"/>
-			</s:HGroup>
+			<s:VGroup id="userNotFoundModule" paddingTop="75" horizontalAlign="center" includeIn="USER_NOT_FOUND">
+
+				<s:Button label="TOUCH HERE TO REGISTER" width="{scanAgainBtn.width}" click="onBeginRegister(event)" skinClass="skins.barclaysButton" />
+				<s:Spacer height="45" />
+				<s:Button label="TOUCH HERE TO SCAN AGAIN" click="init(event)" id="scanAgainBtn" skinClass="skins.barclaysButton" />
+
+			</s:VGroup>
 			
 			<s:HGroup id="userFingerScanStepModule" paddingTop="105" height="250" includeIn="REGISTER_BEGIN, STEP1, STEP2, STEP3, REGISTER_COMPLETE">
 				<s:HGroup includeIn="REGISTER_BEGIN" >

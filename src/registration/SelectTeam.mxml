@@ -247,16 +247,14 @@
 			<s:Spacer height="80" />
 			<s:Label id="frontMessage" horizontalCenter="0"  text="PLEASE SELECT YOUR TEAM" />
 			<s:Spacer height="70" />
-			<s:DataGroup id="CarouselGroup" updateComplete="createListeners(event)" horizontalCenter="0"  width="1200" itemRenderer="registration.logoItemRenderer">			
+			<s:DataGroup id="CarouselGroup" updateComplete="createListeners(event)" horizontalCenter="0"  itemRenderer="registration.logoItemRenderer">			
 				<s:layout>
-					<s:TileLayout orientation="rows" clipAndEnableScrolling="true"
-								  requestedColumnCount="-1" requestedRowCount="-1"
+					<s:TileLayout orientation="rows" horizontalAlign="center" clipAndEnableScrolling="true"
+								  requestedColumnCount="10" requestedRowCount="-1"
 								  verticalGap="50" horizontalGap="0" useVirtualLayout="true" />
 				</s:layout>
 				<s:XMLListCollection  id="teamList"   source="{teamDataList}"/>	
 			</s:DataGroup>
-			<s:Spacer height="90" />
-			<s:Button label="CONTINUE" click="accept(event)" skinClass="skins.barclaysButton" />
 		</s:VGroup>
 			
 			
