@@ -4,7 +4,6 @@
 		remove="exit(event)" creationComplete="created(event)" 
 		xmlns:components="views.components.*" 
 		currentState="paths" xmlns:calibrator="views.components.calibrator.*"
-		creationComplete="group1_creationCompleteHandler(event)"
 		>
 	
 	<fx:Script>
@@ -35,6 +34,8 @@
 
 				if (this.parentApplication.data!=null)
 				{
+					stage.displayState=StageDisplayState.NORMAL;
+					NativeApplication.nativeApplication.activeWindow.alwaysInFront=false;
 					data = this.parentApplication.data;
 					this.server.text = data.xml.serverIP;
 					this.localserver.text = data.xml.localIP;
@@ -49,6 +50,7 @@
 			protected function exit(event:Event=null):void
 			{
 				trace("*** EXIT APPLICATIONTYPE ***");
+				stage.displayState=StageDisplayState.FULL_SCREEN_INTERACTIVE;
 				NativeApplication.nativeApplication.activeWindow.alwaysInFront=true;
 			}
 			
@@ -79,6 +81,7 @@
 			
 			protected function cancel(e:MouseEvent):void
 			{
+				
 				this.parentApplication.dispatchEvent( new ViewEvent(ViewEvent.LOCATION_RESTART ));
 			}
 			
@@ -87,11 +90,7 @@
 				this.parentApplication.dispatchEvent( new ViewEvent(ViewEvent.LOCATION_FACEBOOK_FORCELOGOUT ));
 			}
 			
-			protected function group1_creationCompleteHandler(event:FlexEvent):void
-			{
-				// TODO Auto-generated method stub
-				
-			}
+
 			
 		]]>
 	</fx:Script>
