@@ -17,6 +17,7 @@
 			
 			import events.CameraCaptureEvent;
 			import events.CameraEvent;
+			import events.KioskError;
 			import events.KioskProgressEvent;
 			import events.ViewEvent;
 			
@@ -35,6 +36,9 @@
 			private var settings:Settings;
 			private var teamModel:TeamModel;
 			
+			private var uploadFile:File;
+			private var urlRequest:URLRequest;
+			
 			[Bindable]
 			private var cameraWindow:CameraSecondScreenWindow;
 			
@@ -45,6 +49,11 @@
 			
 			public function init(event : Event):void
 			{
+				
+				urlRequest= new URLRequest(this.parentApplication.localURL+"uploader.php");
+				
+				trace("begin of camera: upload url "+urlRequest.url);
+				
 				currentState = "instruction";
 				
 				teamModel = TeamModel.instance;
@@ -129,6 +138,13 @@
 			
 			protected function cameraCompleteHandler(event:CameraCaptureEvent):void
 			{
+				
+				uploadFile.removeEventListener(Event.COMPLETE,uploadCompleteHandler);
+				uploadFile.removeEventListener(Event.OPEN,openUploadHandler);
+				uploadFile.removeEventListener(DataEvent.UPLOAD_COMPLETE_DATA,uploadDataComplete);
+				uploadFile.removeEventListener(ProgressEvent.PROGRESS,updateProgress);
+				uploadFile.removeEventListener(IOErrorEvent.IO_ERROR,onFileError);
+				
 				this.parentApplication.dispatchEvent( new ViewEvent( ViewEvent.LOCATION_RESTART ));
 			}
 			
@@ -221,9 +237,68 @@
 			
 			protected function uploadPhoto():void {
 				trace("uploading photo...");
+				
+				uploadFile = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath + File.separator + "output" + File.separator + settings.userData.imageID + ".jpg");
+				if(uploadFile.exists) {
+					trace("*************** greenscreen file is here");
+				} else {
+					trace("No greenscreen file");
+				}
+				
+				uploadFile.addEventListener(Event.COMPLETE,uploadCompleteHandler);
+				uploadFile.addEventListener(Event.OPEN,openUploadHandler);
+				uploadFile.addEventListener(DataEvent.UPLOAD_COMPLETE_DATA,uploadDataComplete);
+				uploadFile.addEventListener(ProgressEvent.PROGRESS,updateProgress);
+				uploadFile.addEventListener(IOErrorEvent.IO_ERROR,onFileError);
+				uploadFile.upload(urlRequest);
 				this.parentApplication.dispatchEvent( new KioskProgressEvent(KioskProgressEvent.NOTIFY, "Uploading file" ) );
-				//currentState='thankyou'
+				
+				
+				//
 			}
+			
+			protected function uploadDataComplete(event:DataEvent):Boolean
+			{
+				
+				try {
+					var result:XML = new XML(event.data);
+				} catch (e:Error) {
+					this.parentApplication.dispatchEvent( new KioskError(KioskError.ERROR, e.message+"\r\n"+event.data.toString(), "Malformed xml result" ) );
+					return false;
+				}
+				trace("result from upload:"+result.toString());
+				trace("message:"+result.message);
+				trace("status:"+result.status);
+				if(result.status!="OK") {
+					this.parentApplication.dispatchEvent( new KioskError(KioskError.ERROR, result.message, "Problem after file upload" ) );
+				} else {
+					currentState='thankyou';
+				}
+				return true;
+			}
+			protected function openUploadHandler(event:Event):void
+			{
+				trace("uploading");
+				//statusText.text = "Uploading...";
+			}
+			
+			protected function onFileError(error:IOErrorEvent) :void {
+				this.parentApplication.dispatchEvent( new KioskError(KioskError.ERROR, error.text.toString(), "I/O error while uploading the file" ) );
+				
+			}
+			protected function updateProgress(event:ProgressEvent):void {
+				var perc:Number=Math.round(event.bytesLoaded*100/event.bytesTotal);
+				this.parentApplication.dispatchEvent( new KioskProgressEvent(KioskProgressEvent.UPDATE, String(perc)+"% complete"));
+			}
+			
+			protected function uploadCompleteHandler(event:Event):void
+			{
+				this.parentApplication.dispatchEvent( new KioskProgressEvent( KioskProgressEvent.UPDATE_COMPLETE ));
+				
+				
+				
+			}
+			
 		]]>
 	</fx:Script>
 	

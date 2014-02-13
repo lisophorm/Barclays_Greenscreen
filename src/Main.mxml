@@ -230,7 +230,7 @@
 				//Console.log("baseURL: "+baseURL, this);
 				//Console.log("localURL: "+localURL, this);
 				//Console.log("appplicationtype is now: "+ApplicationType, this);
-				monitor =  new MonitorConnection(baseURL+"ping.php");			
+				monitor =  new MonitorConnection(localURL+"ping.php");			
 				
 				NativeApplication.nativeApplication.idleThreshold = 600;
 				//Display connect symbol

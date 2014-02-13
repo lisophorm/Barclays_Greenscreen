@@ -4,24 +4,20 @@
 		remove="exit(event)" creationComplete="created(event)" 
 		xmlns:components="views.components.*" 
 		currentState="paths" xmlns:calibrator="views.components.calibrator.*"
+		creationComplete="group1_creationCompleteHandler(event)"
 		>
 	
 	<fx:Script>
 		<![CDATA[
-			import com.utils.Console;
+			import mx.collections.ArrayList;
+			import mx.core.Window;
+			import mx.events.FlexEvent;
 			
 			import events.ApplicationEvent;
 			import events.CameraSelectionEvent;
 			import events.ViewEvent;
 			
-			import model.Config;
 			import model.Settings;
-			
-			import mx.collections.ArrayCollection;
-			import mx.collections.ArrayList;
-			import mx.events.FlexEvent;
-			
-			import spark.events.IndexChangeEvent;
 			
 			
 			[Bindable]
@@ -34,6 +30,9 @@
 			}
 			public function init(event:Event=null):void
 			{
+				trace("*************Applicationtype");
+
+
 				if (this.parentApplication.data!=null)
 				{
 					data = this.parentApplication.data;
@@ -50,6 +49,7 @@
 			protected function exit(event:Event=null):void
 			{
 				trace("*** EXIT APPLICATIONTYPE ***");
+				NativeApplication.nativeApplication.activeWindow.alwaysInFront=true;
 			}
 			
 			protected function submit(e:MouseEvent):void
@@ -85,6 +85,12 @@
 			protected function forceLogout(e:MouseEvent):void
 			{
 				this.parentApplication.dispatchEvent( new ViewEvent(ViewEvent.LOCATION_FACEBOOK_FORCELOGOUT ));
+			}
+			
+			protected function group1_creationCompleteHandler(event:FlexEvent):void
+			{
+				// TODO Auto-generated method stub
+				
 			}
 			
 		]]>
