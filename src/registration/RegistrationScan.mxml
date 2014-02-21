@@ -180,7 +180,7 @@
 			{			
 				currentState="USER_NOT_FOUND";
 				//register with device first
-				frontMessage.text = "WE CAN'T FIND YOU ON OUR SYSTEM, PLEASE SCAN YOUR\r\nFINGER AGAIN IF YOU HAVE ALREADY REGISTERED\r\nOR PRESS THE BUTTON BELOW TO REGISTER";
+				frontMessage.text = "WE CAN'T FIND YOU ON OUR SYSTEM, PLEASE SCAN YOUR\r\nTHUMB AGAIN IF YOU HAVE ALREADY REGISTERED\r\nOR PRESS THE BUTTON BELOW TO REGISTER";
 			}
 			
 			public function get uniqueID():Number
@@ -440,11 +440,11 @@
 			</s:filters>
 		</s:Label>
 		<s:Spacer height="50"/>
-		<s:Label id="pleaseScanLabel" textAlign="center" width="1200" styleName="registrationTwo" text="PLEASE SCAN YOUR FINGER TO START"/>
-		<s:Spacer height="68"/>
-		<s:Label id="registerOnceLabel" textAlign="center" width="1000" styleName="registrationThree" text="REGISTER ONCE, USING YOUR FINGERPRINT {'\n'}AS YOUR UNIQUE IDENTIFIER*.{'\n'}IT'S THEN QUICK AND EASY TO PLAY ANY ACTIVITY{'\n'}AT BARCLAYS PREMIER LEAGUE LIVE."/>
-		<s:Spacer height="60"/>
-		<s:Label id="allFingerprintsLabel" textAlign="center" width="1000" styleName="registrationFour" text="*ALL FINGERPRINTS ARE DELETED DIRECTLY AFTER THE EVENT."/>
+		<s:Label id="pleaseScanLabel" textAlign="center" styleName="registrationTwo" text="PLEASE SCAN YOUR THUMB"/>
+		<s:Spacer height="30"/>
+		<s:Image source="@Embed('assets/images/fingerprintinstrunctions.png')" smooth="true" smoothingQuality="high" />
+		<s:Spacer height="30"/>
+		<s:Label id="allFingerprintsLabel" textAlign="center" styleName="registrationFour" text="You only have to register once to play any activity at Barlcays Premier{'\n'}League Live and all prints are deleted directly after the event."/>
 	</s:VGroup>
 	
 	<s:VGroup horizontalAlign="center" verticalAlign="top" height="574" width="100%">
@@ -453,12 +453,12 @@
 		<s:VGroup horizontalAlign="center">
 			
 			<s:Label id="frontMessage" horizontalCenter="0" textAlign="center"
-					 text="PLEASE SCAN YOUR FINGER 3 TIMES"
-					 text.REGISTER_BEGIN = "REGISTRATION SCAN - PLEASE SCAN FINGER"
+					 text="PLEASE SCAN YOUR THUMB 3 TIMES"
+					 text.REGISTER_BEGIN = "REGISTRATION SCAN - PLEASE SCAN THUMB"
 					 text.SCANNING_RESTART = "READING ERROR - PLEASE TRY AGAIN!"
-					 text.STEP1="PLEASE SCAN YOUR FINGER 3 TIMES"
-					 text.STEP2="PLEASE SCAN YOUR FINGER 3 TIMES"
-					 text.STEP3="PLEASE SCAN YOUR FINGER 3 TIMES"
+					 text.STEP1="PLEASE SCAN YOUR THUMB 3 TIMES"
+					 text.STEP2="PLEASE SCAN YOUR THUMB 3 TIMES"
+					 text.STEP3="PLEASE SCAN YOUR THUMB 3 TIMES"
 					 text.REGISTER_COMPLETE="SCANNING SUCCESSFUL"
 					 visible.READY_TO_SCAN="false"/>
 			

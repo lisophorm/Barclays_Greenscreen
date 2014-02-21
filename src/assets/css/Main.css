@@ -47,7 +47,8 @@ s|Label#frontMessage  {
 .registrationTwo{
 	fontSize: 57;
 	fontFamily:"StandardRegularAllCase";
-	color:#FFFFFF;
+	fontWeight:bold;
+	color:#00ADEE;
 }
 
 .registrationThree{
@@ -59,7 +60,7 @@ s|Label#frontMessage  {
 .registrationFour{
 	fontSize: 25;
 	fontFamily:"StandardRegularAllCase";
-	color:#FFFFFF;
+	color:#00ADEE;
 }
 
 .welcomeBackHeader{

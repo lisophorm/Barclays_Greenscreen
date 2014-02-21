@@ -184,11 +184,11 @@
 		<s:FormHeading id="frontMessage" label="PLEASE ENTER YOUR DETAILS" />
 		<s:Spacer height="30" />
 		<s:FormItem label="First Name:" skinClass="skins.BarclaysFormItem" >				
-			<s:TextInput id="userFirstName" width="500" height="54" skinClass="skins.BarclaysTextInput" keyDown="keyHandler(event)"/>
+			<s:TextInput id="userFirstName" width="500" height="54" autoCapitalize="word" skinClass="skins.BarclaysTextInput" keyDown="keyHandler(event)"/>
 		</s:FormItem>
 		
 		<s:FormItem label="Last Name:" skinClass="skins.BarclaysFormItem">
-			<s:TextInput id="userLastName" width="500" height="54" skinClass="skins.BarclaysTextInput" keyDown="keyHandler(event)"/>
+			<s:TextInput id="userLastName" width="500" height="54" autoCapitalize="word" skinClass="skins.BarclaysTextInput" keyDown="keyHandler(event)"/>
 		</s:FormItem>
 		
 		<s:FormItem label="Email address:" skinClass="skins.BarclaysFormItem">
