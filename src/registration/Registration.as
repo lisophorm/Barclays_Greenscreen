@@ -217,6 +217,11 @@ package registration
 						
 						this.dispatchEvent( new RegistrationEvent( RegistrationEvent.USER_NOT_FOUND, data["msg"] ) );
 					break;
+					case 500 :
+						//- network error - cannot talk to fingerprint server
+						
+						this.dispatchEvent( new RegistrationEvent( RegistrationEvent.IO_ERROR, data["msg"] ) );
+						break;
 				}
 			}
 		}

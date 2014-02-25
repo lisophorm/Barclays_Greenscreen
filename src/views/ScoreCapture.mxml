@@ -47,7 +47,16 @@
 			protected function submitHandler(event : MouseEvent, gameID : int, score : String) : void
 			{
 				var variables : Object = {};
-				if(score.length>0) {
+				if(score.indexOf("_")!=-1 && gameID==0) {
+					this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, "Wrong score format.\r\nFormat is 999.9 - please do not leave any underscore sign", "ERROR"));
+	
+				} else if(score.indexOf("_")!=-1 && gameID==1) {
+					this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, "Wrong score format.\r\nFormat is 99.9 - please do not leave any underscore sign", "ERROR"));
+					
+				} else if(score.indexOf("_")!=-1 && gameID==2) {
+					this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, "Wrong score format.\r\nFormat is 99:99.9 - please do not leave any underscore sign", "ERROR"));
+					
+				} else if(score.length>0) {
 					variables.urn = settings.userData.urn;
 					variables.gameid = gameID;
 					variables.score = score;

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
-		xmlns:s="library://ns.adobe.com/flex/spark" 
-		creationComplete="created()" 
-		addedToStage="addedToStageHander(event)"
-		remove="exit(event)" xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:components="views.components.*">
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 creationComplete="created()" 
+		 addedToStage="addedToStageHander(event)"
+		 remove="exit(event)" xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:components="views.components.*">
 	
 	<fx:Metadata>
 		[Event(name="debug", type="registration.debug.DebugEvent")]
@@ -15,19 +15,12 @@
 			import com.alfo.utils.EncryptWrapper;
 			import com.alfo.utils.StringUtils;
 			
-			import registration.debug.DebugEvent;
-			import events.KioskError;
-			import events.UserEvent;
-			import events.ViewEvent;
-			
 			import flash.display.StageDisplayState;
 			import flash.events.Event;
 			import flash.events.FocusEvent;
 			import flash.events.KeyboardEvent;
 			import flash.events.MouseEvent;
 			import flash.events.SoftKeyboardEvent;
-			
-			import model.Settings;
 			
 			import mx.events.FlexEvent;
 			import mx.events.StateChangeEvent;
@@ -36,6 +29,14 @@
 			import mx.rpc.http.HTTPService;
 			
 			import spark.events.TextOperationEvent;
+			
+			import events.KioskError;
+			import events.UserEvent;
+			import events.ViewEvent;
+			
+			import model.Settings;
+			
+			import registration.debug.DebugEvent;
 			
 			private var currentURN:String;
 			
@@ -63,7 +64,7 @@
 				this.addEventListener( Event.INIT, init);
 				this.removeEventListener(StateChangeEvent.CURRENT_STATE_CHANGE, onStateChange);
 				this.addEventListener(StateChangeEvent.CURRENT_STATE_CHANGE, onStateChange);
-			
+				
 			}
 			public function init(event:Event=null):void
 			{
@@ -90,6 +91,8 @@
 					device.addEventListener( RegistrationEvent.USER_FOUND, this.userFound);
 					device.addEventListener( RegistrationEvent.USER_NOT_FOUND, this.userNotFound);
 					
+					device.addEventListener( RegistrationEvent.IO_ERROR, this.networkError);
+					
 					//scanning steps 1-3
 					device.addEventListener( RegistrationEvent.SCAN_STEP_1, this.register_step_1);
 					device.addEventListener( RegistrationEvent.SCAN_STEP_2, this.register_step_2);
@@ -108,7 +111,7 @@
 			{
 				this.init();
 			}
-
+			
 			protected function scan_restart( e:RegistrationEvent ):void
 			{
 				this.currentState = "SCANNING_RESTART";
@@ -183,6 +186,12 @@
 				frontMessage.text = "WE CAN'T FIND YOU ON OUR SYSTEM, PLEASE SCAN YOUR\r\nTHUMB AGAIN IF YOU HAVE ALREADY REGISTERED\r\nOR PRESS THE BUTTON BELOW TO REGISTER";
 			}
 			
+			protected function networkError( e:RegistrationEvent=null ):void
+			{			
+				currentState="FINGERPRINT_CONNECTION_ERROR";
+				this.onError( e.message , "NETWORK ERROR 500");
+			}
+			
 			public function get uniqueID():Number
 			{
 				var unique : Number =  Number((new Date()).time);
@@ -225,7 +234,7 @@
 			
 			protected function checkKey(e:KeyboardEvent=null):void
 			{
-			//	trace("checking key");
+				//	trace("checking key");
 				if (e.keyCode == Keyboard.ENTER  && (this.parentApplication).urn==barcodeInput.text.length)
 				{
 					lookupBarCode();
@@ -241,7 +250,7 @@
 			}
 			protected function lookupBarCode(e:FlexEvent=null):void
 			{
-			
+				
 				//trace("barcode before:"+barcodeInput.text);
 				barcode = com.alfo.utils.StringUtils.trim(String(barcodeInput.text.toLocaleUpperCase()));
 				// only for hungarian
@@ -266,7 +275,7 @@
 						stopListen();
 						barcodeWriter.visible = false;
 						var localurl:String = (this.parentApplication).localURL+"checkuser.php";
-					//	localurl = "http://www.ignitesocial.co.uk/ignite/checkuser.php";
+						//	localurl = "http://www.ignitesocial.co.uk/ignite/checkuser.php";
 						service =  new HTTPService;
 						service.url = localurl;
 						service.method = "POST";
@@ -277,7 +286,7 @@
 						service.addEventListener(ResultEvent.RESULT, userValidCheck);
 						service.resultFormat = "flashvars";
 						service.send(params);
-					//	trace("REQUEST TO SERVER MADE");
+						//	trace("REQUEST TO SERVER MADE");
 						
 					} else
 					{
@@ -296,7 +305,7 @@
 			
 			protected function userCheckFailed(event:FaultEvent):void
 			{
-//				this.parentApplication.dispatchEvent(new events.KioskError(KioskError.ERROR,event.fault.faultDetail.toString(), event.fault.faultString.toString(), init) );
+				//				this.parentApplication.dispatchEvent(new events.KioskError(KioskError.ERROR,event.fault.faultDetail.toString(), event.fault.faultString.toString(), init) );
 			}
 			protected function onNewUser(uid:*):void
 			{
@@ -317,11 +326,11 @@
 			{
 				//this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, "SORRY - BUT YOU CAN ONLY PLAY ONCE", "ERROR", init));			
 				//init();
-
+				
 			}
-			protected function onError(msg:String):void
+			protected function onError(msg:String,header:String="ERROR"):void
 			{
-				this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, "ERROR - RETURNED:"+msg, "ERROR", init));
+				this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, "ERROR - RETURNED:"+msg, header, init));
 				//init();
 			}
 			
@@ -361,13 +370,13 @@
 						str += m+"="+e.result[m]+"; "; 
 					}
 					//this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, "NO RESULT ON SERVER :"+str, "SERVER ERROR", init));
-							
+					
 				}
 			}
 			protected function getBarcodeFocus(e:Event=null):void
 			{
-//				trace("set focus")
-//				barcodeWriter.setFocus();
+				//				trace("set focus")
+				//				barcodeWriter.setFocus();
 			}
 			
 			
@@ -381,9 +390,9 @@
 			{
 				checking=false;
 				this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, "Network error, please check connectivity and try again: " + event.fault.faultString, "NETWORK ERROR", restart));
-
+				
 			}
-		
+			
 			protected function onBeginRegister(event:MouseEvent=null):void
 			{
 				
@@ -405,10 +414,10 @@
 			
 			//protected function userdata_resultHandler( e:ResultEvent ):void {}
 			//protected function userdata_faultHandler( e:FaultEvent ):void {}
-				
+			
 			protected function addedToStageHander(event:Event):void
 			{
-			//	registerOnceLabel.width = stage.stageWidth;
+				//	registerOnceLabel.width = stage.stageWidth;
 			}
 			
 			protected function debugEventHandler(event : DebugEvent):void
@@ -418,7 +427,7 @@
 			
 		]]>
 	</fx:Script>
-
+	
 	<s:states>
 		<s:State name="DEFAULT" />
 		<s:State name="REGISTER_BEGIN" />
@@ -431,10 +440,11 @@
 		<s:State name="USER_NOT_FOUND" />
 		<s:State name="USER_FOUND" />
 		<s:State name="REGISTRATION_ERROR" />
+		<s:State name="FINGERPRINT_CONNECTION_ERROR" />
 	</s:states>
-
+	
 	<s:VGroup id="welcomeScreen" horizontalAlign="center" includeIn="READY_TO_SCAN" width="1366">
-		<s:Label id="welcomeLabel" textAlign="center" width="1200" styleName="registrationOne" text="WELCOME TO BPL LIVE">
+		<s:Label id="welcomeLabel" textAlign="center" width="1200" styleName="registrationOne" text="WELCOME TO{'\n'}BACLAYS PREMIER LEAGUE LIVE">
 			<s:filters>
 				<s:GlowFilter color="0x00AEEF" strength="15"/>
 			</s:filters>
@@ -455,6 +465,7 @@
 			<s:Label id="frontMessage" horizontalCenter="0" textAlign="center"
 					 text="PLEASE SCAN YOUR THUMB 3 TIMES"
 					 text.REGISTER_BEGIN = "REGISTRATION SCAN - PLEASE SCAN THUMB"
+					 text.FINGERPRINT_CONNECTION_ERROR="NETWORK ERROR 500 PLEASE ASK HELP TO A MEMBER OF STAFF"
 					 text.SCANNING_RESTART = "READING ERROR - PLEASE TRY AGAIN!"
 					 text.STEP1="PLEASE SCAN YOUR THUMB 3 TIMES"
 					 text.STEP2="PLEASE SCAN YOUR THUMB 3 TIMES"
@@ -465,13 +476,13 @@
 			<s:TextInput id="barcodeWriter" top="-50" addedToStage="getBarcodeFocus()" alpha="0" includeInLayout="false" visible="false" text="" textAlign="left" softKeyboardActivating="urn_softKeyboardActivatingHandler(event)"/>
 			
 			<s:TextInput id="barcodeInput" includeInLayout="false" addedToStage="getBarcodeFocus()"  visible="false" text="" textAlign="left"/>
-
+			
 			<s:VGroup id="userNotFoundModule" paddingTop="75" horizontalAlign="center" includeIn="USER_NOT_FOUND">
-
+				
 				<s:Button label="TOUCH HERE TO REGISTER" width="{scanAgainBtn.width}" click="onBeginRegister(event)" skinClass="skins.barclaysButton" />
 				<s:Spacer height="45" />
 				<s:Button label="TOUCH HERE TO SCAN AGAIN" click="init(event)" id="scanAgainBtn" skinClass="skins.barclaysButton" />
-
+				
 			</s:VGroup>
 			
 			<s:HGroup id="userFingerScanStepModule" paddingTop="105" height="250" includeIn="REGISTER_BEGIN, STEP1, STEP2, STEP3, REGISTER_COMPLETE">

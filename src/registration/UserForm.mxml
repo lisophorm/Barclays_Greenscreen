@@ -67,9 +67,8 @@
 				userEmail.text = ""; 
 				
 				termsCheck.selected = false;
-				premierLeagueCheck.selected = false;
-				clubCheck.selected = false;
-				barclaysCheck.selected = false;
+				premierLeagueCheck.selected = true;
+				clubCheck.selected = true;
 								
 			}
 			protected function exit(event:Event=null):void
@@ -81,7 +80,10 @@
 			{
 				var validatorErrorArray:Array = Validator.validateAll(validatorArr);
 				var isValidForm:Boolean = validatorErrorArray.length == 0;
-				if (isValidForm) 
+				if(termsCheck.selected==false){
+					this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, "You must agree the terms and conditions before proceeding", "ERROR"));
+					
+				} else if (isValidForm) 
 				{
 					//send data
 					saveData.send({urn: settings.userData.urn, 
@@ -91,8 +93,7 @@
 						email: userEmail.text, 
 						optInTerms: termsCheck.selected ? 1 : 0, 
 						optInPremier: premierLeagueCheck.selected ? 1 : 0,
-						optInClub:premierLeagueCheck.selected ? 1 : 0,
-						optInBarclays:barclaysCheck.selected ? 1 : 0
+						optInClub:premierLeagueCheck.selected ? 1 : 0
 					});
 				//	save();
 				} 
@@ -107,9 +108,8 @@
 				userLastName.text="";
 				userLastName.errorString="";
 				termsCheck.selected = false;
-				premierLeagueCheck.selected = false;
-				clubCheck.selected = false;
-				barclaysCheck.selected = false;
+				premierLeagueCheck.selected = true;
+				clubCheck.selected = true;
 			}
 			
 			protected function save(e:ResultEvent=null):void
@@ -204,15 +204,12 @@
 		
 		<s:Spacer height="20"/>
 		
-		<s:CheckBox id="premierLeagueCheck" width="145" styleName="tcaccept" label="I WOULD LIKE TO RECEIVE INFORMATION FROM THE PREMIER LEAGUE " skinClass="skins.BarclaysCheckBox" />
+		<s:CheckBox id="premierLeagueCheck" width="145" styleName="tcaccept" label="I would like to receive information from the Premier League and Official Partners. " skinClass="skins.BarclaysCheckBox" />
 
 		<s:Spacer height="20"/>
 		
-		<s:CheckBox id="clubCheck" width="145" styleName="tcaccept" label="I WOULD LIKE TO RECEIVE INFORMATION FROM MY CLUB " skinClass="skins.BarclaysCheckBox" />
+		<s:CheckBox id="clubCheck" width="145" styleName="tcaccept" label="I would like to receive information from my Club and Official Partners. " skinClass="skins.BarclaysCheckBox" />
 		
-		<s:Spacer height="20"/>
-		
-		<s:CheckBox id="barclaysCheck" width="145" styleName="tcaccept" label="I WOULD LIKE TO RECEIVE INFORMATION FROM BARCLAYS " skinClass="skins.BarclaysCheckBox" />
 	
 		<s:Spacer height="30"/>
 		
