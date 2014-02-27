@@ -157,6 +157,9 @@ s|RadioButton {
 	skinClass: ClassReference("skins.vodafoneRadioButton");
 	
 }
+s|Scroller {
+	skinClass: ClassReference("skins.BarScroller");
+}
 s|RadioButton #labelDisplay {
 	fontSize:18;
 	

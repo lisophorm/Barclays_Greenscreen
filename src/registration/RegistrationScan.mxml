@@ -189,7 +189,7 @@
 			protected function networkError( e:RegistrationEvent=null ):void
 			{			
 				currentState="FINGERPRINT_CONNECTION_ERROR";
-				this.onError( e.message , "NETWORK ERROR 500");
+				this.onError( "Connection problem. Please try again.\r\nIf the problem persists please contact a member of the staff\r\n\r\n"+e.message , "NETWORK ERROR 500");
 			}
 			
 			public function get uniqueID():Number
@@ -444,7 +444,7 @@
 	</s:states>
 	
 	<s:VGroup id="welcomeScreen" horizontalAlign="center" includeIn="READY_TO_SCAN" width="1366">
-		<s:Label id="welcomeLabel" textAlign="center" width="1200" styleName="registrationOne" text="WELCOME TO{'\n'}BACLAYS PREMIER LEAGUE LIVE">
+		<s:Label id="welcomeLabel" textAlign="center" width="90%" styleName="registrationOne" text="WELCOME TO{'\n'}BARCLAYS PREMIER LEAGUE LIVE">
 			<s:filters>
 				<s:GlowFilter color="0x00AEEF" strength="15"/>
 			</s:filters>

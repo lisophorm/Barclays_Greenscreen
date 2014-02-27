@@ -8,8 +8,6 @@
 		<![CDATA[
 			import registration.Registration;
 			
-			import spark.events.TextOperationEvent;
-			
 			public var registrationModule : Registration;
 			
 			public function fireSocketCode(socketCode : int):void
