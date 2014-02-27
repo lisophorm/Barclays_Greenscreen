@@ -58,6 +58,7 @@ viewport property to link them together.
          */
         override public function beginHighlightBitmapCapture() : Boolean
         {
+			trace("iknsie scrollbs");
             var needUpdate:Boolean = super.beginHighlightBitmapCapture();
             
             // Draw an opaque rect that fill our entire skin. Our background

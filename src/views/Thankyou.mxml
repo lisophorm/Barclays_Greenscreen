@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
-		xmlns:s="library://ns.adobe.com/flex/spark" 
-		remove="exit(event)" creationComplete="created(event)" 
-		xmlns:components="views.components.*">
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 remove="exit(event)" creationComplete="created(event)" 
+		 xmlns:components="views.components.*">
 	
 	<fx:Metadata>
 		[Event(name="restart", type="events.ViewEvent")]
@@ -39,19 +39,19 @@
 			
 			protected function exit(event:Event):void
 			{
-			//	Console.log("*** Thankyou :: exit ***", this);
+				//	Console.log("*** Thankyou :: exit ***", this);
 				// TODO Auto-generated method stub
 				TweenMax.killTweensOf(this);
-			//	clearInterval(intervallo);
-//				trace("*** EXIT APPLICATIONTYPE ***");	
+				//	clearInterval(intervallo);
+				//				trace("*** EXIT APPLICATIONTYPE ***");	
 			}
 			
 			protected function close():void 
 			{
-			//	trace("Thankyou :: close");
-			//	Console.log("*** Thankyou :: close ***", this);
+				//	trace("Thankyou :: close");
+				//	Console.log("*** Thankyou :: close ***", this);
 				TweenMax.killTweensOf(this);
-			//	clearInterval(intervallo);
+				//	clearInterval(intervallo);
 				//navigator.popToFirstView();
 				parentApplication.dispatchEvent(new ViewEvent( ViewEvent.LOCATION_RESTART ));
 				
@@ -63,8 +63,9 @@
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 	</fx:Declarations>
 	<s:VGroup width="100%" height="597" horizontalAlign="center" verticalAlign="middle">
-		<s:Spacer width="10" height="40"/>
-		<s:Label styleName="thankyou" text="THANK"  />
-		<s:Label styleName="thankyou" text="YOU"  paddingTop="-50" />
+		<s:Spacer width="10" height="30"/>
+		<s:Label textAlign="center" width="750" styleName="thankyou" text="Thank you"  />
+		<s:Label textAlign="center" width="750" styleName="thankyou" text="for selecting your Dream Team." />
+		<s:Spacer width="10" height="30"/>
 	</s:VGroup>
 </s:Group>

@@ -64,7 +64,7 @@
     </s:Rect>
 	<s:BitmapImage source="@Embed('/assets/images/core/appbackground.png')" left="0" right="0" top="0" bottom="0" >
 		
-	</s:BitmapImage>
+	</s:BitmapImage>wwww
     
     <!--
         Note: setting the minimum size to 0 here so that changes to the host component's
