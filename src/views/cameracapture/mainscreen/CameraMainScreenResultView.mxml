@@ -21,7 +21,7 @@
 		]]>
 	</fx:Script>
 	
-	<s:Spacer height="200"/>
+	<s:Spacer height="50"/>
 	<s:Group>
 		<s:VGroup horizontalAlign="center" width="100%" verticalAlign="middle">
 			<s:Spacer height="50"/>

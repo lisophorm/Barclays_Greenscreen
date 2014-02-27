@@ -1,8 +1,9 @@
 <s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009" 
 					   xmlns:s="library://ns.adobe.com/flex/spark" 
 					   xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:views="views.*"
-					   horizontalCenter="center" width="1024" height="768"
+					   horizontalCenter="center" width="100%" height="100%"
 					   creationComplete="init(event)"  resize="onresize()" backgroundColor="0x000000"
+					
 					   addedToStage="fullscreen()" alwaysInFront="true" showStatusBar="false" xmlns:mainscreen="views.cameracapture.mainscreen.*" xmlns:components="views.components.*" xmlns:fingerprintscanner="fingerprintscanner.*" xmlns:registration="registration.*" xmlns:debug="registration.debug.*">
 	<fx:Script>
 		<![CDATA[
@@ -1090,7 +1091,7 @@
 				<s:Button skinClass="skins.BasicButton" styleName="nav" icon="@Embed('assets/images/core/home_logo.png')" click="{defaultView()}"/>
 				<!--s:Button label="camera" click="{gotoView('CameraCapture')}"/-->
 				<!--s:Button label="score" click="{gotoView('ScoreCapture')}"/-->
-				<s:Button label="thank you" click="{gotoView('Thankyou')}"/>
+				<s:Button label="thank you" click="{gotoView('UserForm')}"/>
 				<s:Button skinClass="skins.BasicButton" styleName="nav" label="{ML.t('Quit')}" click="exitApplication(event)" id="quitButton" color="0xFFFFFF" visible="{loggedIn}" includeInLayout="{loggedIn}" />
 				<s:Button skinClass="skins.BasicButton" styleName="nav" icon="@Embed('assets/images/core/padlock.png')" click="config(event)" color="0xFFFFFF" />
 			</s:HGroup>		
@@ -1104,7 +1105,7 @@
 		<s:BorderContainer id="borderHolder" width="100%" height="100%" borderVisible="false" backgroundImage="@Embed('./assets/images/Background2.png')">
 			<!--s:Image includeInLayout="false" alpha="0.5" x="0" y="0" top="0" left="0" right="1280" bottom="720"  source="@Embed('../guides/Instructions_1280x720px_Page_01.jpg')" width="1280" height="720" smooth="true" /-->	
 		
-			<mx:ViewStack id="Stack" height="100%" width="100%"  creationPolicy="all">
+			<mx:ViewStack backgroundAlpha="0" id="Stack" height="100%" width="100%"  creationPolicy="all">
 				<mx:VBox hideEffect="{hideFX}"  showEffect="{showFX}">
 					<registration:RegistrationScan id="RegisterView" debug="debugEventHandler(event)" />
 				</mx:VBox>

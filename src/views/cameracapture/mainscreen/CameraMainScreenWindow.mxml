@@ -16,15 +16,12 @@
 			import com.greensock.TweenMax;
 			
 			import events.CameraCaptureEvent;
-			import events.CameraEvent;
 			import events.KioskError;
 			import events.KioskProgressEvent;
 			import events.ViewEvent;
 			
 			import model.Settings;
 			import model.TeamModel;
-			
-			import registration.UserData;
 			
 			import views.cameracapture.secondscreen.CameraSecondScreenWindow;
 			
@@ -80,6 +77,7 @@
 				}
 				cameraWindow=new CameraSecondScreenWindow();
 				cameraWindow.open();
+				cameraWindow.alwaysInFront=true;
 				cameraWindow.move(Screen.screens[secondscreen].visibleBounds.left,Screen.screens[secondscreen].visibleBounds.top);
 				cameraWindow.width=Screen.screens[secondscreen].visibleBounds.width;
 				cameraWindow.height=Screen.screens[secondscreen].visibleBounds.height;
