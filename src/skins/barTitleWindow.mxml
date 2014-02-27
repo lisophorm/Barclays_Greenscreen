@@ -239,6 +239,7 @@
                 <!--- @copy spark.components.Panel#titleDisplay -->
                 <s:Label id="titleDisplay" maxDisplayedLines="1" 
                          left="9" right="36" top="1" bottom="0" minHeight="80" 
+						 fontFamily="StandardRegular"
                          verticalAlign="middle" horizontalCenter="0" />
                 
                 <!-- layer 4: moveArea -->

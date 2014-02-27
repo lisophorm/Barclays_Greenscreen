@@ -38,41 +38,41 @@
 			/* NEW !!
 			public function addedToStageHandler(event : Event) : void
 			{
-			settings = Settings.instance;
-			teamModel = TeamModel.instance;
-			
-			var settingsFile : File = File.desktopDirectory.resolvePath("settings.txt");
-			var stream : FileStream = new FileStream();
-			stream.open(settingsFile, FileMode.READ);
-			var dataString : String = stream.readUTFBytes(stream.bytesAvailable);
-			var dataArray : Array = dataString.split(",");
-			
-			stream.close();
-			
-			var cupFilename : String = teamModel.teamList[0].cupImage;
-			var file : File = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+File.separator+"clubs"+File.separator+"cups" + File.separator + cupFilename);
-			var url : String = file.url;
-			
-			trophyImage.source = url;
-			
-			webcamView.initialise(settings.cameraViewWidth, settings.cameraViewHeight);
-			
-			webcamView.x = dataArray[0];
-			webcamView.y = dataArray[1];
-			webcamView.zoomView(dataArray[2]);
-			
-			trophyImage.x = dataArray[3];
-			trophyImage.y = dataArray[4];
-			trophyImage.width = dataArray[5];
-			trophyImage.height = dataArray[6];
+				settings = Settings.instance;
+				teamModel = TeamModel.instance;
+				
+				var settingsFile : File = File.desktopDirectory.resolvePath("settings.txt");
+				var stream : FileStream = new FileStream();
+				stream.open(settingsFile, FileMode.READ);
+				var dataString : String = stream.readUTFBytes(stream.bytesAvailable);
+				var dataArray : Array = dataString.split(",");
+				
+				stream.close();
+				
+				var cupFilename : String = teamModel.teamList[0].cupImage;
+				var file : File = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+File.separator+"clubs"+File.separator+"cups" + File.separator + cupFilename);
+				var url : String = file.url;
+				
+				trophyImage.source = url;
+				
+				webcamView.initialise(settings.cameraViewWidth, settings.cameraViewHeight);
+				
+				webcamView.x = dataArray[0];
+				webcamView.y = dataArray[1];
+				webcamView.zoomView(dataArray[2]);
+				
+				trophyImage.x = dataArray[3];
+				trophyImage.y = dataArray[4];
+				trophyImage.width = dataArray[5];
+				trophyImage.height = dataArray[6];
 			}
 			*/
 			public function takePhoto():void
 			{
-				//				var outputPath : String = greenScreenPrefs.basePath+File.separator + "captures" + File.separator + "capture.jpg";
-				//				var captureRectangle : Rectangle = new Rectangle(0, 0, 500, 300);
-				//				var imageCapture : ImageCapture = new ImageCapture(outputPath, captureRectangle);
-				//				webcamView.captureImage(imageCapture);
+//				var outputPath : String = greenScreenPrefs.basePath+File.separator + "captures" + File.separator + "capture.jpg";
+//				var captureRectangle : Rectangle = new Rectangle(0, 0, 500, 300);
+//				var imageCapture : ImageCapture = new ImageCapture(outputPath, captureRectangle);
+//				webcamView.captureImage(imageCapture);
 				
 				//var timeline : TimelineMax = new TimelineMax();
 				//timeline.append(new TweenMax(cameraFlash, .3, {alpha:1, glowFilter:{color:0xFFFFFF, alpha:1, blurX:20, blurY:20}}));
@@ -92,12 +92,12 @@
 				
 				var cupFilename : String = teamModel.teamList[settings.userData.teamID].cupImage;
 				var file : File = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath + File.separator + 
-					"clubs" + File.separator + "cups" + File.separator + cupFilename);
+									"clubs" + File.separator + "cups" + File.separator + cupFilename);
 				var url : String = file.url;
 				
 				cupImage.source = url;
 			}
-			
+
 			public function removedFromStageHandler(event:Event):void
 			{
 				cameraDevice.destroy();
@@ -112,16 +112,24 @@
 					cupImage.x = (settings.cameraSettings[9]-(settings.cameraSettings[11]/2))*ratioH;
 					cupImage.y =  (settings.cameraSettings[10]-(settings.cameraSettings[12]/2))*ratioV;
 					cupImage.width =  settings.cameraSettings[11]*ratioH;
-					cupImage.height =  settings.cameraSettings[12]*ratioV;
+					//busorect.height =  settings.cameraSettings[15]*ratioV;
+					//busorect.width =  settings.cameraSettings[16]*ratioH;
+					//cameraMask.x = settings.cameraSettings[13];
+					//cameraMask.y = settings.cameraSettings[14];
 				}
 			}
 			
 			protected function cameraDevice_creationCompleteHandler(event:FlexEvent):void
 			{
-				// TODO Auto-generated method stub
-				
+				trace("camera complete - width: "+cameraDevice.width+" h:"+cameraDevice.height);				
 			}
 			
+			
+			protected function cameraDevice_resizeHandler(event:ResizeEvent):void
+			{
+				trace("camera resize - width: "+cameraDevice.width+" h:"+cameraDevice.height);				
+				
+			}
 			
 		]]>
 	</fx:Script>
@@ -131,32 +139,38 @@
 	</s:layout>
 	<s:Spacer height="60"/>
 	
-	<!--	<s:Group>
-	<s:Group width="{settings.cameraViewWidth}" height="{settings.cameraViewHeight}" id="webcamContainer">
-	<calibrator:WebcamView id="webcamView" mask="{webcamMask}"/>
-	<s:Group id="webcamMask" width="100%" height="100%">
-	<s:Rect width="100%" height="100%">
-	<s:fill>
-	<s:SolidColor color="0x900000"/>
-	</s:fill>
-	</s:Rect>
-	</s:Group>
-	</s:Group>
-	<s:Image id="trophyImage"/>
+<!--	<s:Group>
+		<s:Group width="{settings.cameraViewWidth}" height="{settings.cameraViewHeight}" id="webcamContainer">
+			<calibrator:WebcamView id="webcamView" mask="{webcamMask}"/>
+			<s:Group id="webcamMask" width="100%" height="100%">
+				<s:Rect width="100%" height="100%">
+					<s:fill>
+						<s:SolidColor color="0x900000"/>
+					</s:fill>
+				</s:Rect>
+			</s:Group>
+		</s:Group>
+		<s:Image id="trophyImage"/>
 	</s:Group> -->
 	
 	
 	<s:Group verticalCenter="0">
-		<model:CameraDevice id="cameraDevice"  creationComplete="cameraDevice_creationCompleteHandler(event)"/>
-		<!-- mask="{cameraMask}" -->
-		<s:Group width="800" height="600" id="cameraMask" resize="cameraMask_resizeHandler(event)">
+		<s:Group width="800" height="600" id="cameraBckg" resize="cameraMask_resizeHandler(event)">
 			<s:Rect width="100%" height="100%">
+				<s:fill>
+					<s:SolidColor color="0xcc00cc"/>
+				</s:fill>
+			</s:Rect>
+		</s:Group>
+		<model:CameraDevice id="cameraDevice" mask="{cameraMask}" creationComplete="cameraDevice_creationCompleteHandler(event)" resize="cameraDevice_resizeHandler(event)"/>
+		<s:Group width="800" height="600" id="cameraMask" resize="cameraMask_resizeHandler(event)"  >
+			<s:Rect width="100%" height="100%" id="busorect" >
 				<s:fill>
 					<s:SolidColor color="0xFFFFFF"/>
 				</s:fill>
 			</s:Rect>
 		</s:Group>
-		<s:Image id="cupImage" smooth="true" smoothingQuality="high" />
+		<s:Image id="cupImage" />
 		<s:Rect width="100%" height="100%" id="cameraFlash" alpha="0">
 			<s:fill>
 				<s:SolidColor color="0xFFFFFF"/>

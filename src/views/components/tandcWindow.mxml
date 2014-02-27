@@ -38,13 +38,14 @@
 				}
 			]]>
 		</fx:Script>
-		<controls:WebView id="tec" width="{this.width-20}" height="{this.height-150}" addedToStage="ta_addedToStageHandler(event)" />
+	<controls:WebView id="tec" width="{this.width-40}" height="{gruosso.height-100}" addedToStage="ta_addedToStageHandler(event)" />
 	
 	
-	<s:VGroup width="100%" height="100%" horizontalAlign="center" verticalAlign="bottom">
+	<s:VGroup width="100%" height="100%" horizontalAlign="center" id="gruosso" verticalAlign="bottom">
 		
 	
-	<s:Button skinClass="skins.vodafoneButton" id="gino" label="Close" click="PopUpManager.removePopUp(this);"/>
+	<s:Button skinClass="skins.vodafoneButton"  id="gino" label="Close" click="PopUpManager.removePopUp(this);"/>
+		<s:Spacer height="10" id="spazioGiu"  />
 	</s:VGroup>
 		<fx:Metadata>
 		[Event(name="showTerms", type="flash.events.Event")]
@@ -104,8 +105,9 @@
 				tec.source=initialUrl;
 			}
 			protected function resizza():void {
-				var eventObject:Event = new Event ("showTerms");
-				dispatchEvent(eventObject); 
+				trace("resizza altro");
+				//var eventObject:Event = new Event ("showTerms");
+				//dispatchEvent(eventObject); 
 			}
 
 			

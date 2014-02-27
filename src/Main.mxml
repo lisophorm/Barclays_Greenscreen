@@ -1089,9 +1089,9 @@
 			<s:HGroup width="100%" horizontalAlign="right" paddingRight="0" verticalAlign="middle" height="150">
 				<s:Button skinClass="skins.BasicButton" styleName="nav" icon="@Embed('assets/images/core/nm-no-connection.gif')" id="connStatus" label="{ML.t('NO CONNECTION')}" color="0xFFFFFF" visible="false" />
 				<s:Button skinClass="skins.BasicButton" styleName="nav" icon="@Embed('assets/images/core/home_logo.png')" click="{defaultView()}"/>
-				<s:Button label="camera" click="{gotoView('CameraCapture')}"/>
+				<!--s:Button label="camera" click="{gotoView('CameraCapture')}"/-->
 				<!--s:Button label="score" click="{gotoView('ScoreCapture')}"/-->
-				<s:Button label="thank you" click="{gotoView('UserForm')}"/>
+				<s:Button label="form" click="{gotoView('UserForm')}"/>
 				<s:Button skinClass="skins.BasicButton" styleName="nav" label="{ML.t('Quit')}" click="exitApplication(event)" id="quitButton" color="0xFFFFFF" visible="{loggedIn}" includeInLayout="{loggedIn}" />
 				<s:Button skinClass="skins.BasicButton" styleName="nav" icon="@Embed('assets/images/core/padlock.png')" click="config(event)" color="0xFFFFFF" />
 			</s:HGroup>		
