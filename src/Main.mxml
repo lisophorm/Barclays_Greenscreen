@@ -197,7 +197,7 @@
 				
 				if(Updater.isSupported) {
 					trace("checking update")
-					checkUpdate();
+					//checkUpdate();
 				} else {
 					trace("update not supported");
 				}

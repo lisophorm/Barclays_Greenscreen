@@ -12,9 +12,9 @@
 		
 		<fx:Script>
 			<![CDATA[
-				import model.ML;
-				
 				import mx.events.FlexEvent;
+				
+				import model.ML;
 				
 				protected var isremoving:Boolean = false;
 				
@@ -23,6 +23,11 @@
 				
 				protected function onAdded(e:FlexEvent=null):void
 				{
+					
+					//
+					
+					
+					
 					isremoving = false;
 				}
 				protected function exit(e:FlexEvent=null):void
@@ -64,7 +69,9 @@
 			protected var tcRequest:URLRequest;
 			protected var tcLoader:URLLoader = new URLLoader();
 			public var initialUrl:String;
-			protected var myStage:StageWebView;
+			protected var webView:StageWebView;
+			
+			
 			
 			protected function ttlWndw_close(evt:CloseEvent):void {
 				//myStage.visible=false;
