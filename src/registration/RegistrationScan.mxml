@@ -59,6 +59,11 @@
 			
 			public function created(event:FlexEvent=null):void
 			{
+				
+				trace("********** init of finger scan rego process");
+				
+				
+				
 				init();
 				this.removeEventListener( Event.INIT, init);
 				this.addEventListener( Event.INIT, init);
@@ -68,6 +73,7 @@
 			}
 			public function init(event:Event=null):void
 			{
+				trace("previous registration:"+this.parentApplication.registrationIncomplete);
 				this.currentState = "";
 				currentURN = null;
 				frontMessage.text = "PLEASE WAIT - INITIALISING SCANNER";
@@ -147,7 +153,14 @@
 			
 			protected function readyToScan( e:RegistrationEvent=null ):void
 			{
+				trace("RegistrationScan :: ready to scan");
 				currentState="READY_TO_SCAN";
+				// if last registration wasn't finalized, delete fingerprint data
+				if(this.parentApplication.registrationIncomplete) {
+					this.parentApplication.registrationIncomplete=false;
+					device.sendMessage("delete "+this.parentApplication.lastIncompleteURN);
+					this.parentApplication.lastIncompleteURN="";
+				}
 			}
 			
 			protected function userRegistered( e:RegistrationEvent = null ):void
@@ -201,6 +214,7 @@
 			
 			protected function exit(e:Event=null):void
 			{
+				trace("**************** exit registration");
 				stopListen();
 			}
 			
@@ -330,7 +344,7 @@
 			}
 			protected function onError(msg:String,header:String="ERROR"):void
 			{
-				this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, "ERROR - RETURNED:"+msg, header, init));
+				this.parentApplication.dispatchEvent(new KioskError(KioskError.ERROR, "COMMUNICATION ERROR WITH THE FINGERPRINT SERVER:\r\nRETURNED:"+msg, "ERROR", init));
 				//init();
 			}
 			
@@ -397,14 +411,21 @@
 			{
 				
 				this.currentState = "REGISTER_BEGIN";
+				// we just started the registration
+				this.parentApplication.registrationIncomplete=true;
 				
 				// create the user here
 				
 				var user : UserData = new UserData();
 				user.urn = "A"+uniqueID.toString()+"Z";
+				
+				
 				settings.userData = user;
 				
 				device.registerUser( user.urn );
+				
+				// stores urn in case of registration incomplete
+				this.parentApplication.lastIncompleteURN=user.urn;
 			}
 			
 			protected function onStateChange( e:StateChangeEvent ):void

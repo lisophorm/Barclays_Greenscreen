@@ -64,8 +64,7 @@
 	</fx:Declarations>
 	<s:VGroup width="100%" height="597" horizontalAlign="center" verticalAlign="middle">
 		<s:Spacer width="10" height="30"/>
-		<s:Label textAlign="center" width="750" styleName="thankyou" text="Thank you"  />
-		<s:Label textAlign="center" width="750" styleName="thankyou" text="for selecting your Dream Team." />
+		<s:Label textAlign="center" styleName="thankyou" text="Thank you"  />
 		<s:Spacer width="10" height="30"/>
 	</s:VGroup>
 </s:Group>

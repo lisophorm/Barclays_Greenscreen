@@ -191,8 +191,8 @@ mx|ViewStack mx|VBox
 .thankyou
 {
 	fontFamily: "StandardRegular";
-	
-	fontSize: 280;
+	typographicCase:uppercase;
+	fontSize: 180;
 	color: #00AEEF;
 	lineHeight: 0px;
 }

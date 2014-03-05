@@ -20,7 +20,6 @@
 			import air.update.events.UpdateEvent;
 			
 			import events.ApplicationEvent;
-			import registration.debug.DebugEvent;
 			import events.GreenscreenModuleEvent;
 			import events.KioskError;
 			import events.KioskEvent;
@@ -34,6 +33,8 @@
 			import model.MonitorConnection;
 			import model.Settings;
 			import model.TeamModel;
+			
+			import registration.debug.DebugEvent;
 			
 			import skins.vodafoneButton;
 			import skins.vodafoneFormItem;
@@ -90,6 +91,12 @@
 			
 			[Bindable]
 			public var isRegistered:String = "";
+			
+			[Bindable]
+			public var registrationIncomplete:Boolean=false;
+			
+			[Bindable]
+			public var lastIncompleteURN:String="";
 			
 			protected var optin_marketing:Boolean = false;
 			protected var optin_terms:Boolean = false;
@@ -1090,8 +1097,6 @@
 				<s:Button skinClass="skins.BasicButton" styleName="nav" icon="@Embed('assets/images/core/nm-no-connection.gif')" id="connStatus" label="{ML.t('NO CONNECTION')}" color="0xFFFFFF" visible="false" />
 				<s:Button skinClass="skins.BasicButton" styleName="nav" icon="@Embed('assets/images/core/home_logo.png')" click="{defaultView()}"/>
 				<!--s:Button label="camera" click="{gotoView('CameraCapture')}"/-->
-				<!--s:Button label="score" click="{gotoView('ScoreCapture')}"/-->
-				<s:Button label="form" click="{gotoView('UserForm')}"/>
 				<s:Button skinClass="skins.BasicButton" styleName="nav" label="{ML.t('Quit')}" click="exitApplication(event)" id="quitButton" color="0xFFFFFF" visible="{loggedIn}" includeInLayout="{loggedIn}" />
 				<s:Button skinClass="skins.BasicButton" styleName="nav" icon="@Embed('assets/images/core/padlock.png')" click="config(event)" color="0xFFFFFF" />
 			</s:HGroup>		

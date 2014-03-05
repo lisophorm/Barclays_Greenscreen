@@ -4,7 +4,7 @@
 
 @font-face
 {
-	src: url("../fonts/PremierLeague/PremierLeague.ttf");
+	src: url("../fonts/PremierLeague/PremierLeague.otf");
 	fontFamily: "StandardRegular";
 	embedAsCFF: true;
 }
@@ -12,6 +12,13 @@
 {
 	src: url("../fonts/ExpertSans/ExpertSans-Light.ttf");
 	fontFamily: "StandardRegularAllCase";
+	embedAsCFF: true;
+}
+@font-face
+{
+	src: url("/assets/fonts/ExpertSans/ExpertSans-Bold.ttf");
+	fontFamily: "/assets/StandardRegularAllCase";
+	fontWeight: bold;
 	embedAsCFF: true;
 }
 @font-face
