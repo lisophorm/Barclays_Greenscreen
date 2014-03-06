@@ -3,10 +3,11 @@
 					   xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:views="views.*"
 					   horizontalCenter="center" width="100%" height="100%"
 					   creationComplete="init(event)"  resize="onresize()" backgroundColor="0x000000"
-					
+					closing="windowedapplication1_closingHandler(event)"
 					   addedToStage="fullscreen()" alwaysInFront="true" showStatusBar="false" xmlns:mainscreen="views.cameracapture.mainscreen.*" xmlns:components="views.components.*" xmlns:fingerprintscanner="fingerprintscanner.*" xmlns:registration="registration.*" xmlns:debug="registration.debug.*">
 	<fx:Script>
 		<![CDATA[
+			import com.alfo.utils.IELauncher;
 			import com.greensock.TweenMax;
 			import com.utils.Console;
 			
@@ -121,6 +122,8 @@
 			
 			private var appUpdater:ApplicationUpdaterUI = new ApplicationUpdaterUI();
 			
+			private var browserHandler:IELauncher;
+			
 			
 			protected function fullscreen(e:Event=null):void
 			{
@@ -202,6 +205,9 @@
 			{
 			//	trace(File.applicationDirectory.nativePath);
 				
+				
+				
+				
 				if(Updater.isSupported) {
 					trace("checking update")
 					//checkUpdate();
@@ -235,6 +241,9 @@
 					
 				urn = int(pref.prefsXML..urnLength);
 				scoreFormat = pref.prefsXML..scoreFormat;
+				
+				browserHandler=new IELauncher();
+				browserHandler.launch();
 				//Console.log("baseURL: "+baseURL, this);
 				//Console.log("localURL: "+localURL, this);
 				//Console.log("appplicationtype is now: "+ApplicationType, this);
@@ -785,6 +794,7 @@
 			
 			protected function config(event:MouseEvent=null):void
 			{
+				
 				if (loggedIn)
 				{
 					this.dispatchEvent( new ViewEvent( ViewEvent.LOCATION_CONFIG ));
@@ -796,6 +806,7 @@
 			protected function login( e:Event=null ):void
 			{
 				this.loggedIn = true;
+				browserHandler.launch();
 				config();
 				
 			}
@@ -1058,6 +1069,14 @@
 			
 
 
+			
+			protected function windowedapplication1_closingHandler(event:Event):void
+			{
+				trace("*********** closing window!");
+				if(browserHandler) {
+					browserHandler.kill();
+				}
+			}
 			
 		]]>
 	</fx:Script>
