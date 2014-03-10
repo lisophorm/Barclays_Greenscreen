@@ -59,7 +59,7 @@
 				{
 					settings.userData.firstName = result["firstname"];
 					settings.userData.lastName = result["lastname"];
-					settings.userData.teamID = int(result["team_id"]);
+					settings.userData.teamID = int(result["team_id"])-1;
 					
 					welcomeBackUser.text = result["firstname"] + " " + result["lastname"];
 					TweenMax.to(welcomeBackUser, .3, {alpha : 1});

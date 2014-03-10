@@ -163,7 +163,7 @@ in accordance with the terms of the license agreement accompanying it.
 			 textAlign="center" styleName="buttonLabel"
 			 maxDisplayedLines="1"
 			 horizontalCenter="0" verticalCenter="1" verticalAlign="middle"
-			 
+			 typographicCase="uppercase"
 			 left="10" right="10" top="2" bottom="2" paddingLeft="10" paddingRight="10"
 			 color="0xffffff">
 	</s:Label>
