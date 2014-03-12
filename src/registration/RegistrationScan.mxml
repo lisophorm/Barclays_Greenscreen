@@ -157,6 +157,7 @@
 				currentState="READY_TO_SCAN";
 				// if last registration wasn't finalized, delete fingerprint data
 				if(this.parentApplication.registrationIncomplete) {
+					trace("deleting previous user");
 					this.parentApplication.registrationIncomplete=false;
 					device.sendMessage("delete "+this.parentApplication.lastIncompleteURN);
 					this.parentApplication.lastIncompleteURN="";
