@@ -151,7 +151,7 @@ in accordance with the terms of the license agreement accompanying it.
 	<!--- @private -->
 	<s:Rect id="border" left="0" right="0" alpha="0" top="0" bottom="0" width="69" height="20" radiusX="15">
 		<s:stroke>
-			<s:SolidColorStroke color="0xffffff" weight="2">
+			<s:SolidColorStroke color="0xffffff" weight="0">
 				
 			</s:SolidColorStroke>
 		</s:stroke>
