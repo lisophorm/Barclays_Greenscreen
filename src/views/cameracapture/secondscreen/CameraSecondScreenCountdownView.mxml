@@ -112,6 +112,7 @@
 					cupImage.x = (settings.cameraSettings[9]-(settings.cameraSettings[11]/2))*ratioH;
 					cupImage.y =  (settings.cameraSettings[10]-(settings.cameraSettings[12]/2))*ratioV;
 					cupImage.width =  settings.cameraSettings[11]*ratioH;
+					cupImage.height =  settings.cameraSettings[12]*ratioV;
 					//busorect.height =  settings.cameraSettings[15]*ratioV;
 					//busorect.width =  settings.cameraSettings[16]*ratioH;
 					//cameraMask.x = settings.cameraSettings[13];

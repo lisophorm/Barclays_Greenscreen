@@ -3,7 +3,7 @@
 					   xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:views="views.*"
 					   horizontalCenter="center" width="100%" height="100%"
 					   creationComplete="init(event)"  resize="onresize()" backgroundColor="0x000000"
-					   addedToStage="fullscreen()" alwaysInFront="false" showStatusBar="false" xmlns:mainscreen="views.cameracapture.mainscreen.*" xmlns:components="views.components.*" xmlns:fingerprintscanner="fingerprintscanner.*" xmlns:registration="registration.*" xmlns:debug="registration.debug.*">
+					   addedToStage="fullscreen()" alwaysInFront="true" showStatusBar="false" xmlns:mainscreen="views.cameracapture.mainscreen.*" xmlns:components="views.components.*" xmlns:fingerprintscanner="fingerprintscanner.*" xmlns:registration="registration.*" xmlns:debug="registration.debug.*">
 	<fx:Script>
 		<![CDATA[
 			import com.greensock.TweenMax;
@@ -1105,7 +1105,7 @@
 			<s:HGroup width="100%" horizontalAlign="right" paddingRight="0" verticalAlign="middle" height="150">
 				<s:Button skinClass="skins.BasicButton" styleName="nav" icon="@Embed('assets/images/core/nm-no-connection.gif')" id="connStatus" label="{ML.t('NO CONNECTION')}" color="0xFFFFFF" visible="false" />
 				<s:Button skinClass="skins.BasicButton" styleName="nav" icon="@Embed('assets/images/core/home_logo.png')" click="{defaultView()}"/>
-				<!--s:Button label="camera" click="{gotoView('CameraCapture')}"/-->
+				<s:Button label="camera" click="{gotoView('CameraCapture')}"/>
 				<s:Button skinClass="skins.BasicButton" styleName="nav" label="{ML.t('Quit')}" click="exitApplication(event)" id="quitButton" color="0xFFFFFF" visible="{loggedIn}" includeInLayout="{loggedIn}" />
 				<s:Button skinClass="skins.BasicButton" styleName="nav" icon="@Embed('assets/images/core/padlock.png')" click="config(event)" color="0xFFFFFF" />
 			</s:HGroup>		
