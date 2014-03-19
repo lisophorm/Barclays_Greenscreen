@@ -5,9 +5,9 @@
 	
 	<fx:Script>
 		<![CDATA[
-			import model.Settings;
-			
 			import mx.events.FlexEvent;
+			
+			import model.Settings;
 			
 			private var camera:Camera;
 			private var settings:Settings;
@@ -37,12 +37,7 @@
 				sprite.addChild(video);
 			}
 
-			public function zoomView(value : Number):void
-			{
-				zoomLevel = value;
-				video.scaleX = video.scaleY = value;
-				camera.setMode(viewWidth * value, viewHeight * value, 30);
-			}
+
 			
 			public function captureImage(imageCapture : ImageCapture):void
 			{
@@ -50,6 +45,14 @@
 				var finalCapture:BitmapData = new BitmapData(viewWidth , viewHeight );
 				finalCapture.draw(video);
 				imageCapture.writeFileFromBitmapData(finalCapture);
+			}
+			
+			public function grabImage():BitmapData
+			{
+				//var finalCapture:BitmapData = new BitmapData(viewWidth * settings.imageOutputMultiplier, viewHeight * settings.imageOutputMultiplier);
+				var finalCapture:BitmapData = new BitmapData(viewWidth , viewHeight,true );
+				finalCapture.draw(video);
+				return finalCapture;
 			}
 			
 		]]>

@@ -2,20 +2,40 @@
 <s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx" width="100%" height="100%"
-		 creationComplete="initialise(event)" xmlns:calibrator="views.components.calibrator.*">
+		 creationComplete="initialise(event)" xmlns:calibrator="views.components.calibrator.*" remove="group1_removeHandler(event)">
 	
 	<fx:Script>
 		<![CDATA[
+			import com.alfo.chroma.Chromagic;
 			import com.alfo.utils.GreenScreenPrefs;
+			import com.roguedevelopment.objecthandles.Flex4ChildManager;
+			import com.roguedevelopment.objecthandles.Flex4HandleFactory;
+			import com.roguedevelopment.objecthandles.HandleDefinitions;
+			import com.roguedevelopment.objecthandles.HandleDescription;
+			import com.roguedevelopment.objecthandles.HandleRoles;
+			import com.roguedevelopment.objecthandles.ObjectHandles;
+			import com.roguedevelopment.objecthandles.constraints.MaintainProportionConstraint;
+			import com.roguedevelopment.objecthandles.constraints.MovementConstraint;
+			import com.roguedevelopment.objecthandles.decorators.AlignmentDecorator;
+			import com.roguedevelopment.objecthandles.decorators.DecoratorManager;
 			
 			import mx.events.FlexEvent;
 			import mx.events.ResizeEvent;
+			
+			import events.CameraEvent;
 			
 			import model.Settings;
 			import model.TeamModel;
 			
 			[Bindable]
 			private var settings:Settings;
+			
+			[Bindable] protected var trophyModel:SimpleDataModel = new SimpleDataModel();
+			[Bindable] protected var cropModel:SimpleDataModel = new SimpleDataModel();
+			[Bindable] protected var bckCutModel:SimpleDataModel = new SimpleDataModel();	
+			
+			protected var objectHandles:ObjectHandles;
+			protected var decoratorManager:DecoratorManager;
 			
 			private var greenScreenPrefs:GreenScreenPrefs = new GreenScreenPrefs();
 			private var teamModel:TeamModel;
@@ -24,15 +44,61 @@
 			
 			private var testImage:ImageCapture;
 			
+			private var chroma:Chromagic = new Chromagic();
+			
+			private var finalPreview:BitmapData;
+			
 			public function initialise(event : FlexEvent):void
 			{
+				var constraint2:MovementConstraint = new MovementConstraint();
+				constraint2.minX = 0;
+				constraint2.minY = 0;
+				constraint2.maxX = 800;
+				constraint2.maxY = 600;
+				
+				var propConstraint:MaintainProportionConstraint=new MaintainProportionConstraint();
+				
+				
+				finalPreview=new BitmapData(800,600,true);
+				objectHandles = new ObjectHandles( mainGroup , 
+					null, 
+					new Flex4HandleFactory() , 
+					new Flex4ChildManager() );
+				
+				//objectHandles.defaultHandles = handles; 
+				
+				cropModel.x = 50;
+				cropModel.y = 150;
+				cropModel.width = 50;
+				cropModel.height = 50;
+				
+				trophyModel.x = 50;
+				trophyModel.y = 150;
+				trophyModel.width = 50;
+				trophyModel.height = 50;
+				//flexModel1.isLocked = true;
+				objectHandles.registerComponent(cropModel,cropWiew, HandleDefinitions.NO_ROTATE_DEFINITION,true);
+				objectHandles.registerComponent(trophyModel,trophyView, HandleDefinitions.NO_ROTATE_DEFINITION,true,[propConstraint]);
+				//objectHandles.addDefaultConstraint(new MaintainProportionConstraint());
+				objectHandles.addDefaultConstraint( constraint2 );
+				
+				
+				decoratorManager = new DecoratorManager( objectHandles, drawingLayer );
+				decoratorManager.addDecorator( new AlignmentDecorator() );
+
+				
 				settings = Settings.instance;
 				teamModel = TeamModel.instance;
 				
 				var cupFilename : String = teamModel.teamList[0].cupImage;
 				
+				var backgroundImageName : String = teamModel.teamList[0].backgroundImage;
+				
+				var backgroundFile:File= File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+File.separator+"clubs"+File.separator+"backgrounds" + File.separator + backgroundImageName);				
 				var file : File = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+File.separator+"clubs"+File.separator+"cups" + File.separator + cupFilename);
 				var url : String = file.url;
+				
+				backgroundImage.source=backgroundFile.url;
 				
 				trophyView.setTrophyImage(url);
 				
@@ -77,10 +143,10 @@
 				dataArray[0] = webcamView.x;
 				dataArray[1] = webcamView.y;
 				dataArray[2] = slider.value;
-				dataArray[3] = trophyView.container.x;
+				/*dataArray[3] = trophyView.container.x;
 				dataArray[4] = trophyView.container.y;
 				dataArray[5] = trophyView.handle.x;
-				dataArray[6] = trophyView.handle.y;
+				dataArray[6] = trophyView.handle.y;*/
 				
 				var data : String = dataArray.join(",");
 				
@@ -93,9 +159,58 @@
 			
 			protected function button1_clickHandler(event:MouseEvent):void
 			{
-				testImage = new ImageCapture(File.desktopDirectory.resolvePath("testcapture.jpg").nativePath,new Rectangle(0,0,0,0));
-				webcamView.captureImage(testImage);
-				trace("image captured");
+				var cupMatrix:Matrix=new Matrix();
+				cupMatrix.scale(trophyView.scaleX,trophyView.scaleY);
+				cupMatrix.translate(trophyModel.x,trophyModel.y);
+				objectHandles.selectionManager.clearSelection();
+				var background:BitmapData=new BitmapData(800,600,true);
+				var photo:BitmapData=webcamView.grabImage();
+				var chromed:BitmapData=chroma.key(photo);
+				trace("trophy x:"+trophyModel.x);
+				trace("trophy x:"+trophyView.scaleX);
+				trace("trophy height:"+trophyModel.height);
+				//testImage = new ImageCapture(File.desktopDirectory.resolvePath("testcapture.jpg").nativePath,new Rectangle(0,0,0,0));
+				//webcamView.captureImage(testImage);
+				trace("image captured"+photo.width+"height:"+photo.height);
+				background.draw(backgroundImage);
+				background.draw(chromed);
+				background.draw(trophyView,cupMatrix);
+				finalImage.source=background;
+				finalImage.visible=true;
+				drawingLayer.visible=false;
+
+			}
+			
+			protected function trophyView_COMPLETEHandler(event:CameraEvent):void
+			{
+				trace("******** CALIBRATOR TROPHY LOADED");
+				trophyModel.width = event.data.width;
+				trophyModel.height = event.data.height;
+				
+				
+			}
+			
+			protected function group1_removeHandler(event:FlexEvent):void
+			{
+				trace("*********** removed calibrator");
+				
+			}
+			
+			protected function tryAgainBtn_clickHandler(event:MouseEvent):void
+			{
+				finalImage.visible=false;
+				drawingLayer.visible=true;
+			}
+			
+			protected function webcamView_clickHandler(event:MouseEvent):void
+			{
+				trace("webcam surface clicked x:"+webcamView.mouseX+" y:"+webcamView.mouseY);
+				
+			}
+			
+			protected function cropWiew_clickHandler(event:MouseEvent):void
+			{
+				trace("crop clicked x:"+webcamView.mouseX+" y:"+webcamView.mouseY);
 				
 			}
 			
@@ -105,10 +220,16 @@
 	<s:layout>
 		<s:VerticalLayout horizontalAlign="center" verticalAlign="middle"/>
 	</s:layout>
+	<s:Image id="backgroundImage" width="800" height="600" visible="false" includeInLayout="false" />
 	<s:Spacer height="60"/>
-	<s:Group>
+	
+	<s:HGroup>
+		
+	
+	<s:Group id="mainGroup">
+		<s:SpriteVisualElement width="100%" height="100%" id="drawingLayer" />
 		<s:Group width="{settings.calibratorViewWidth}" height="{settings.calibratorViewHeight}" id="webcamContainer">
-			<calibrator:WebcamView id="webcamView" mask="{webcamMask}"/>
+			<calibrator:WebcamView id="webcamView" mask="{webcamMask}" click="webcamView_clickHandler(event)"/>
 			<s:Group id="webcamMask" width="100%" height="100%">
 				<s:Rect width="100%" height="100%">
 					<s:fill>
@@ -122,12 +243,19 @@
 				</s:stroke>
 			</s:Rect>
 		</s:Group>
-		<calibrator:TrophyView id="trophyView"/>
-	</s:Group>
+		<calibrator:RectCropView id="cropWiew" model="{cropModel}" click="cropWiew_clickHandler(event)" />
+		<calibrator:TrophyView id="trophyView" model="{trophyModel}" COMPLETE="trophyView_COMPLETEHandler(event)" />
+		<s:BitmapImage width="100%" height="100%" id="finalImage" scaleMode="zoom" smooth="true" visible="false"  />
+	</s:Group >
+	<calibrator:ChromaSliders id="chromaSettings" />
+	</s:HGroup>
 	<s:Spacer height="30"/>
 	<s:HSlider id="slider" width="{settings.cameraViewWidth}"
 			   snapInterval="0" minimum="1" maximum="4" change="{webcamView.zoomView(slider.value)}"/>
-	<s:Button label="test" click="button1_clickHandler(event)" />
-	<s:Button click="saveSettingsClickHandler(event)" label="save"/>
-	
+	<s:HGroup>
+		<s:Button label="test" click="button1_clickHandler(event)" />
+		<s:Button click="saveSettingsClickHandler(event)" label="save"/>
+		<s:Button id="tryAgainBtn" label="try again" click="tryAgainBtn_clickHandler(event)"  />
+	</s:HGroup>
+
 </s:Group>

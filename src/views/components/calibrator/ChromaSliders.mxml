@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:BorderContainer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				   xmlns:s="library://ns.adobe.com/flex/spark" 
+				   xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="300" creationComplete="bordercontainer1_creationCompleteHandler(event)">
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			
+			protected function bordercontainer1_creationCompleteHandler(event:FlexEvent):void
+			{
+				// TODO Auto-generated method stub
+				
+			}
+			
+		]]>
+	</fx:Script>
+	<s:VGroup>
+		
+	
+	<s:HGroup>
+		<s:HSlider id="hueSlider"  width="300" minimum="0" maximum="360" value="120" />
+		<s:Label text="hue" color="0x000000" />
+	</s:HGroup>
+	<s:HGroup>
+		<s:HSlider id="deltaSlider"  width="300" minimum="0" maximum="360" value="45" />
+		<s:Label text="tolerance" color="0x000000" />
+	</s:HGroup>
+	<s:HGroup>
+		<s:HSlider id="satSlider"  width="300" minimum="0" maximum="100" value="20" stepSize="1" />
+		<s:Label text="saturation" color="0x000000" />
+	</s:HGroup>
+	
+	<s:HGroup>
+		<s:HSlider width="300" id="minSlider" minimum="0" maximum="100"  value="35" stepSize="1" />
+		<s:Label text="minumum" color="0x000000" />
+	</s:HGroup>
+	<s:HGroup>
+		<s:HSlider width="300" id="maxSlider" minimum="0" maximum="100" value="95" stepSize="1" />
+		<s:Label text="maximum" color="0x000000" />
+	</s:HGroup>
+	</s:VGroup>
+</s:BorderContainer>

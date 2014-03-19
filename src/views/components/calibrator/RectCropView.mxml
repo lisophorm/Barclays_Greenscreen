@@ -10,7 +10,6 @@
 	</fx:Metadata>
 	<fx:Script>
 		<![CDATA[
-			import events.CameraEvent;
 			
 			protected var originalWidth : int;
 			protected var originalHeight : int;
@@ -18,34 +17,11 @@
 			private var mouseZero:Point;
 			
 			
-			public function setTrophyImage(url : String):void
-			{
-				trophyImage.source = url;
-			}
-			
-
-			
-
-			
-			
 
 			
 
 			
 
-			
-
-			
-			protected function trophyImageCompleteHandler(event:Event):void
-			{
-				originalWidth = trophyImage.bitmapData.width;
-				originalHeight = trophyImage.bitmapData.height;
-				var dimensions:Object = new Object();
-				dimensions.width=originalWidth;
-				dimensions.height=originalHeight;
-				var e:CameraEvent=new CameraEvent(CameraEvent.COMPLETE,dimensions);
-				dispatchEvent(e);
-			}
 			
 		]]>
 	</fx:Script>
@@ -53,6 +29,12 @@
 	<fx:Declarations>
 		<calibrator:SimpleDataModel id="model" />
 	</fx:Declarations>
-		<s:BitmapImage smooth="true" width="{width}" height="{height}" id="trophyImage" complete="trophyImageCompleteHandler(event)" />
-
+	<s:Rect width="{width}" height="{height}" >
+		<s:stroke>
+			<s:SolidColorStroke color="0x000000" weight="2" />
+		</s:stroke>
+		<s:fill>
+			<s:SolidColor color="0xffffff" alpha="0.1" />
+		</s:fill>
+	</s:Rect>
 </s:Group>
