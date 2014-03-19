@@ -32,6 +32,7 @@
 				camera.setMode(viewWidth, viewHeight, 30);
 				
 				video = new Video(viewWidth, viewHeight);
+				video.smoothing=true;
 				video.attachCamera(camera);
 				sprite.addChild(video);
 			}
@@ -45,7 +46,8 @@
 			
 			public function captureImage(imageCapture : ImageCapture):void
 			{
-				var finalCapture:BitmapData = new BitmapData(viewWidth * settings.imageOutputMultiplier, viewHeight * settings.imageOutputMultiplier);
+				//var finalCapture:BitmapData = new BitmapData(viewWidth * settings.imageOutputMultiplier, viewHeight * settings.imageOutputMultiplier);
+				var finalCapture:BitmapData = new BitmapData(viewWidth , viewHeight );
 				finalCapture.draw(video);
 				imageCapture.writeFileFromBitmapData(finalCapture);
 			}

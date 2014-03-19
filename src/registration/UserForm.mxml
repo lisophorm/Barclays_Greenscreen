@@ -85,6 +85,8 @@
 					
 				} else if (isValidForm) 
 				{
+					settings.userData.firstName = userFirstName.text;
+					settings.userData.lastName = userLastName.text;
 					//send data
 					saveData.send({urn: settings.userData.urn, 
 

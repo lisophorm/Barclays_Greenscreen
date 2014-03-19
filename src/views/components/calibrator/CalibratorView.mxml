@@ -8,11 +8,11 @@
 		<![CDATA[
 			import com.alfo.utils.GreenScreenPrefs;
 			
-			import model.Settings;
-			import model.TeamModel;
-			
 			import mx.events.FlexEvent;
 			import mx.events.ResizeEvent;
+			
+			import model.Settings;
+			import model.TeamModel;
 			
 			[Bindable]
 			private var settings:Settings;
@@ -21,6 +21,8 @@
 			private var teamModel:TeamModel;
 			private var mouseZero:Point;
 			private var webcamViewZero:Point;
+			
+			private var testImage:ImageCapture;
 			
 			public function initialise(event : FlexEvent):void
 			{
@@ -37,7 +39,7 @@
 				webcamContainer.addEventListener(MouseEvent.MOUSE_DOWN, webcamMouseDownHandler);
 				addEventListener(MouseEvent.MOUSE_UP, webcamMouseUpHandler);
 				
-				webcamView.initialise(settings.calibratorViewWidth, settings.calibratorViewHeight);
+				webcamView.initialise(800, 600);
 				
 				slider.thumb.width = slider.thumb.height = 20;
 			}
@@ -70,7 +72,7 @@
 			
 			protected function saveSettingsClickHandler(event : MouseEvent) : void
 			{
-	
+				trace("save settings");
 				var dataArray : Array = new Array();
 				dataArray[0] = webcamView.x;
 				dataArray[1] = webcamView.y;
@@ -87,6 +89,14 @@
 				stream.open(file, FileMode.WRITE);
 				stream.writeUTFBytes(data);
 				stream.close();
+			}
+			
+			protected function button1_clickHandler(event:MouseEvent):void
+			{
+				testImage = new ImageCapture(File.desktopDirectory.resolvePath("testcapture.jpg").nativePath,new Rectangle(0,0,0,0));
+				webcamView.captureImage(testImage);
+				trace("image captured");
+				
 			}
 			
 		]]>
@@ -117,5 +127,7 @@
 	<s:Spacer height="30"/>
 	<s:HSlider id="slider" width="{settings.cameraViewWidth}"
 			   snapInterval="0" minimum="1" maximum="4" change="{webcamView.zoomView(slider.value)}"/>
+	<s:Button label="test" click="button1_clickHandler(event)" />
 	<s:Button click="saveSettingsClickHandler(event)" label="save"/>
+	
 </s:Group>
