@@ -20,11 +20,14 @@ package model
 	
 	import mx.core.UIComponent;
 	
+	import events.BitmapCapturedEvent;
 	import events.CameraEvent;
 	
 	import ru.inspirit.image.encoder.JPGAsyncEncoder;
 
 	[Event(name="COMPLETE", type="events.CameraEvent")]
+	[Event(name="bitmapCaptured", type="events.BitmapCapturedEvent")]
+	
 	public class CameraDevice extends UIComponent
 	{
 		protected var camera:Camera;
@@ -150,6 +153,7 @@ package model
 				camera = null;
 				video = null;
 				
+				dispatchEvent(new BitmapCapturedEvent(BitmapCapturedEvent.BITMAP_CAPTURED, finalCapture, true));
 //				overlay = new Sprite();
 //				overlay.graphics.beginFill(0xFFFFFF,1);
 //				overlay.graphics.drawRect(0,0, _width, _height);
@@ -158,9 +162,9 @@ package model
 //				
 //				TweenMax.to( overlay, 1.5, { alpha:0, onComplete: hideOverlay});
 				
-				encoder.addEventListener(ProgressEvent.PROGRESS, onEncodingProgress);
-				encoder.addEventListener(Event.COMPLETE, onEncodeComplete);
-				encoder.encodeAsync(finalCapture);
+//				encoder.addEventListener(ProgressEvent.PROGRESS, onEncodingProgress);
+//				encoder.addEventListener(Event.COMPLETE, onEncodeComplete);
+//				encoder.encodeAsync(finalCapture);
 			}
 			
 		}

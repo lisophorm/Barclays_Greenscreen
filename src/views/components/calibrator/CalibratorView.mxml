@@ -7,7 +7,8 @@
 	<fx:Script>
 		<![CDATA[
 			import com.alfo.chroma.Chromagic;
-			import com.alfo.utils.GreenScreenPrefs;
+			import com.alfo.utils.ChromaPrefs;
+			import com.alfo.utils.ImageFactory;
 			import com.roguedevelopment.objecthandles.Flex4ChildManager;
 			import com.roguedevelopment.objecthandles.Flex4HandleFactory;
 			import com.roguedevelopment.objecthandles.HandleDefinitions;
@@ -23,6 +24,9 @@
 			import mx.events.ResizeEvent;
 			
 			import events.CameraEvent;
+			import events.ViewEvent;
+			
+			import flashx.textLayout.factory.TruncationOptions;
 			
 			import model.Settings;
 			import model.TeamModel;
@@ -37,7 +41,7 @@
 			protected var objectHandles:ObjectHandles;
 			protected var decoratorManager:DecoratorManager;
 			
-			private var greenScreenPrefs:GreenScreenPrefs = new GreenScreenPrefs();
+			private var chromaPrefs:ChromaPrefs;
 			private var teamModel:TeamModel;
 			private var mouseZero:Point;
 			private var webcamViewZero:Point;
@@ -48,8 +52,15 @@
 			
 			private var finalPreview:BitmapData;
 			
+			private var imageFactory:ImageFactory;
+			
 			public function initialise(event : FlexEvent):void
 			{
+				
+				imageFactory=new ImageFactory(800,600,1);
+				
+				chromaPrefs=ChromaPrefs.getInstance();
+				
 				var constraint2:MovementConstraint = new MovementConstraint();
 				constraint2.minX = 0;
 				constraint2.minY = 0;
@@ -65,17 +76,28 @@
 					new Flex4HandleFactory() , 
 					new Flex4ChildManager() );
 				
-				//objectHandles.defaultHandles = handles; 
+				trace("i sm hrtr");
 				
-				cropModel.x = 50;
-				cropModel.y = 150;
-				cropModel.width = 50;
-				cropModel.height = 50;
+				cropModel.x = chromaPrefs.cropX;
+				cropModel.y = chromaPrefs.cropY;
+				cropModel.width = chromaPrefs.cropWidth;
+				cropModel.height = chromaPrefs.cropHeight
 				
-				trophyModel.x = 50;
-				trophyModel.y = 150;
-				trophyModel.width = 50;
-				trophyModel.height = 50;
+				trophyModel.x = chromaPrefs.cupX;
+				trophyModel.y = chromaPrefs.cupY;
+				trophyModel.width = chromaPrefs.cupWidth;
+				trophyModel.height = chromaPrefs.cupHeight;
+				
+				chromaSettings.Hue = chromaPrefs.Hue;
+				chromaSettings.Saturation = chromaPrefs.Saturation;
+				chromaSettings.Tolerance=chromaPrefs.Tolerance;
+				chromaSettings.MinValue = chromaPrefs.MinValue;
+				chromaSettings.MaxValue = chromaPrefs.MaxValue;
+				
+				chromaSettings.crossHairX=chromaPrefs.colorPickerX;
+				chromaSettings.crossHairY=chromaPrefs.colorPickerY;
+				chromaSettings.autoColor=chromaPrefs.autoColor;
+				
 				//flexModel1.isLocked = true;
 				objectHandles.registerComponent(cropModel,cropWiew, HandleDefinitions.NO_ROTATE_DEFINITION,true);
 				objectHandles.registerComponent(trophyModel,trophyView, HandleDefinitions.NO_ROTATE_DEFINITION,true,[propConstraint]);
@@ -94,8 +116,8 @@
 				
 				var backgroundImageName : String = teamModel.teamList[0].backgroundImage;
 				
-				var backgroundFile:File= File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+File.separator+"clubs"+File.separator+"backgrounds" + File.separator + backgroundImageName);				
-				var file : File = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+File.separator+"clubs"+File.separator+"cups" + File.separator + cupFilename);
+				var backgroundFile:File= File.applicationDirectory.resolvePath("assets"+File.separator+"images"+File.separator+"clubs"+File.separator+"backgrounds" + File.separator + backgroundImageName);				
+				var file : File = File.applicationDirectory.resolvePath("assets"+File.separator+"images"+File.separator+"clubs"+File.separator+"cups" + File.separator + cupFilename);
 				var url : String = file.url;
 				
 				backgroundImage.source=backgroundFile.url;
@@ -107,7 +129,7 @@
 				
 				webcamView.initialise(800, 600);
 				
-				slider.thumb.width = slider.thumb.height = 20;
+				//slider.thumb.width = slider.thumb.height = 20;
 			}
 			
 			protected function webcamMouseDownHandler(event : MouseEvent) : void
@@ -138,54 +160,75 @@
 			
 			protected function saveSettingsClickHandler(event : MouseEvent) : void
 			{
-				trace("save settings");
-				var dataArray : Array = new Array();
-				dataArray[0] = webcamView.x;
-				dataArray[1] = webcamView.y;
-				dataArray[2] = slider.value;
+				trace("save settings"+trophyModel.x+" y:"+trophyModel.y);
+
+				//dataArray[2] = slider.value;
 				/*dataArray[3] = trophyView.container.x;
 				dataArray[4] = trophyView.container.y;
 				dataArray[5] = trophyView.handle.x;
 				dataArray[6] = trophyView.handle.y;*/
+				chromaPrefs.cropX = cropModel.x;
+				chromaPrefs.cropY = cropModel.y;
+				chromaPrefs.cropWidth = cropModel.width;
+				chromaPrefs.cropHeight = cropModel.height;
 				
-				var data : String = dataArray.join(",");
+				chromaPrefs.cupX = trophyModel.x;
+				chromaPrefs.cupY = trophyModel.y;
+				chromaPrefs.cupWidth = trophyModel.width;
+				chromaPrefs.cupHeight = trophyModel.height;
 				
-				var file : File = File.desktopDirectory.resolvePath("settings.txt");
-				var stream : FileStream = new FileStream();
-				stream.open(file, FileMode.WRITE);
-				stream.writeUTFBytes(data);
-				stream.close();
+				chromaPrefs.Hue = chromaSettings.Hue;
+				chromaPrefs.Saturation = chromaSettings.Saturation;
+				chromaPrefs.Tolerance = chromaSettings.Tolerance;
+				chromaPrefs.MinValue = chromaSettings.MinValue;
+				chromaPrefs.MaxValue = chromaSettings.MaxValue;
+				chromaPrefs.colorPickerX=chromaSettings.crossHairX;
+				chromaPrefs.colorPickerY=chromaSettings.crossHairY;
+				chromaPrefs.autoColor=chromaSettings.autoColor;
+				chromaPrefs.saveXMLPrefs();
+				this.parentApplication.dispatchEvent( new ViewEvent(ViewEvent.LOCATION_RESTART ));
 			}
 			
 			protected function button1_clickHandler(event:MouseEvent):void
 			{
-				var cupMatrix:Matrix=new Matrix();
-				cupMatrix.scale(trophyView.scaleX,trophyView.scaleY);
-				cupMatrix.translate(trophyModel.x,trophyModel.y);
+				imageFactory.crop=new Rectangle(cropModel.x,cropModel.y,cropModel.width,cropModel.height);
+				imageFactory.trophy=new Rectangle(trophyModel.x,trophyModel.y,trophyView.scaleX,trophyView.scaleY);
+				
+
 				objectHandles.selectionManager.clearSelection();
-				var background:BitmapData=new BitmapData(800,600,true);
+
 				var photo:BitmapData=webcamView.grabImage();
-				var chromed:BitmapData=chroma.key(photo);
+
 				trace("trophy x:"+trophyModel.x);
 				trace("trophy x:"+trophyView.scaleX);
 				trace("trophy height:"+trophyModel.height);
-				//testImage = new ImageCapture(File.desktopDirectory.resolvePath("testcapture.jpg").nativePath,new Rectangle(0,0,0,0));
-				//webcamView.captureImage(testImage);
-				trace("image captured"+photo.width+"height:"+photo.height);
-				background.draw(backgroundImage);
-				background.draw(chromed);
-				background.draw(trophyView,cupMatrix);
-				finalImage.source=background;
+				if(chromaSettings.autoColor==1) {
+					trace("colorpicker x:"+chromaSettings.crossHairX+"y:"+chromaSettings.crossHairY);
+					var hsv:Vector.<Number>=imageFactory.colorPicker(chromaSettings.crossHairX,chromaSettings.crossHairY,webcamView.grabImage());
+					trace("hue is:"+hsv[0]);
+					imageFactory.Hue=hsv[0]*360;
+					trace("hue is:"+imageFactory.Hue);
+				} else {
+					imageFactory.Hue=chromaSettings.Hue;
+					trace("hue is:"+imageFactory.Hue);
+				}
+				imageFactory.Saturation=chromaSettings.Saturation;
+				imageFactory.Tolerance=chromaSettings.Tolerance;
+				imageFactory.MinValue=chromaSettings.MinValue;
+				imageFactory.MaxValue=chromaSettings.MaxValue;
+				finalImage.source=imageFactory.processImage(photo,trophyView.trophyImage.bitmapData,backgroundImage);
 				finalImage.visible=true;
 				drawingLayer.visible=false;
+				photo.dispose();
+				photo=null;
 
 			}
 			
 			protected function trophyView_COMPLETEHandler(event:CameraEvent):void
 			{
 				trace("******** CALIBRATOR TROPHY LOADED");
-				trophyModel.width = event.data.width;
-				trophyModel.height = event.data.height;
+				trophyModel.width = chromaPrefs.cupWidth;
+				trophyModel.height = chromaPrefs.cupHeight;
 				
 				
 			}
@@ -205,13 +248,23 @@
 			protected function webcamView_clickHandler(event:MouseEvent):void
 			{
 				trace("webcam surface clicked x:"+webcamView.mouseX+" y:"+webcamView.mouseY);
-				
+				var hsv:Vector.<Number>=imageFactory.colorPicker(webcamView.mouseX,webcamView.mouseY,webcamView.grabImage());
+				trace("hsv:"+hsv[0]+"-"+hsv[1]+"-"+hsv[2]);
+				chromaSettings.Hue=	hsv[0]*360;
+				chromaSettings.Saturation=hsv[1]/2;
+				chromaSettings.crossHairX=webcamView.mouseX;
+				chromaSettings.crossHairY=webcamView.mouseY;
 			}
 			
 			protected function cropWiew_clickHandler(event:MouseEvent):void
 			{
 				trace("crop clicked x:"+webcamView.mouseX+" y:"+webcamView.mouseY);
-				
+				var hsv:Vector.<Number>=imageFactory.colorPicker(webcamView.mouseX,webcamView.mouseY,webcamView.grabImage());
+				trace("hsv:"+hsv[0]+"-"+hsv[1]+"-"+hsv[2]);
+				chromaSettings.Hue=	hsv[0]*360;
+				chromaSettings.Saturation=hsv[1]/2;
+				chromaSettings.crossHairX=webcamView.mouseX;
+				chromaSettings.crossHairY=webcamView.mouseY;
 			}
 			
 		]]>
@@ -250,8 +303,8 @@
 	<calibrator:ChromaSliders id="chromaSettings" />
 	</s:HGroup>
 	<s:Spacer height="30"/>
-	<s:HSlider id="slider" width="{settings.cameraViewWidth}"
-			   snapInterval="0" minimum="1" maximum="4" change="{webcamView.zoomView(slider.value)}"/>
+	<!--s:HSlider id="slider" width="{settings.cameraViewWidth}"
+			   snapInterval="0" minimum="1" maximum="4" change="{webcamView.zoomView(slider.value)}"/-->
 	<s:HGroup>
 		<s:Button label="test" click="button1_clickHandler(event)" />
 		<s:Button click="saveSettingsClickHandler(event)" label="save"/>

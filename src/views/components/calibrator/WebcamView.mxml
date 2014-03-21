@@ -5,7 +5,7 @@
 	
 	<fx:Script>
 		<![CDATA[
-			import mx.events.FlexEvent;
+
 			
 			import model.Settings;
 			

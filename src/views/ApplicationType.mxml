@@ -31,7 +31,7 @@
 			{
 				trace("*************Applicationtype");
 
-
+				this.currentState="paths";
 				if (this.parentApplication.data!=null)
 				{
 					stage.displayState=StageDisplayState.NORMAL;
@@ -129,7 +129,7 @@
 							<s:TextInput id="calibrator" width="650" height="30" color="0x000000" fontFamily="Arial"/>
 						</s:FormItem>
 					
-						<s:HGroup>
+						<s:HGroup visible="false" includeInLayout="false">
 
 							<s:FormItem width="365" label="URN Length:" >
 									<s:TextInput id="urnLength" width="150" color="0x000000"  height="30" fontFamily="Arial"/>
@@ -137,7 +137,7 @@
 							<s:FormItem width="365" label="Score format:" >
 								<s:TextInput id="scoreFormat" width="150" color="0x000000"  height="30" fontFamily="Arial"/>
 							</s:FormItem>
-							
+
 						</s:HGroup>
 			
 						<!--
@@ -147,7 +147,7 @@
 			
 						<s:FormItem width="365" label="Application:">
 							<s:VGroup width="628">
-								
+							
 									<s:RadioButton width="500" label="Registration Only" value="registration" group="{radioGroup}" skinClass="skins.vodafoneRadioButton" />
 									<s:RadioButton width="500" label="Photocapture" value="photocapture" group="{radioGroup}" skinClass="skins.vodafoneRadioButton" />
 									<s:RadioButton width="500" label="Simulator" value="simulator" group="{radioGroup}" skinClass="skins.vodafoneRadioButton" />
@@ -159,10 +159,13 @@
 						</s:FormItem>
 						
 					</s:Form>	
-				<s:Button label="Choose Webcam" skinClass="skins.vodafoneButton" click="selectCamera(event)"/>
-				<s:Spacer height="20"/>
-				<s:Button label="Calibrator" skinClass="skins.vodafoneButton" click="{this.currentState='calibrator'}"/>
-				<s:Spacer height="20"/>
+					<s:HGroup>
+						<s:Button label="Choose Webcam" skinClass="skins.vodafoneButton" click="selectCamera(event)"/>
+						<s:Spacer width="20"/>
+						<s:Button label="Calibrator" skinClass="skins.vodafoneButton" click="{this.currentState='calibrator'}"/>
+						<s:Spacer width="20"/>
+					</s:HGroup>
+
 				</s:VGroup>
 				</s:Group>
 			</s:Scroller>

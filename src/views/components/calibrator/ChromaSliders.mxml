@@ -6,37 +6,213 @@
 		<![CDATA[
 			import mx.events.FlexEvent;
 			
+			import events.CameraEvent;
+			import events.ChromaSliderEvent;
+			
+			private var  _Hue:Number;
+			private var  _Tolerance:Number;
+			private var  _Saturation:Number;
+			private var  _MinValue:Number;
+			private var  _MaxValue:Number;
+			
+			private var _crossHairX:Number;
+			private var _crossHairY:Number;
+			private var _autoColor:Number;
+			
+			private var event:ChromaSliderEvent
+			
+			public function get autoColor():Number
+			{
+				return _autoColor;
+			}
+
+			public function set autoColor(value:Number):void
+			{
+				if(value==1) {
+					colorPickerCheckbox.selected=true;
+				} else {
+					colorPickerCheckbox.selected=false;
+				}
+				_autoColor = value;
+			}
+
+			public function get crossHairY():Number
+			{
+				return _crossHairY;
+			}
+
+			public function set crossHairY(value:Number):void
+			{
+				_crossHairY = value;
+				crossHairYlabel.text=value.toString();
+			}
+
+			public function get crossHairX():Number
+			{
+				return _crossHairX;
+			}
+
+			public function set crossHairX(value:Number):void
+			{
+				_crossHairX = value;
+				crosshairXlabel.text=value.toString();
+			}
+
+			public function get MaxValue():Number
+			{
+				return _MaxValue;
+			}
+
+			public function set MaxValue(value:Number):void
+			{
+				_MaxValue = value;
+				updateHandlers();
+			}
+
+			public function get MinValue():Number
+			{
+				return _MinValue;
+			}
+
+			public function set MinValue(value:Number):void
+			{
+				_MinValue = value;
+				updateHandlers();
+			}
+
+			public function get Saturation():Number
+			{
+				return _Saturation;
+			}
+
+			public function set Saturation(value:Number):void
+			{
+				_Saturation = value;
+				updateHandlers();
+			}
+
+			public function get Tolerance():Number
+			{
+				return _Tolerance;
+			}
+
+			public function set Tolerance(value:Number):void
+			{
+				_Tolerance = value;
+				updateHandlers();
+			}
+
+			public function get Hue():Number
+			{
+				return _Hue;
+			}
+
+			public function set Hue(value:Number):void
+			{
+				_Hue = value;
+				updateHandlers();
+			}
+
 			protected function bordercontainer1_creationCompleteHandler(event:FlexEvent):void
 			{
-				// TODO Auto-generated method stub
+				_Hue=hueSlider.value;
+				_Tolerance = deltaSlider.value;
+				_Saturation= satSlider.value /100;
+				_MinValue = minSlider.value/100;
+				_MaxValue = maxSlider.value/100;
+
+			}
+			
+			private function dispatchChange():void {
+				event = new ChromaSliderEvent(ChromaSliderEvent.CHANGE);
+				event.Hue = hueSlider.value;
+				event.Tolerance = deltaSlider.value;
+				event.Saturation = satSlider.value /100;
+				
+				event.MinValue = minSlider.value/100;
+				event.MaxValue = maxSlider.value/100;
+			}
+			
+			protected function updateHandlers() {
+				hueSlider.value=_Hue;
+				deltaSlider.value=_Tolerance;
+				satSlider.value=_Saturation*100;
+				minSlider.value=_MinValue *100;
+				maxSlider.value=_MaxValue *100;
+			}
+			
+			protected function sliders_changeHandler(event:Event):void
+			{
+				_Hue=hueSlider.value;
+				_Tolerance = deltaSlider.value;
+				_Saturation= satSlider.value /100;
+				_MinValue = minSlider.value/100;
+				_MaxValue = maxSlider.value/100;
+				dispatchChange();
+			}
+			
+			protected function button1_clearHandler(event:Event):void
+			{
+				hueSlider.value=120;
+				_Hue=120;
+				deltaSlider.value=45;
+				_Tolerance=45;
+				satSlider.value=20;
+				_Saturation=0.2;
+				minSlider.value=35;
+				_MinValue=0.35;
+				maxSlider.value=95;
+				_MaxValue=0.95;
+				_crossHairX = 0;
+				crosshairXlabel.text="0";
+				_crossHairY = 0;
+				crossHairYlabel.text="0";
+			}
+			
+			protected function colorPickerCheckbox_changeHandler(event:Event):void
+			{
+				if(colorPickerCheckbox.selected) {
+					_autoColor=1;
+				} else {
+					_autoColor=0;
+				}
 				
 			}
 			
 		]]>
 	</fx:Script>
+	<fx:Metadata>
+		[Event(name="CHANGE", type="events.ChromaSliderEvent")]
+	</fx:Metadata>
 	<s:VGroup>
 		
 	
 	<s:HGroup>
-		<s:HSlider id="hueSlider"  width="300" minimum="0" maximum="360" value="120" />
+		<s:HSlider id="hueSlider"  width="300" minimum="0" change="sliders_changeHandler(event)" maximum="360" value="120" />
 		<s:Label text="hue" color="0x000000" />
 	</s:HGroup>
 	<s:HGroup>
-		<s:HSlider id="deltaSlider"  width="300" minimum="0" maximum="360" value="45" />
+		<s:HSlider id="deltaSlider"  width="300" minimum="0" change="sliders_changeHandler(event)" maximum="360" value="45" />
 		<s:Label text="tolerance" color="0x000000" />
 	</s:HGroup>
 	<s:HGroup>
-		<s:HSlider id="satSlider"  width="300" minimum="0" maximum="100" value="20" stepSize="1" />
+		<s:HSlider id="satSlider"  width="300" minimum="0" change="sliders_changeHandler(event)" maximum="100" value="20" stepSize="1" />
 		<s:Label text="saturation" color="0x000000" />
 	</s:HGroup>
 	
 	<s:HGroup>
-		<s:HSlider width="300" id="minSlider" minimum="0" maximum="100"  value="35" stepSize="1" />
+		<s:HSlider width="300" id="minSlider" minimum="0" change="sliders_changeHandler(event)" maximum="100"  value="35" stepSize="1" />
 		<s:Label text="minumum" color="0x000000" />
 	</s:HGroup>
 	<s:HGroup>
-		<s:HSlider width="300" id="maxSlider" minimum="0" maximum="100" value="95" stepSize="1" />
+		<s:HSlider width="300" id="maxSlider" minimum="0" change="sliders_changeHandler(event)" maximum="100" value="95" stepSize="1" />
 		<s:Label text="maximum" color="0x000000" />
 	</s:HGroup>
+		<s:CheckBox id="colorPickerCheckbox" label="Activate automatic color picker" change="colorPickerCheckbox_changeHandler(event)" />
+		<s:HGroup>
+			<s:Label color="0x000000"  text="Color picker values" />
+			<s:Label color="0x000000" id="crosshairXlabel" text="0"/><s:Spacer width="5" /><s:Label color="0x000000" id="crossHairYlabel" text="0" />
+		</s:HGroup>
+		<s:Button label="Reset settings" click="button1_clearHandler(event)" />
 	</s:VGroup>
 </s:BorderContainer>

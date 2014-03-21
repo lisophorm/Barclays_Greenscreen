@@ -10,11 +10,14 @@
 	
 	<fx:Script>
 		<![CDATA[
+			import com.alfo.utils.ChromaPrefs;
 			import com.alfo.utils.GreenScreenPrefs;
+			import com.alfo.utils.ImageFactory;
 			import com.alfo.utils.PictureWatcher;
 			import com.alfo.utils.WatchEvent;
 			import com.greensock.TweenMax;
 			
+			import events.BitmapCapturedEvent;
 			import events.CameraCaptureEvent;
 			import events.KioskError;
 			import events.KioskProgressEvent;
@@ -36,6 +39,11 @@
 			private var uploadFile:File;
 			private var urlRequest:URLRequest;
 			
+			private var imageFactory:ImageFactory;
+			private var photo:BitmapData;
+			private var completeImage:BitmapData;
+			private var chromaPrefs:ChromaPrefs;
+			
 			[Bindable]
 			private var cameraWindow:CameraSecondScreenWindow;
 			
@@ -56,6 +64,18 @@
 				teamModel = TeamModel.instance;
 				
 				settings = Settings.instance;
+				
+				imageFactory=new ImageFactory(800,600,1);
+				chromaPrefs=ChromaPrefs.getInstance();
+				
+				var cupFilename : String = teamModel.teamList[0].cupImage;
+				var backgroundImageName : String = teamModel.teamList[0].backgroundImage;
+				
+				var backgroundFile:File= File.applicationDirectory.resolvePath("assets"+File.separator+"images"+File.separator+"clubs"+File.separator+"backgrounds" + File.separator + backgroundImageName);				
+				var file : File = File.applicationDirectory.resolvePath("assets"+File.separator+"images"+File.separator+"clubs"+File.separator+"cups" + File.separator + cupFilename);
+
+				backgroundImage.source=backgroundFile.url;
+				trophyImage.source=file.url;
 				
 				var file : File = File.desktopDirectory.resolvePath("calibrator/settings/appSettings.txt");
 				
@@ -82,6 +102,36 @@
 				cameraWindow.width=Screen.screens[secondscreen].visibleBounds.width;
 				cameraWindow.height=Screen.screens[secondscreen].visibleBounds.height;
 				cameraWindow.currentState = "instruction";
+				cameraWindow.addEventListener(BitmapCapturedEvent.BITMAP_CAPTURED, bitmapCapturedHandler);
+			}
+			
+			protected function bitmapCapturedHandler(event : BitmapCapturedEvent):void
+			{
+				
+				trace("CameraMainScreenWindow :: bitmapCapturedHandler :: " + event.bitmapData.width + " :: " + event.bitmapData.height);
+				
+				var photo:BitmapData=event.bitmapData;
+				
+				if(chromaPrefs.autoColor==1) {
+					trace("colorpicker x:"+chromaPrefs.colorPickerX+"y:"+chromaPrefs.colorPickerY);
+					var hsv:Vector.<Number>=imageFactory.colorPicker(chromaPrefs.colorPickerX,chromaPrefs.colorPickerY,photo);
+					trace("hue is:"+hsv[0]);
+					imageFactory.Hue=hsv[0]*360;
+					trace("hue is:"+imageFactory.Hue);
+				} else {
+					imageFactory.Hue=chromaPrefs.Hue;
+					trace("hue is:"+imageFactory.Hue);
+				}
+				imageFactory.Saturation=chromaPrefs.Saturation;
+				imageFactory.Tolerance=chromaPrefs.Tolerance;
+				imageFactory.MinValue=chromaPrefs.MinValue;
+				imageFactory.MaxValue=chromaPrefs.MaxValue;
+				completeImage=imageFactory.processImage(photo,trophyImage.bitmapData,backgroundImage);
+				displayFinalPhotoDelayed();
+				photo.dispose();
+				photo=null;
+				
+				
 			}
 			
 			protected function updateCountdown(event:CameraCaptureEvent):void
@@ -158,7 +208,7 @@
 				var data:String = "var URN=\"" + settings.userData.imageID + "\"\nvar club_trophy=\"" + cupImage + "\"\nvar bkgImg=\"" + backgroundImageName + "\""; 
 				var stream:FileStream = new FileStream();
 //				
-				stream.close()
+				stream.close();
 				stream.open(urnConfigFile, FileMode.WRITE);
 				stream.writeUTFBytes(data);
 				stream.close();
@@ -307,7 +357,8 @@
 		<s:State name="result" enterState="{cameraWindow.currentState='result'}"/>
 		<s:State name="thankyou" enterState="{cameraWindow.currentState='thankyou'}"/>
 	</s:states>
-	
+	<s:Image id="backgroundImage" width="800" height="600" visible="false" includeInLayout="false" />
+	<s:BitmapImage smooth="true" id="trophyImage" visible="false" includeInLayout="false" />
 	<mainscreen:CameraMainScreenInstructionView nextScreen="{instructionContinueHandler(event)}" includeIn="instruction"/>
 	<mainscreen:CameraMainScreenCountdownView nextScreen="{currentState='wait'}" 
 											  tick="{updateCountdown(event)}" includeIn="countdown"/>
