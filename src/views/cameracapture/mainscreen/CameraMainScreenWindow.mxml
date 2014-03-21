@@ -16,6 +16,8 @@
 			import com.alfo.utils.PictureWatcher;
 			import com.alfo.utils.WatchEvent;
 			import com.greensock.TweenMax;
+			import com.leeburrows.encoders.AsyncJPGEncoder;
+			import com.leeburrows.encoders.supportClasses.AsyncImageEncoderEvent;
 			
 			import events.BitmapCapturedEvent;
 			import events.CameraCaptureEvent;
@@ -44,6 +46,10 @@
 			private var completeImage:BitmapData;
 			private var chromaPrefs:ChromaPrefs;
 			
+			private var imageByteArray : ByteArray;
+			
+			private var pngEncoder:AsyncJPGEncoder;
+			
 			[Bindable]
 			private var cameraWindow:CameraSecondScreenWindow;
 			
@@ -54,6 +60,10 @@
 			
 			public function init(event : Event):void
 			{
+				
+				pngEncoder = new AsyncJPGEncoder(85);
+				pngEncoder.addEventListener(AsyncImageEncoderEvent.COMPLETE,savePicture);
+				pngEncoder.addEventListener(AsyncImageEncoderEvent.PROGRESS,encodeProgressHandler);
 				
 				urlRequest= new URLRequest(this.parentApplication.localURL+"uploader.php");
 				
@@ -84,6 +94,42 @@
 				loader.load(new URLRequest(file.url));
 			}
 			
+			protected function savePicture(e:AsyncImageEncoderEvent) {
+				trace("******** png encode complete");
+				var file : File;
+				
+				file  = File.documentsDirectory.resolvePath("trophy_photos");
+				
+				if(!file.exists) {
+					try {
+						file.createDirectory();
+					} catch (e:Error) {
+						this.parentApplication.dispatchEvent( new KioskError(KioskError.ERROR, "Error creating temp directory \r\n"+file.nativePath+"\r\n"+e.message, "I/O Error" ) );
+					}
+				}
+
+				
+				file=File.documentsDirectory.resolvePath("trophy_photos"+File.separator+settings.userData.imageID + ".jpg");
+				
+				var stream : FileStream = new FileStream();
+				stream.open(file, FileMode.WRITE);
+				stream.writeBytes(pngEncoder.encodedBytes);
+				stream.close();
+				
+				
+				
+				uploadPhoto();
+				
+				
+			}
+
+			
+			private function encodeProgressHandler(event:AsyncImageEncoderEvent):void
+			{
+
+				trace("encoding progress:", Math.floor(event.percentComplete)+"% complete");
+			}
+			
 			public function settingsLoadCompleteHandler(event : Event):void
 			{
 				settings.cameraSettings = String(loader.data).split("|");
@@ -97,7 +143,7 @@
 				}
 				cameraWindow=new CameraSecondScreenWindow();
 				cameraWindow.open();
-				cameraWindow.alwaysInFront=true;
+				cameraWindow.alwaysInFront=false;
 				cameraWindow.move(Screen.screens[secondscreen].visibleBounds.left,Screen.screens[secondscreen].visibleBounds.top);
 				cameraWindow.width=Screen.screens[secondscreen].visibleBounds.width;
 				cameraWindow.height=Screen.screens[secondscreen].visibleBounds.height;
@@ -107,10 +153,20 @@
 			
 			protected function bitmapCapturedHandler(event : BitmapCapturedEvent):void
 			{
-				
+				var trophyscalex:Number=chromaPrefs.cupWidth/trophyImage.width
+
+				//trophyImage.invalidateSize();
+				trace("trophy image scalex:"+trophyscalex);
 				trace("CameraMainScreenWindow :: bitmapCapturedHandler :: " + event.bitmapData.width + " :: " + event.bitmapData.height);
+				imageFactory.crop=new Rectangle(chromaPrefs.cropX,chromaPrefs.cropY,chromaPrefs.cropWidth,chromaPrefs.cropHeight);
+				imageFactory.trophy=new Rectangle(chromaPrefs.cupX,chromaPrefs.cupY,trophyscalex,trophyscalex);
 				
-				var photo:BitmapData=event.bitmapData;
+				var scale:Number = imageFactory.width/event.bitmapData.width;
+				var photoMatrix:Matrix = new Matrix();
+				photoMatrix.scale(scale, scale);
+				
+				var photo:BitmapData=new BitmapData(imageFactory.width,imageFactory.height,true);
+				photo.draw(event.bitmapData,photoMatrix,null,null,null,true);
 				
 				if(chromaPrefs.autoColor==1) {
 					trace("colorpicker x:"+chromaPrefs.colorPickerX+"y:"+chromaPrefs.colorPickerY);
@@ -128,8 +184,8 @@
 				imageFactory.MaxValue=chromaPrefs.MaxValue;
 				completeImage=imageFactory.processImage(photo,trophyImage.bitmapData,backgroundImage);
 				displayFinalPhotoDelayed();
-				photo.dispose();
-				photo=null;
+				//photo.dispose();
+				//photo=null;
 				
 				
 			}
@@ -178,8 +234,8 @@
 			
 			protected function retakeHandler(event : CameraCaptureEvent):void
 			{
-				var oldPhoto:File=File.applicationDirectory.resolvePath(greenScreenPrefs.basePath + File.separator + "output" + File.separator + settings.userData.imageID + ".jpg");
-				oldPhoto.deleteFile();
+				//var oldPhoto:File=File.applicationDirectory.resolvePath(greenScreenPrefs.basePath + File.separator + "output" + File.separator + settings.userData.imageID + ".jpg");
+				//oldPhoto.deleteFile();
 				photoCaptureStartHandler();
 				currentState="countdown";
 			}
@@ -216,19 +272,7 @@
 			
 			protected function compositImage(event : WatchEvent):void
 			{
-				folderWatch.stopWatch();
-				finalWatch.startWatch();
-				var photo:File=File.applicationDirectory.resolvePath(greenScreenPrefs.basePath + File.separator + "captures" + File.separator + "capture.jpg");
-				photo.copyTo(File.applicationDirectory.resolvePath(greenScreenPrefs.basePath + File.separator + "tmp" + File.separator + settings.userData.imageID + ".jpg"),true);
-				
-				var file:File=File.applicationDirectory.resolvePath(greenScreenPrefs.photoShopPath);
-				
-				var nativeProcessInfo:NativeProcessStartupInfo=new NativeProcessStartupInfo();
-				nativeProcessInfo.executable=file;
-				nativeProcessInfo.arguments=new <String>[greenScreenPrefs.basePath + File.separator + "settings" + File.separator + "wrapup.jsx"];
-				
-				var process:NativeProcess=new NativeProcess();
-				process.start(nativeProcessInfo);
+				trace("**** dispatchged compositImage");
 			}
 			
 			protected function displayFinalPhoto(evt:WatchEvent):void 
@@ -239,12 +283,13 @@
 			protected function displayFinalPhotoDelayed():void
 			{
 				finalWatch.stopWatch();
-				var file : File = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath + File.separator + "output" + File.separator + settings.userData.imageID + ".jpg");
+				
 				currentState = "result";
-				cameraWindow.setResultImage("");
-				mainScreenResult.imageURL = "";
-				cameraWindow.setResultImage(file.url);
-				mainScreenResult.imageURL = file.url;
+				this.invalidateDisplayList();
+				cameraWindow.setResultImage(null);
+				mainScreenResult.imageURL = null;
+				cameraWindow.setResultImage(completeImage);
+				mainScreenResult.imageURL = completeImage;
 			}
 			
 			protected function emptyCaptures():void 
@@ -283,10 +328,14 @@
 				emptyCaptures();
 			}
 			
+			private function startEncoding():void {
+				pngEncoder.start(completeImage);
+			}
+			
 			protected function uploadPhoto():void {
 				trace("uploading photo...");
 				
-				uploadFile = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath + File.separator + "output" + File.separator + settings.userData.imageID + ".jpg");
+				uploadFile = File.documentsDirectory.resolvePath("trophy_photos"+File.separator+settings.userData.imageID + ".jpg");
 				if(uploadFile.exists) {
 					trace("*************** greenscreen file is here");
 				} else {
@@ -358,11 +407,13 @@
 		<s:State name="thankyou" enterState="{cameraWindow.currentState='thankyou'}"/>
 	</s:states>
 	<s:Image id="backgroundImage" width="800" height="600" visible="false" includeInLayout="false" />
-	<s:BitmapImage smooth="true" id="trophyImage" visible="false" includeInLayout="false" />
+	<s:BitmapImage smooth="true" id="trophyImage"  />
 	<mainscreen:CameraMainScreenInstructionView nextScreen="{instructionContinueHandler(event)}" includeIn="instruction"/>
-	<mainscreen:CameraMainScreenCountdownView nextScreen="{currentState='wait'}" 
+	<!--mainscreen:CameraMainScreenCountdownView nextScreen="{currentState='wait'}" 
+											  tick="{updateCountdown(event)}" includeIn="countdown"/-->
+	<mainscreen:CameraMainScreenCountdownView nextScreen="{currentState='result'}" 
 											  tick="{updateCountdown(event)}" includeIn="countdown"/>
 	<mainscreen:CameraMainScreenWaitView includeIn="wait"/>
-	<mainscreen:CameraMainScreenResultView id="mainScreenResult" includeIn="result" retake="retakeHandler(event)" nextScreen="{uploadPhoto()}"/>
+	<mainscreen:CameraMainScreenResultView id="mainScreenResult" includeIn="result" retake="retakeHandler(event)" nextScreen="{startEncoding()}"/>
 	<mainscreen:CameraMainScreenThankyouView includeIn="thankyou" cameraComplete="cameraCompleteHandler(event)"/>
 </s:Group>

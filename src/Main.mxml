@@ -3,7 +3,7 @@
 					   xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:views="views.*"
 					   horizontalCenter="center" width="1024" height="768"
 					   creationComplete="init(event)"  resize="onresize()" backgroundColor="0x000000"
-					   addedToStage="fullscreen()" alwaysInFront="true" showStatusBar="false" xmlns:mainscreen="views.cameracapture.mainscreen.*" xmlns:components="views.components.*" xmlns:fingerprintscanner="fingerprintscanner.*" xmlns:registration="registration.*" xmlns:debug="registration.debug.*">
+					   addedToStage="fullscreen()" alwaysInFront="false" showStatusBar="false" xmlns:mainscreen="views.cameracapture.mainscreen.*" xmlns:components="views.components.*" xmlns:fingerprintscanner="fingerprintscanner.*" xmlns:registration="registration.*" xmlns:debug="registration.debug.*">
 	<fx:Script>
 		<![CDATA[
 			import com.greensock.TweenMax;

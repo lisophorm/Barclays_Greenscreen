@@ -7,7 +7,7 @@
 	<fx:Script>
 		<![CDATA[
 			[Bindable]
-			public var imageURL : String;
+			public var imageURL :Object;
 		]]>
 	</fx:Script>
 	
@@ -15,5 +15,5 @@
 		<s:VerticalLayout horizontalAlign="center" verticalAlign="middle"/>
 	</s:layout>
 	<s:Spacer height="60"/>
-	<s:Image width="800" height="600" source="{imageURL}"/>
+	<s:BitmapImage smooth="true" width="800" height="600" source="{imageURL}"/>
 </s:Group>

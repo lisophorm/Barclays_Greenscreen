@@ -13,6 +13,7 @@
 	
 	<fx:Script>
 		<![CDATA[
+			import com.alfo.utils.ChromaPrefs;
 			import com.alfo.utils.GreenScreenPrefs;
 			import com.alfo.utils.ImageFactory;
 			import com.greensock.TimelineMax;
@@ -36,6 +37,8 @@
 			
 			private var greenScreenPrefs:GreenScreenPrefs = new GreenScreenPrefs();
 			private var teamModel:TeamModel;
+			
+			private var chromaprefs:ChromaPrefs;
 			
 			
 			/* NEW !!
@@ -93,9 +96,10 @@
 				
 				teamModel = TeamModel.instance;
 				
+				
+				
 				var cupFilename : String = teamModel.teamList[settings.userData.teamID].cupImage;
-				var file : File = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath + File.separator + 
-									"clubs" + File.separator + "cups" + File.separator + cupFilename);
+				var file : File = File.applicationDirectory.resolvePath("assets"+File.separator+"images"+File.separator+"clubs"+File.separator+"cups" + File.separator + cupFilename);
 				var url : String = file.url;
 				
 				cupImage.source = url;
@@ -111,16 +115,14 @@
 				var ratioH:Number=cameraMask.width/800;
 				var ratioV:Number=cameraMask.height/600;
 				
-				if(settings) {
-					cupImage.x = (settings.cameraSettings[9]-(settings.cameraSettings[11]/2))*ratioH;
-					cupImage.y =  (settings.cameraSettings[10]-(settings.cameraSettings[12]/2))*ratioV;
-					cupImage.width =  settings.cameraSettings[11]*ratioH;
-					cupImage.height =  settings.cameraSettings[12]*ratioV;
-					//busorect.height =  settings.cameraSettings[15]*ratioV;
-					//busorect.width =  settings.cameraSettings[16]*ratioH;
-					//cameraMask.x = settings.cameraSettings[13];
-					//cameraMask.y = settings.cameraSettings[14];
-				}
+				chromaprefs=ChromaPrefs.getInstance();
+				
+				cupImage.x = chromaprefs.cupX*ratioH;
+				cupImage.y =  chromaprefs.cupY*ratioV;
+				cupImage.width =  chromaprefs.cupWidth*ratioH;
+				cupImage.height =  chromaprefs.cupHeight*ratioV;
+
+				
 			}
 			
 			protected function cameraDevice_creationCompleteHandler(event:FlexEvent):void
@@ -175,7 +177,7 @@
 				</s:fill>
 			</s:Rect>
 		</s:Group>
-		<s:Image id="cupImage" />
+		<s:BitmapImage id="cupImage" />
 		<s:Rect width="100%" height="100%" id="cameraFlash" alpha="0">
 			<s:fill>
 				<s:SolidColor color="0xFFFFFF"/>

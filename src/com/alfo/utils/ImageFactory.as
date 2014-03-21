@@ -14,9 +14,9 @@ package com.alfo.utils
 		
 		public var settings:GreenScreenPrefs;
 		
-		private var height:Number;
-		private var width:Number;
-		private var scale:Number;
+		public var height:Number;
+		public var width:Number;
+		public var scale:Number;
 		
 		private var chroma:Chromagic=new Chromagic();
 		
@@ -117,9 +117,12 @@ package com.alfo.utils
 		}
 
 		public function processImage(source:BitmapData,trophy:BitmapData,backGroundImage:spark.components.Image):BitmapData {
+			
 			var cupMatrix:Matrix=new Matrix();
 			cupMatrix.scale(_trophy.width*scale,_trophy.height*scale);
 			cupMatrix.translate(_trophy.x*scale,_trophy.y*scale);
+			trace("trophy size:"+trophy.width + "trophy height:"+ trophy.height);
+			trace("trophy matrix x "+_trophy.x + " y "+_trophy.y + " width "+_trophy.width+ " height "+_trophy.height);
 			background=new BitmapData(this.width,this.height,true);
 			photo=source;
 			chromed=chroma.key(photo);

@@ -20,10 +20,10 @@
 			[Bindable]
 			protected var _resultImage : String;			
 			
-			public function setResultImage(imageFile : String):void
+			public function setResultImage(image:Object):void
 			{
 				if(secondScreenResult)
-					secondScreenResult.imageURL = imageFile;
+					secondScreenResult.imageURL = image;
 			}
 			
 			public function updateCountdownDisplay(event:CameraCaptureEvent):void

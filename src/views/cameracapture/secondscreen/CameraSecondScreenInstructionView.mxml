@@ -6,27 +6,30 @@
 	
 	<fx:Script>
 		<![CDATA[
+			import com.alfo.utils.ChromaPrefs;
 			import com.alfo.utils.GreenScreenPrefs;
-			
-			import model.Settings;
-			import model.TeamModel;
 			
 			import mx.events.FlexEvent;
 			import mx.events.ResizeEvent;
+			
+			import model.Settings;
+			import model.TeamModel;
 			
 			private var settings:Settings;
 			
 			private var greenScreenPrefs:GreenScreenPrefs = new GreenScreenPrefs();
 			private var teamModel:TeamModel;
+			private var chromaprefs:ChromaPrefs;
 			
 			public function initialise(event : FlexEvent):void
 			{
 				settings = Settings.instance;
 				teamModel = TeamModel.instance;
+				chromaprefs=ChromaPrefs.getInstance();
 				
 				var cupFilename : String = teamModel.teamList[settings.userData.teamID].cupImage;
 				
-				var file : File = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+File.separator+"clubs"+File.separator+"cups" + File.separator + cupFilename);
+				var file : File = File.applicationDirectory.resolvePath("assets"+File.separator+"images"+File.separator+"clubs"+File.separator+"cups" + File.separator + cupFilename);
 				var url : String = file.url;
 				cupImage.source = url;
 				
@@ -39,10 +42,10 @@
 				var ratioV:Number=cameraPlaceholder.height/600;
 				
 				if(settings) {
-					cupImage.x = (settings.cameraSettings[9]-(settings.cameraSettings[11]/2))*ratioH;
-					cupImage.y =  (settings.cameraSettings[10]-(settings.cameraSettings[12]/2))*ratioV;
-					cupImage.width =  settings.cameraSettings[11]*ratioH;
-					cupImage.height =  settings.cameraSettings[12]*ratioV;
+					cupImage.x = chromaprefs.cupX*ratioH;
+					cupImage.y =  chromaprefs.cupY*ratioV;
+					cupImage.width =  chromaprefs.cupWidth*ratioH;
+					cupImage.height =  chromaprefs.cupHeight*ratioV;
 				}
 			}
 			
@@ -59,6 +62,6 @@
 				<s:SolidColor color="0xFFFFFF"/>
 			</s:fill>
 		</s:Rect>
-		<s:Image id="cupImage"/>
+		<s:BitmapImage id="cupImage"/>
 	</s:Group>
 </s:Group>
