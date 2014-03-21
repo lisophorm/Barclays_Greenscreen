@@ -24,6 +24,7 @@
 			import mx.events.ResizeEvent;
 			
 			import events.CameraEvent;
+			import events.KioskProgressEvent;
 			import events.ViewEvent;
 			
 			import flashx.textLayout.factory.TruncationOptions;
@@ -130,7 +131,6 @@
 				addEventListener(MouseEvent.MOUSE_UP, webcamMouseUpHandler);
 				
 				webcamView.initialise(800, 600);
-				
 				//slider.thumb.width = slider.thumb.height = 20;
 			}
 			
@@ -221,14 +221,14 @@
 				//finalImage.source=
 				imageFactory.processImage(photo,trophyView.trophyImage.bitmapData,backgroundImage);
 				imageFactory.addEventListener(Event.COMPLETE,chromaComplete);
-
+				this.parentApplication.dispatchEvent( new KioskProgressEvent(KioskProgressEvent.NOTIFY, "Please wait..." ) );
 
 			}
 			private function chromaComplete(e:Event) {
 				finalImage.source=ImageFactory.background;
 				finalImage.visible=true;
 				drawingLayer.visible=false;
-
+				this.parentApplication.dispatchEvent( new KioskProgressEvent(KioskProgressEvent.UPDATE_COMPLETE ) );
 			}
 			
 			protected function trophyView_COMPLETEHandler(event:CameraEvent):void

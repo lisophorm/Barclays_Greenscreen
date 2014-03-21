@@ -78,8 +78,8 @@
 				imageFactory=new ImageFactory(800,600,1);
 				chromaPrefs=ChromaPrefs.getInstance();
 				
-				var cupFilename : String = teamModel.teamList[0].cupImage;
-				var backgroundImageName : String = teamModel.teamList[0].backgroundImage;
+				var cupFilename : String = teamModel.teamList[settings.userData.teamID].cupImage;
+				var backgroundImageName : String = teamModel.teamList[settings.userData.teamID].backgroundImage;
 				
 				var backgroundFile:File= File.applicationDirectory.resolvePath("assets"+File.separator+"images"+File.separator+"clubs"+File.separator+"backgrounds" + File.separator + backgroundImageName);				
 				var file : File = File.applicationDirectory.resolvePath("assets"+File.separator+"images"+File.separator+"clubs"+File.separator+"cups" + File.separator + cupFilename);
@@ -143,7 +143,7 @@
 				}
 				cameraWindow=new CameraSecondScreenWindow();
 				cameraWindow.open();
-				cameraWindow.alwaysInFront=false;
+				cameraWindow.alwaysInFront=true;
 				cameraWindow.move(Screen.screens[secondscreen].visibleBounds.left,Screen.screens[secondscreen].visibleBounds.top);
 				cameraWindow.width=Screen.screens[secondscreen].visibleBounds.width;
 				cameraWindow.height=Screen.screens[secondscreen].visibleBounds.height;
@@ -256,20 +256,7 @@
 			
 			protected function writeURN():void
 			{
-				var urnConfigFile:File = File.applicationDirectory.resolvePath(greenScreenPrefs.basePath+File.separator+
-					"settings" + File.separator + "urn.jsx");
 				
-				var uniqueCode : String = Math.random().toString().substr(2,5);
-				settings.userData.imageID = settings.userData.urn + "_" + uniqueCode;
-				var backgroundImageName : String = teamModel.teamList[settings.userData.teamID].backgroundImage;
-				var cupImage : String = teamModel.teamList[settings.userData.teamID].cupImage;
-				var data:String = "var URN=\"" + settings.userData.imageID + "\"\nvar club_trophy=\"" + cupImage + "\"\nvar bkgImg=\"" + backgroundImageName + "\""; 
-				var stream:FileStream = new FileStream();
-//				
-				stream.close();
-				stream.open(urnConfigFile, FileMode.WRITE);
-				stream.writeUTFBytes(data);
-				stream.close();
 			}
 			
 			protected function compositImage(event : WatchEvent):void
@@ -314,20 +301,21 @@
 			
 			protected function exit( e:Event = null ):void
 			{
+				if(photo) {
+					photo.dispose();
+					photo=null;
+				}
 				tidy();
 			}
 			
 			// called when exiting from the component
 			protected function tidy(e:Event = null):void
 			{				
-				var dello:File=File.applicationDirectory.resolvePath(greenScreenPrefs.basePath + File.separator + "tmp" + File.separator + "lastpicture.jpg");
-				if(dello.exists) {
-					dello.deleteFile();
-				}
+			
 				
 				finalWatch.removeEventListener(WatchEvent.ON_ADD_PHOTO, displayFinalPhoto);
 				finalWatch.stopWatch();
-				emptyCaptures();
+
 			}
 			
 			private function startEncoding():void {
@@ -351,9 +339,6 @@
 				uploadFile.addEventListener(ProgressEvent.PROGRESS,updateProgress);
 				uploadFile.addEventListener(IOErrorEvent.IO_ERROR,onFileError);
 				uploadFile.upload(urlRequest);
-				
-				
-				
 				//
 			}
 			
@@ -394,9 +379,6 @@
 			protected function uploadCompleteHandler(event:Event):void
 			{
 				this.parentApplication.dispatchEvent( new KioskProgressEvent( KioskProgressEvent.UPDATE_COMPLETE ));
-				
-				
-				
 			}
 			
 		]]>

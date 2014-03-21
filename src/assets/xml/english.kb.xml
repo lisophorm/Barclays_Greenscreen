@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<keyboard>
+  <row>
+	<key code="192" width="1"><![CDATA[`~]]></key>
+	<key code="49" width="1"><![CDATA[1!]]></key>
+	<key code="50" width="1"><![CDATA[2@;]]></key>
+	<key code="51" width="1"><![CDATA[3£]]></key>
+	<key code="52" width="1"><![CDATA[4$]]></key>
+	<key code="53" width="1"><![CDATA[5%]]></key>
+	<key code="54" width="1"><![CDATA[6^]]></key>
+	<key code="55" width="1"><![CDATA[7&amp;]]></key>
+	<key code="56" width="1"><![CDATA[8*]]></key>
+	<key code="57" width="1"><![CDATA[9(]]></key>
+	<key code="47" width="1"><![CDATA[0)]]></key>
+	<key code="189" width="1"><![CDATA[-_]]></key>
+	<key code="187" width="1"><![CDATA[=+]]></key>
+	<key code="8"><![CDATA[Delete]]></key>
+  </row>
+  <row>
+	<key code="9" width="1.5"><![CDATA[Tab]]></key>
+	<key code="81" width="1"><![CDATA[qQ]]></key>
+	<key code="87" width="1"><![CDATA[wW]]></key>
+	<key code="69" width="1"><![CDATA[eE]]></key>
+	<key code="82" width="1"><![CDATA[rR]]></key>
+	<key code="84" width="1"><![CDATA[tT]]></key>
+	<key code="89" width="1"><![CDATA[yY]]></key>
+	<key code="85" width="1"><![CDATA[uU]]></key>
+	<key code="73" width="1"><![CDATA[iI]]></key>
+	<key code="79" width="1"><![CDATA[oO]]></key>
+	<key code="80" width="1"><![CDATA[pP]]></key>
+	<key code="219" width="1"><![CDATA[[{]]></key>
+	<key code="221" width="1"><![CDATA[]}]]></key>
+	<key code="36" width="1"><![CDATA[&#8364;&#165;]]></key>
+  </row>
+  <row>
+	<key code="20" width="1.9"><![CDATA[CAPS]]></key>
+	<key code="65" width="1"><![CDATA[aA]]></key>
+	<key code="83" width="1"><![CDATA[sS]]></key>
+	<key code="68" width="1"><![CDATA[dD]]></key>
+	<key code="70" width="1"><![CDATA[fF]]></key>
+	<key code="71" width="1"><![CDATA[gG]]></key>
+	<key code="72" width="1"><![CDATA[hH]]></key>
+	<key code="74" width="1"><![CDATA[jJ]]></key>
+	<key code="75" width="1"><![CDATA[kK]]></key>
+	<key code="76" width="1"><![CDATA[lL]]></key>
+	<key code="186" width="1"><![CDATA[;:]]></key>
+	<key code="39" width="1"><![CDATA[&apos;"]]></key>
+	<key code="35" width="1"><![CDATA[#~]]></key>
+  </row>
+  <row>
+	<key code="16" width="1.4"><![CDATA[Shift]]></key>
+	<key code="220" width="1"><![CDATA[\|]]></key>
+	<key code="90" width="1"><![CDATA[zZ]]></key>
+	<key code="88" width="1"><![CDATA[xX]]></key>
+	<key code="67" width="1"><![CDATA[cC]]></key>
+	<key code="86" width="1"><![CDATA[vV]]></key>
+	<key code="66" width="1"><![CDATA[bB]]></key>
+	<key code="78" width="1"><![CDATA[nN]]></key>
+	<key code="77" width="1"><![CDATA[mM]]></key>
+	<key code="188" width="1"><![CDATA[,&lt;]]></key>
+	<key code="190" width="1"><![CDATA[.&gt;]]></key>
+	<key code="191" width="1"><![CDATA[/?]]></key>
+	<key code="999" width="1"><![CDATA[@@]]></key>
+  </row>
+  <row>
+	<key code="18" width="1.7"><![CDATA[Alt]]></key>
+	<key code="32" width="10"><![CDATA[Space]]></key>
+	<key/>
+	<key code="-1" width="3"><![CDATA[Hide]]></key>
+  </row>
+</keyboard>
