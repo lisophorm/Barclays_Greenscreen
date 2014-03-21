@@ -54,6 +54,8 @@
 			
 			private var imageFactory:ImageFactory;
 			
+			private var photo:BitmapData;
+			
 			public function initialise(event : FlexEvent):void
 			{
 				
@@ -192,16 +194,16 @@
 			protected function button1_clickHandler(event:MouseEvent):void
 			{
 				imageFactory.crop=new Rectangle(cropModel.x,cropModel.y,cropModel.width,cropModel.height);
-				imageFactory.trophy=new Rectangle(trophyModel.x,trophyModel.y,trophyView.scaleX,trophyView.scaleY);
+				imageFactory.trophy=new Rectangle(trophyModel.x,trophyModel.y,trophyView.width/trophyView.trophyImage.bitmapData.width,trophyView.height/trophyView.trophyImage.bitmapData.height);
 				
 
 				objectHandles.selectionManager.clearSelection();
 
-				var photo:BitmapData=webcamView.grabImage();
+				photo=webcamView.grabImage();
 
 				trace("trophy x:"+trophyModel.x);
-				trace("trophy x:"+trophyView.scaleX);
-				trace("trophy height:"+trophyModel.height);
+				trace("trophy width:"+trophyView.width);
+				trace("trophy wiidth:"+trophyView.trophyImage.bitmapData.width);
 				if(chromaSettings.autoColor==1) {
 					trace("colorpicker x:"+chromaSettings.crossHairX+"y:"+chromaSettings.crossHairY);
 					var hsv:Vector.<Number>=imageFactory.colorPicker(chromaSettings.crossHairX,chromaSettings.crossHairY,webcamView.grabImage());
@@ -216,11 +218,16 @@
 				imageFactory.Tolerance=chromaSettings.Tolerance;
 				imageFactory.MinValue=chromaSettings.MinValue;
 				imageFactory.MaxValue=chromaSettings.MaxValue;
-				finalImage.source=imageFactory.processImage(photo,trophyView.trophyImage.bitmapData,backgroundImage);
+				//finalImage.source=
+				imageFactory.processImage(photo,trophyView.trophyImage.bitmapData,backgroundImage);
+				imageFactory.addEventListener(Event.COMPLETE,chromaComplete);
+
+
+			}
+			private function chromaComplete(e:Event) {
+				finalImage.source=ImageFactory.background;
 				finalImage.visible=true;
 				drawingLayer.visible=false;
-				photo.dispose();
-				photo=null;
 
 			}
 			

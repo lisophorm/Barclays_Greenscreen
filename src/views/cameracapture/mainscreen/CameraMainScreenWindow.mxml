@@ -161,11 +161,11 @@
 				imageFactory.crop=new Rectangle(chromaPrefs.cropX,chromaPrefs.cropY,chromaPrefs.cropWidth,chromaPrefs.cropHeight);
 				imageFactory.trophy=new Rectangle(chromaPrefs.cupX,chromaPrefs.cupY,trophyscalex,trophyscalex);
 				
-				var scale:Number = imageFactory.width/event.bitmapData.width;
+				var scale:Number = imageFactory.finalW/event.bitmapData.width;
 				var photoMatrix:Matrix = new Matrix();
 				photoMatrix.scale(scale, scale);
 				
-				var photo:BitmapData=new BitmapData(imageFactory.width,imageFactory.height,true);
+				var photo:BitmapData=new BitmapData(imageFactory.finalW,imageFactory.finalH,true);
 				photo.draw(event.bitmapData,photoMatrix,null,null,null,true);
 				
 				if(chromaPrefs.autoColor==1) {
@@ -182,8 +182,10 @@
 				imageFactory.Tolerance=chromaPrefs.Tolerance;
 				imageFactory.MinValue=chromaPrefs.MinValue;
 				imageFactory.MaxValue=chromaPrefs.MaxValue;
-				completeImage=imageFactory.processImage(photo,trophyImage.bitmapData,backgroundImage);
-				displayFinalPhotoDelayed();
+				// completeImage=
+				imageFactory.processImage(photo,trophyImage.bitmapData,backgroundImage);
+				imageFactory.addEventListener(Event.COMPLETE,displayFinalPhotoDelayed);
+
 				//photo.dispose();
 				//photo=null;
 				
@@ -280,7 +282,7 @@
 				TweenMax.delayedCall(1, displayFinalPhotoDelayed);
 			}
 			
-			protected function displayFinalPhotoDelayed():void
+			protected function displayFinalPhotoDelayed(e:Event=null):void
 			{
 				finalWatch.stopWatch();
 				
@@ -288,8 +290,8 @@
 				this.invalidateDisplayList();
 				cameraWindow.setResultImage(null);
 				mainScreenResult.imageURL = null;
-				cameraWindow.setResultImage(completeImage);
-				mainScreenResult.imageURL = completeImage;
+				cameraWindow.setResultImage(ImageFactory.background);
+				mainScreenResult.imageURL = ImageFactory.background;
 			}
 			
 			protected function emptyCaptures():void 
@@ -329,7 +331,8 @@
 			}
 			
 			private function startEncoding():void {
-				pngEncoder.start(completeImage);
+				pngEncoder.start(ImageFactory.background);
+				this.parentApplication.dispatchEvent( new KioskProgressEvent(KioskProgressEvent.NOTIFY, "Please wait..." ) );
 			}
 			
 			protected function uploadPhoto():void {
@@ -348,7 +351,7 @@
 				uploadFile.addEventListener(ProgressEvent.PROGRESS,updateProgress);
 				uploadFile.addEventListener(IOErrorEvent.IO_ERROR,onFileError);
 				uploadFile.upload(urlRequest);
-				this.parentApplication.dispatchEvent( new KioskProgressEvent(KioskProgressEvent.NOTIFY, "Uploading file" ) );
+				
 				
 				
 				//
@@ -407,12 +410,12 @@
 		<s:State name="thankyou" enterState="{cameraWindow.currentState='thankyou'}"/>
 	</s:states>
 	<s:Image id="backgroundImage" width="800" height="600" visible="false" includeInLayout="false" />
-	<s:BitmapImage smooth="true" id="trophyImage"  />
+	<s:BitmapImage smooth="true" id="trophyImage" visible="false"  />
 	<mainscreen:CameraMainScreenInstructionView nextScreen="{instructionContinueHandler(event)}" includeIn="instruction"/>
-	<!--mainscreen:CameraMainScreenCountdownView nextScreen="{currentState='wait'}" 
-											  tick="{updateCountdown(event)}" includeIn="countdown"/-->
-	<mainscreen:CameraMainScreenCountdownView nextScreen="{currentState='result'}" 
+	<mainscreen:CameraMainScreenCountdownView nextScreen="{currentState='wait'}" 
 											  tick="{updateCountdown(event)}" includeIn="countdown"/>
+	<!--mainscreen:CameraMainScreenCountdownView nextScreen="{currentState='result'}" 
+											  tick="{updateCountdown(event)}" includeIn="countdown"/-->
 	<mainscreen:CameraMainScreenWaitView includeIn="wait"/>
 	<mainscreen:CameraMainScreenResultView id="mainScreenResult" includeIn="result" retake="retakeHandler(event)" nextScreen="{startEncoding()}"/>
 	<mainscreen:CameraMainScreenThankyouView includeIn="thankyou" cameraComplete="cameraCompleteHandler(event)"/>

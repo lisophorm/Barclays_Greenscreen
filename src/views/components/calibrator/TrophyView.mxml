@@ -12,8 +12,8 @@
 		<![CDATA[
 			import events.CameraEvent;
 			
-			protected var originalWidth : int;
-			protected var originalHeight : int;
+			public var originalWidth : int;
+			public var originalHeight : int;
 			private var trophyZero:Point;
 			private var mouseZero:Point;
 			

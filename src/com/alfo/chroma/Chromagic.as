@@ -1,17 +1,20 @@
 package com.alfo.chroma
 {
 	import flash.display.BitmapData;
-	import flash.events.EventDispatcher;
+	import flash.display.Sprite;
+	import flash.events.Event;
 	import flash.geom.Rectangle;
 	import flash.utils.ByteArray;
 	import flash.utils.Endian;
 	import flash.utils.getTimer;
 	
+	import mx.core.UIComponent;
+	
 //	import avm2.intrinsics.memory.lf64;
 //	import avm2.intrinsics.memory.sf64;
 	
 	
-	public class Chromagic extends EventDispatcher
+	public class Chromagic extends UIComponent
 	{
 		public var  Hue:Number;
 		public var  Tolerance:Number;
@@ -28,6 +31,33 @@ package com.alfo.chroma
 		public var destDataBytes:ByteArray=new ByteArray();
 		
 		public var picPos:int = 0;
+		
+		private var lengo:uint;
+		private var rgbString:String;
+		private var currenPixel:uint;
+		private var rowLength:int;
+		
+		private var bits:String;
+		private var currentPixel:uint;
+		private var imgHeight:uint;
+		private var imgWidth:uint;
+		
+		private var startTime:uint;
+		
+		private var sprite:Sprite=new Sprite();
+		
+		var num4:Number;
+		var num5:Number;
+		var sat:Number;
+		
+		public var keyedBmp:BitmapData;
+		//destDataBytes
+
+		
+		var rgb : Vector.<Number>;
+		var hsv : Vector.<Number>;
+		
+		var numArray : Vector.<Number>;
 		
 		public function Chromagic()
 		{
@@ -188,13 +218,12 @@ package com.alfo.chroma
 		
 		
 		
-		public function key(m_video_input:BitmapData,useSpill:Boolean=false):BitmapData
+		public function key(m_video_input:BitmapData,useSpill:Boolean=false):void
 		{
-			var bits:String;
-			var currentPixel:uint;
-			var imgHeight:uint=m_video_input.height;
-			var imgWidth:uint=m_video_input.width;
-			var keyedBmp:BitmapData=new BitmapData(m_video_input.width,m_video_input.height,true,0xAABBCCDD);
+
+			imgHeight=m_video_input.height;
+			imgWidth=m_video_input.width;
+			keyedBmp=new BitmapData(m_video_input.width,m_video_input.height,true,0xAABBCCDD);
 			//destDataBytes
 			destDataBytes.endian=Endian.LITTLE_ENDIAN;
 			destDataBytes=m_video_input.getPixels(new Rectangle(0,0,m_video_input.width,m_video_input.height));
@@ -203,43 +232,41 @@ package com.alfo.chroma
 			//dataBytes.position=0;
 			//destDataBytes.position=0;
 			
-			var rgb : Vector.<Number> = new <Number>[0, 0, 0, 0];
-			var hsv : Vector.<Number> = new <Number>[0, 0, 0, 0];
+			rgb = new <Number>[0, 0, 0, 0];
+			hsv = new <Number>[0, 0, 0, 0];
 			
-			var numArray : Vector.<Number> = new <Number>[0, 0, 0, 0];
+			numArray = new <Number>[0, 0, 0, 0];
 			
 			var num1:Number = this.Hue - this.Tolerance;
 			var num2:Number = this.Hue + this.Tolerance;
 			var num3:Number = this.Tolerance / 360;
-			var num4:Number = num1 / 360;
-			var num5:Number = num2 / 360;
-			var sat:Number = this.Saturation;
+			num4 = num1 / 360;
+			num5 = num2 / 360;
+			sat = this.Saturation;
 			
 
 			trace("key start");
 			var startTime:uint = getTimer();
-			var lengo:uint=destDataBytes.length/4;
-			var rgbString:String;
+			lengo=destDataBytes.length/4;
+			rgbString:String;
 			destDataBytes.position=0;
-			var currenPixel:uint;
-			for(picPos = 0; picPos <lengo; picPos++)
+			picPos =0;
+			// pointer to the bitmapdata
+			rowLength=m_video_input.width*4;
+
+			
+			sprite.addEventListener(Event.ENTER_FRAME, iterateChroma);
+		}
+		
+		private function iterateChroma(e:Event) {
+			for(var i = 0; i <rowLength; i++)
 			{
 				currenPixel=destDataBytes.readUnsignedInt();
-//				trace("byte in hex: "+currenPixel.toString(16)+" position:"+picPos+" length:"+lengo);
+				//				trace("byte in hex: "+currenPixel.toString(16)+" position:"+picPos+" length:"+lengo);
 				rgb[2] = (currenPixel & 0xFF) / 255.0;
 				rgb[1] = (currenPixel >> 8 & 0xFF) / 255.0;
 				rgb[0] = (currenPixel >> 16 & 0xFF) / 255.0;
 				rgb[3] = (currenPixel >> 24 & 0xFF) / 255.0; 
-				
-
-				
-				/*rgbString=rgb[0].toString(16);
-				rgbString+=rgb[1].toString(16);
-				rgbString+=rgb[2].toString(16);
-				rgbString+=rgb[3].toString(16);*/
-				
-				
-				
 				
 				hsv=RGB_to_HSV(rgb);
 				
@@ -274,23 +301,27 @@ package com.alfo.chroma
 						rgb=HSV_to_RGB(hsv);
 					}
 					dataBytes[picPos] = (rgb[3] * 255.0) << 24 | (rgb[0] * 255.0) << 16 | (rgb[1] * 255.0) << 8 | (rgb[2] * 255.0);
+					
+					
 				}
+				picPos++;
 				
-
 				
 			}
-			//try {
-			//destDataBytes.position=0;
-			//keyedBmp.setPixels(new Rectangle(0,0,m_video_input.width,m_video_input.height),destDataBytes);
-			//} catch (e:Error) {
-			//	trace("error in setpixels");
-			//}
-			
-			var endTime:uint = getTimer();
-			trace("key done in : " + (endTime-startTime)/1000);
 
-			keyedBmp.setVector(new Rectangle(0,0,m_video_input.width,m_video_input.height),dataBytes);
-			return keyedBmp;
+			if(picPos>=lengo) {
+				sprite.removeEventListener(Event.ENTER_FRAME, iterateChroma);
+				trace("end of chroma!!!");
+				var endTime:uint = getTimer();
+				trace("key done in : " + (endTime-startTime)/1000);
+				
+				keyedBmp.setVector(new Rectangle(0,0,keyedBmp.width,keyedBmp.height),dataBytes);
+				var e:Event = new Event(Event.COMPLETE);
+				dispatchEvent(e);
+			}
+			
+
+
 		}
 		
 		public function argb2vec(theNumber:uint):Vector.<Number> 

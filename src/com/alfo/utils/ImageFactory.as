@@ -3,19 +3,22 @@ package com.alfo.utils
 	import com.alfo.chroma.Chromagic;
 	
 	import flash.display.BitmapData;
+	import flash.events.Event;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	
+	import mx.core.UIComponent;
+	
 	import spark.components.Image;
 
-	public class ImageFactory
+	public class ImageFactory extends UIComponent
 	{
 		
 		public var settings:GreenScreenPrefs;
 		
-		public var height:Number;
-		public var width:Number;
+		public var finalH:Number;
+		public var finalW:Number;
 		public var scale:Number;
 		
 		private var chroma:Chromagic=new Chromagic();
@@ -23,6 +26,9 @@ package com.alfo.utils
 		public static var background:BitmapData;
 		public static var photo:BitmapData;
 		public static var chromed:BitmapData;
+		
+		private static var backGroundImageBitmap:BitmapData;
+		private static var trophyImageBitmap:BitmapData;
 		
 		private var  _Hue:Number;
 		private var  _Tolerance:Number;
@@ -33,11 +39,14 @@ package com.alfo.utils
 		private var _trophy:Rectangle;
 		private var _crop:Rectangle;
 		
+		private var cupMatrix:Matrix;
+		
 		public function ImageFactory(width:Number=800,height:Number=800,scale:Number=1)
 		{
-			this.width=width;
-			this.height=height;
+			this.finalW=width;
+			this.finalH=height;
 			this.scale=scale;
+			chroma.addEventListener(Event.COMPLETE,chromaComplete);
 		}
 
 		public function get crop():Rectangle
@@ -116,20 +125,29 @@ package com.alfo.utils
 			_Hue = value;
 		}
 
-		public function processImage(source:BitmapData,trophy:BitmapData,backGroundImage:spark.components.Image):BitmapData {
+		public function processImage(source:BitmapData,trophy:BitmapData,backGroundImage:spark.components.Image):void {
 			
-			var cupMatrix:Matrix=new Matrix();
+			cupMatrix=new Matrix();
 			cupMatrix.scale(_trophy.width*scale,_trophy.height*scale);
 			cupMatrix.translate(_trophy.x*scale,_trophy.y*scale);
 			trace("trophy size:"+trophy.width + "trophy height:"+ trophy.height);
 			trace("trophy matrix x "+_trophy.x + " y "+_trophy.y + " width "+_trophy.width+ " height "+_trophy.height);
-			background=new BitmapData(this.width,this.height,true);
+			background=new BitmapData(this.finalW,this.finalH,true);
+			backGroundImageBitmap=new BitmapData(backGroundImage.bitmapData.width,backGroundImage.bitmapData.height,true);
+			trophyImageBitmap=trophy;
+			backGroundImageBitmap.draw(backGroundImage.bitmapData);
 			photo=source;
-			chromed=chroma.key(photo);
-			background.draw(backGroundImage.bitmapData);
-			background.copyPixels(chromed,new Rectangle(_crop.x*scale,_crop.y*scale,_crop.width*scale,_crop.height*scale),new Point(_crop.x*scale,_crop.y*scale),null,null,true);
-			background.draw(trophy,cupMatrix);
-			return background;
+			chroma.key(photo);
+			
+		}
+		
+		private function chromaComplete(e:Event) {
+			trace("::::::::: chroma complete on imageFactory");
+			background.draw(backGroundImageBitmap);
+			background.copyPixels(chroma.keyedBmp,new Rectangle(_crop.x*scale,_crop.y*scale,_crop.width*scale,_crop.height*scale),new Point(_crop.x*scale,_crop.y*scale),null,null,true);
+			background.draw(trophyImageBitmap,cupMatrix);
+			//chromed=chroma.keyedBmp;
+			dispatchEvent(new Event(Event.COMPLETE));
 		}
 		
 		public function colorPicker(x:Number,y:Number,image:BitmapData):Vector.<Number> {
