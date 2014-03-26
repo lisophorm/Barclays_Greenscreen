@@ -42,6 +42,7 @@
 			
 			protected function exit(e:Event=null):void
 			{
+				
 			}
 			
 			protected function submitHandler(event : MouseEvent, gameID : int, score : String) : void

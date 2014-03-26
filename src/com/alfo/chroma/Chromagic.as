@@ -251,7 +251,7 @@ package com.alfo.chroma
 			rgbString:String;
 			destDataBytes.position=0;
 			picPos =0;
-			// pointer to the bitmapdata
+			// pointer to the bitmapdataw
 			rowLength=m_video_input.width*4;
 
 			

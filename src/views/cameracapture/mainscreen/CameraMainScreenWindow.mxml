@@ -95,6 +95,8 @@
 			}
 			
 			protected function savePicture(e:AsyncImageEncoderEvent) {
+				
+				settings.userData.imageID=settings.userData.urn+"_trophy";
 				trace("******** png encode complete");
 				var file : File;
 				

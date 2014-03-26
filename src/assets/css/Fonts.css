@@ -16,6 +16,12 @@
 }
 @font-face
 {
+	src: url("../fonts/ExpertSans/ExpertSans-Light.ttf");
+	fontFamily: "StandardRegularAllCaseNoCFF";
+	embedAsCFF: false;
+}
+@font-face
+{
 	src: url("/assets/fonts/ExpertSans/ExpertSans-Bold.ttf");
 	fontFamily: "/assets/StandardRegularAllCase";
 	fontWeight: bold;

@@ -82,7 +82,8 @@
 			
 			protected function textChangingHandler(event : TextOperationEvent) : void
 			{
-				event.preventDefault();
+				trace("changing maskedinput");
+				//event.preventDefault();
 			}
 			
 			protected function numberInputKeyDownHandler(event:KeyboardEvent):void

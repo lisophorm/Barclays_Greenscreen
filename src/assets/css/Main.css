@@ -18,6 +18,11 @@ s|Label  {
 	color: #FFFFFF;
 	
 }
+.KeyStyle {
+	fontSize:24;
+	fontFamily: "StandardRegularAllCaseNoCFF";
+	color: #000000;
+}
 s|Label#frontMessage  {
 	fontSize:57;
 	fontFamily: "StandardRegularAllCase";

@@ -42,7 +42,7 @@ package model
 		protected var URN:String = "";
 		private var greenScreenPrefs:GreenScreenPrefs;
 		
-		private var outputScale : Number = 3;
+		private var outputScale : Number = 1;
 		
 //		private var outputWidth : int = 1600;
 //		private var outputHeight : int = 1200;

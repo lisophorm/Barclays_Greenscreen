@@ -13,6 +13,7 @@
 			import mx.events.FlexEvent;
 			import mx.managers.PopUpManager;
 			
+			import spark.components.TextInput;
 			import spark.filters.DropShadowFilter;
 			
 			import air.update.ApplicationUpdaterUI;
@@ -35,8 +36,9 @@
 			
 			import registration.debug.DebugEvent;
 			
-			import skins.vodafoneButton;
 			import skins.vodafoneFormItem;
+			
+			//import uk.co.huydinh.app.champion.keyboard.OnScreenKeyboard;
 			
 			import views.components.ErrorAlert;
 			import views.components.GreenScreenPopUp;
@@ -44,6 +46,14 @@
 			import views.components.ProgressPopUp;
 			import views.components.pleaseWait;
 			import views.components.tandcWindow;
+			
+			
+			
+			
+			
+			
+			
+			
 						
 			public var baseURL:String ="";
 			[Bindable]
@@ -120,6 +130,11 @@
 			
 			private var appUpdater:ApplicationUpdaterUI = new ApplicationUpdaterUI();
 			
+			//
+			//var keyboardRequest:URLRequest;
+			//var keyboardLoader = new URLLoader();
+			//var englishKeyboard:OnScreenKeyboard = new OnScreenKeyboard();
+			
 			
 			
 			protected function fullscreen(e:Event=null):void
@@ -191,18 +206,66 @@
 				}
 			}
 				
-			/*
-			TO DO:
-			-- Need to save optins
-			-- Check that RegisterView always get wired back up
-			-
+
+			function onKeyboardLoad(Event):void
+			{
+				/*englishKeyboard.keyData = new XML(keyboardLoader.data);
+				virtualKey.addChild(englishKeyboard);
+				configureInputField(UserForm.userFirstName);
+				configureInputField(UserForm.userLastName);
+				configureInputField(UserForm.userEmail);
+				configureInputField(ScoreCapture.accuracyValue.numberInput);
+				configureInputField(ScoreCapture.powerValue.numberInput);
+				configureInputField(ScoreCapture.controlValue.numberInput);
+				
+				englishKeyboard.alpha=0;
+				englishKeyboard.visible=false;*/
+				
+			}
+			function configureInputField(tf:TextInput):void
+			{
+				
+				tf.addEventListener(FocusEvent.FOCUS_IN, handleFocusIn);
+				tf.addEventListener(MouseEvent.CLICK, handleInputClick);
+				tf.addEventListener(KeyboardEvent.KEY_DOWN, handleKeyboardDown);
+			}
+			function handleFocusIn(event:FocusEvent):void
+			{
+				virtualKey.depth=1;
+				var activeField:TextInput = event.currentTarget as TextInput;
+				//activeField.backgroundColor = INPUT_FIELD_COLOUR;
+				
+				//englishKeyboard.focus = activeField;
+			}
 			
-			*/
+			/**
+			 * Restores the hint text if the input is empty
+			 */
+			function handleInputClick(event:MouseEvent):void
+			{
+				
+				//if ((!englishKeyboard.visible || englishKeyboard.alpha < 1) ) {
+				//englishKeyboard.show();
+				//}
+				
+				var activeField:TextInput = event.currentTarget as TextInput;
+				//activeField.backgroundColor = INPUT_FIELD_COLOUR;
+			}
+			
+			
+			function handleKeyboardDown(event:KeyboardEvent):void
+			{
+				var activeField:TextInput = event.currentTarget as TextInput;
+				//activeField.backgroundColor = INPUT_FIELD_COLOUR;
+				
+			}
 			protected function init(e:Event = null):void
 			{
 			//	trace(File.applicationDirectory.nativePath);
 				
-				
+				//keyboardRequest = new URLRequest("assets/xml/english.kb.xml");
+				//keyboardLoader.addEventListener(Event.COMPLETE, onKeyboardLoad);
+				//keyboardLoader.load(keyboardRequest);
 				
 				
 				if(Updater.isSupported) {
@@ -818,6 +881,7 @@
 				PopUpManager.addPopUp(passwordbox, this, false);
 				PopUpManager.centerPopUp(passwordbox);
 				this.dispatchEvent( new ApplicationEvent( ApplicationEvent.POPUP_OPEN ) );
+				configureInputField(passwordbox.passwordInput);
 				centerPopups();
 			}
 			protected function getActivePopup():Array
@@ -1105,7 +1169,7 @@
 			<s:HGroup width="100%" horizontalAlign="right" paddingRight="0" verticalAlign="middle" height="150">
 				<s:Button skinClass="skins.BasicButton" styleName="nav" icon="@Embed('assets/images/core/nm-no-connection.gif')" id="connStatus" label="{ML.t('NO CONNECTION')}" color="0xFFFFFF" visible="false" />
 				<s:Button skinClass="skins.BasicButton" styleName="nav" icon="@Embed('assets/images/core/home_logo.png')" click="{defaultView()}"/>
-				<!--s:Button label="camera" click="{gotoView('CameraCapture')}"/-->
+				<!--s:Button label="camera" click="{gotoView('UserForm')}"/-->
 				<s:Button skinClass="skins.BasicButton" styleName="nav" label="{ML.t('Quit')}" click="exitApplication(event)" id="quitButton" color="0xFFFFFF" visible="{loggedIn}" includeInLayout="{loggedIn}" />
 				<s:Button skinClass="skins.BasicButton" styleName="nav" icon="@Embed('assets/images/core/padlock.png')" click="config(event)" color="0xFFFFFF" />
 			</s:HGroup>		
@@ -1169,4 +1233,5 @@
 	</s:Group>
 	</s:VGroup>
 	<debug:DebugPanel left="0" top="0" id="debugPanel" visible="false"/>
+	<s:SpriteVisualElement id="virtualKey"/>
 </s:WindowedApplication>
